@@ -1,0 +1,17 @@
+[project]
+name = "framework-ecommerce-mavi"
+version = "0.1.0"
+description = "Framework Ecommerce MAVI — automatización UI multi-ecommerce (Playwright + Pytest)."
+requires-python = ">=3.11"
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+extend-exclude = [
+    "Context_Contratos",
+    "Example_Valentin",
+    "artifacts",
+]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP"]

@@ -1,0 +1,20 @@
+# Perfiles de ejecución seleccionables con --exec-profile.
+profiles:
+  default:
+    browser: chromium
+    headless: true
+    navigation_timeout_ms: 30000
+    action_timeout_ms: 10000
+    expect_timeout_ms: 5000
+  headed:
+    browser: chromium
+    headless: false
+    navigation_timeout_ms: 30000
+    action_timeout_ms: 10000
+    expect_timeout_ms: 5000
+  ci:
+    browser: chromium
+    headless: true
+    navigation_timeout_ms: 45000
+    action_timeout_ms: 15000
+    expect_timeout_ms: 8000

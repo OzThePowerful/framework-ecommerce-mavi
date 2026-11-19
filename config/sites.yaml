@@ -1,0 +1,33 @@
+# Definición única de sitios (ecommerce) soportados.
+# La resolución se realiza únicamente desde core/config/site_config.py.
+# Prohibido: URLs en pages, workflows o tests.
+sites:
+  muebles_america:
+    code: MA
+    environments:
+      stage:
+        # TODO: confirmar URL real del ambiente stage.
+        base_url: "https://www.mueblesamerica.mx"
+        checkout_url_pattern: "**/onestepcheckout/**"
+      prod:
+        base_url: "https://www.mueblesamerica.mx"
+        checkout_url_pattern: "**/onestepcheckout/**"
+  viu:
+    code: VIU
+    environments:
+      stage:
+        # TODO: URL pendiente de levantamiento (TLD .invalid = placeholder).
+        base_url: "https://stage.viu.invalid"
+        checkout_url_pattern: "**/checkout/**"
+      prod:
+        base_url: "https://www.viu.invalid"
+        checkout_url_pattern: "**/checkout/**"
+  mavi:
+    code: MAVI
+    environments:
+      stage:
+        base_url: "https://stage.mavi.invalid"
+        checkout_url_pattern: "**/checkout/**"
+      prod:
+        base_url: "https://www.mavi.invalid"
+        checkout_url_pattern: "**/checkout/**"

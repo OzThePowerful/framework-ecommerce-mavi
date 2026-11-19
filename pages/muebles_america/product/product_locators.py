@@ -1,0 +1,10 @@
+"""Locators de la PDP de Muebles América."""
+
+
+class ProductLocators:
+    ADD_TO_CART_BUTTON = (
+        "button.add-to-cart.border.relative.buy.button-viu.contained.lg.primary"
+        ".btn-ripple:visible"
+    )
+    NOTIFICATION = "div.notifications.fixed span"
+    CART_NOTIFICATION_BUTTON = "button.fw-600.fs-15.cl-white"

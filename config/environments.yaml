@@ -1,0 +1,10 @@
+# Ambientes válidos del framework.
+# La disponibilidad por sitio se define en sites.yaml (ningún sitio
+# puede exponer un ambiente no declarado aquí).
+environments:
+  stage:
+    description: "Ambiente de pruebas / preproducción."
+    allows_writes: true
+  prod:
+    description: "Ambiente productivo. Requiere autorización explícita."
+    allows_writes: false

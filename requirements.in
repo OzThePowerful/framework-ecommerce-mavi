@@ -1,0 +1,10 @@
+# Dependencias directas (editar aquí; fijar en requirements.lock).
+pytest
+pytest-bdd
+pytest-playwright
+pytest-base-url
+playwright
+allure-pytest
+PyYAML
+ruff
+openpyxl

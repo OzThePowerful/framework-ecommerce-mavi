@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.venv/
+
+# Artefactos y reportes generados
+artifacts/
+allure-results/
+allure-report/
+playwright-report/
+test-results/
+
+# Configuración local / secretos (nunca versionar)
+.env
+.env.*
+*.local
+*.local.yaml
+*.local.yml
+
+# Material del curso / contexto no versionable
+Context_Contratos/
+Example_Valentin/
+
+# SO / editor
+.DS_Store
+Thumbs.db
