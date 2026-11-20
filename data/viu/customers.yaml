@@ -1,0 +1,7 @@
+# Clientes de prueba — VIU. Datos ficticios de QA;
+# no usar datos personales reales.
+guest:
+  first_name: "QA"
+  last_name: "Automation"
+  email: "qa.automation.viu@example.com"
+  phone: "3312345678"

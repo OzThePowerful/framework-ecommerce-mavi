@@ -1,0 +1,12 @@
+# Métodos de pago — Muebles América.
+# TODO levantamiento funcional de métodos disponibles en stage/prod
+# (fuera de alcance de EC-SP01-004). Nunca guardar datos de tarjeta
+# reales: solo llaves de método y estado.
+# Casos relacionados: CP_EC_MA_PAY_001.
+card:
+  method: "tarjeta"
+  status: "pending"
+
+transfer:
+  method: "transferencia"
+  status: "pending"

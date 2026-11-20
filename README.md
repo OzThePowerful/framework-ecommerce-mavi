@@ -166,10 +166,27 @@ pytest --collect-only
 ### Datos de prueba
 
 - **Entrada**: `data/<sitio>/*.yaml` vía `DataProvider`. Hoy se usa
-  `YamlDataProvider`; `ExcelDataProvider` es intercambiable. Si un dataset no
-  existe para el sitio, se busca en `data/common/`.
+  `YamlDataProvider`; `ExcelDataProvider` es intercambiable sin tocar
+  consumidores. Si un dataset no existe para el sitio, se busca en
+  `data/common/` (fallback).
 - **Generados**: `repositories/` escribe en `artifacts/generated/<run_id>/`
   con escritura atómica.
+
+Datasets base por ecommerce (`data/muebles_america/` y `data/viu/`):
+
+| Dataset | Contenido |
+|---|---|
+| `search.yaml` | Términos con/sin resultados |
+| `products.yaml` | Productos verificados en stage |
+| `customers.yaml` | Clientes de prueba (ficticios) |
+| `addresses.yaml` | Direcciones de prueba (ficticias) |
+| `checkout.yaml` | Parámetros del checkout; referencia claves de `customers`/`addresses` |
+| `payment.yaml` | Métodos de pago (`status: pending` hasta levantamiento) |
+
+Nomenclatura: cada archivo es un mapa `clave_logica → campos` (ej.
+`guest:`, `guadalajara:`). El consumo es `provider.get_dataset(nombre)`
+o `provider.get_record(dataset, clave)`; los tests nunca conocen rutas.
+No se almacenan datos personales reales ni secretos.
 
 Para cambiar el producto o la categoría del flujo de MA, edita
 `data/muebles_america/guest_checkout.yaml`; no hace falta tocar el test.

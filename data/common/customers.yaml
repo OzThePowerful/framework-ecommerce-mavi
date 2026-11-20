@@ -1,0 +1,7 @@
+# Cliente genérico compartido: fallback de data/common/ para sitios
+# sin customers.yaml propio (ej. mavi hasta su levantamiento).
+default_guest:
+  first_name: "QA"
+  last_name: "Automation"
+  email: "qa.automation@example.com"
+  phone: "3300000000"

@@ -1,0 +1,10 @@
+# Direcciones de prueba — VIU. Datos ficticios.
+guadalajara:
+  street: "Av. de las Pruebas"
+  exterior_number: "100"
+  interior_number: ""
+  neighborhood: "Americana"
+  zip_code: "44100"
+  city: "Guadalajara"
+  state: "Jalisco"
+  references: "Entrega QA automatizada"

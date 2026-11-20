@@ -1,0 +1,10 @@
+# Datasets de búsqueda — Muebles América.
+# Casos relacionados: CP_EC_MA_SEARCH_001 (con resultados),
+# CP_EC_MA_SEARCH_002 (sin resultados).
+with_results:
+  term: "parrilla"
+  min_results: 1
+
+without_results:
+  term: "zzzz-producto-inexistente-qa"
+  expected_results: 0

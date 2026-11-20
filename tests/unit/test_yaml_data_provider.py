@@ -21,6 +21,21 @@ def test_dataset_del_sitio(tmp_path):
     assert provider.get_dataset("products") == {"item": 1}
 
 
+def test_sitio_valido_prioriza_su_dataset(tmp_path):
+    """Sitio con dataset propio: gana sobre el de common."""
+    _write(tmp_path / "viu" / "products.yaml", "src: sitio")
+    _write(tmp_path / "common" / "products.yaml", "src: comun")
+    provider = YamlDataProvider("viu", data_root=tmp_path)
+    assert provider.get_dataset("products") == {"src": "sitio"}
+
+
+def test_sitio_inexistente_error_explicito(tmp_path):
+    """Sitio sin carpeta ni fallback common: error que nombra el sitio."""
+    provider = YamlDataProvider("sitio_falso", data_root=tmp_path)
+    with pytest.raises(DataError, match="sitio_falso"):
+        provider.get_dataset("products")
+
+
 def test_fallback_common(tmp_path):
     _write(tmp_path / "common" / "shared.yaml", "shared: true")
     provider = YamlDataProvider("viu", data_root=tmp_path)
@@ -38,3 +53,10 @@ def test_yaml_invalido_error_explicito(tmp_path):
     provider = YamlDataProvider("viu", data_root=tmp_path)
     with pytest.raises(DataError):
         provider.get_dataset("broken")
+
+
+def test_registro_inexistente_error_explicito(tmp_path):
+    _write(tmp_path / "viu" / "products.yaml", "uno: {}")
+    provider = YamlDataProvider("viu", data_root=tmp_path)
+    with pytest.raises(DataError, match="dos"):
+        provider.get_record("products", "dos")

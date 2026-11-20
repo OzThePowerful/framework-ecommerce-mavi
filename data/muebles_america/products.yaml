@@ -1,0 +1,8 @@
+# Catálogo de productos verificados en stage (mueblesstage.mavi.mx).
+# El flujo E2E de checkout invitado usa guest_checkout.yaml; este
+# dataset alimenta pruebas de producto/búsqueda.
+parrilla_whirlpool:
+  name: "Parrilla Whirlpool WP3550S 90 Cm"
+  department: "Departamentos"
+  category: "Línea blanca"
+  category_href: "/departamentos/linea-blanca.html"

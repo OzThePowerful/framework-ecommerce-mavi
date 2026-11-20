@@ -1,0 +1,9 @@
+# Parámetros del checkout — Muebles América.
+# Los valores de customer/address referencian claves de
+# customers.yaml y addresses.yaml.
+# Casos relacionados: CP_EC_MA_CHECKOUT_002, CP_EC_MA_CHECKOUT_003.
+guest:
+  customer: "guest"
+  address: "guadalajara"
+  shipping_method: "pending"  # TODO levantamiento de métodos de envío.
+  payment_method: "pending"   # TODO ver payment.yaml.

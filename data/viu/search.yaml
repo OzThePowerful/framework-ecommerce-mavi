@@ -1,0 +1,10 @@
+# Datasets de búsqueda — VIU.
+# Casos relacionados: CP_EC_VIU_SEARCH_001 (con resultados),
+# CP_EC_VIU_SEARCH_002 (sin resultados).
+with_results:
+  term: "estufa"
+  min_results: 1
+
+without_results:
+  term: "zzzz-producto-inexistente-qa"
+  expected_results: 0
