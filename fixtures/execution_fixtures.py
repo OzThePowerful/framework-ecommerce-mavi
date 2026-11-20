@@ -4,7 +4,6 @@ import os
 
 import pytest
 
-from core.config.config_loader import load_execution_profile
 from core.config.site_config import resolve_site
 from core.execution.execution_context import ExecutionContext
 from core.execution.run_context import RunContext
@@ -65,20 +64,11 @@ def execution_context(request, run_context) -> ExecutionContext:
     environment = os.environ.get(_ENV_ENV_VAR) or request.config.getoption(
         "--target-env"
     )
-    profile = load_execution_profile(request.config.getoption("--exec-profile"))
-    site_config = resolve_site(site, environment)
-    return ExecutionContext(
-        project="ecommerce",
-        site=site_config.site,
-        site_code=site_config.code,
-        environment=site_config.environment,
-        base_url=site_config.base_url,
-        checkout_url_pattern=site_config.checkout_url_pattern,
-        browser=profile["browser"],
-        headless=bool(profile["headless"]),
-        case_id=os.environ.get(_CASE_ENV_VAR) or request.config.getoption("--case-id"),
+    case_id = os.environ.get(_CASE_ENV_VAR) or request.config.getoption("--case-id")
+    return ExecutionContext.build(
+        site=site,
+        environment=environment,
+        profile_name=request.config.getoption("--exec-profile"),
+        case_id=case_id,
         run_id=run_context.run_id,
-        navigation_timeout=int(profile["navigation_timeout_ms"]),
-        action_timeout=int(profile["action_timeout_ms"]),
-        expect_timeout=int(profile["expect_timeout_ms"]),
     )

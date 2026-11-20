@@ -1,8 +1,8 @@
-"""Resolución única de sitio + ambiente desde sites.yaml."""
+"""Resolución única de sitio + ambiente desde sites.yaml / environments.yaml."""
 
 from dataclasses import dataclass
 
-from core.config.config_loader import load_sites
+from core.config.config_loader import load_environments, load_sites
 from core.execution.execution_errors import (
     ConfigError,
     UnknownEnvironmentError,
@@ -19,9 +19,16 @@ class SiteConfig:
     checkout_url_pattern: str
 
 
-def resolve_site(site: str, environment: str, sites: dict | None = None) -> SiteConfig:
+def resolve_site(
+    site: str,
+    environment: str,
+    sites: dict | None = None,
+    environments: dict | None = None,
+) -> SiteConfig:
     """Resuelve el SiteConfig o lanza error explícito.
 
+    Validación en dos niveles: el ambiente debe estar declarado en
+    environments.yaml y además existir para el sitio en sites.yaml.
     Nunca redirige silenciosamente a otro ambiente ni aplica defaults
     peligrosos: combinaciones desconocidas siempre fallan.
     """
@@ -34,12 +41,18 @@ def resolve_site(site: str, environment: str, sites: dict | None = None) -> Site
     code = entry.get("code")
     if not code:
         raise ConfigError(f"El sitio '{site}' no define 'code' en sites.yaml")
-    environments = entry.get("environments", {})
-    env_config = environments.get(environment)
+    declared = (environments or load_environments()).get("environments", {})
+    if environment not in declared:
+        raise UnknownEnvironmentError(
+            f"Ambiente '{environment}' no declarado en environments.yaml. "
+            f"Declarados: {sorted(declared)}"
+        )
+    site_environments = entry.get("environments", {})
+    env_config = site_environments.get(environment)
     if env_config is None:
         raise UnknownEnvironmentError(
             f"Ambiente '{environment}' no existe para '{site}'. "
-            f"Disponibles: {sorted(environments)}"
+            f"Disponibles: {sorted(site_environments)}"
         )
     base_url = env_config.get("base_url")
     if not base_url:

@@ -114,6 +114,20 @@ pytest tests/smoke/test_guest_checkout_ma.py
 Variables de entorno que sobrescriben las opciones: `MAVI_ECOM_SITE`,
 `MAVI_ECOM_ENV` y `MAVI_ECOM_CASE_ID`.
 
+### Configuración
+
+| Archivo | Rol |
+|---|---|
+| `config/sites.yaml` | Única fuente de `base_url` y `checkout_url_pattern` por sitio y ambiente. |
+| `config/environments.yaml` | Catálogo de ambientes válidos (`stage`, `prod`). |
+| `config/execution_profiles.yaml` | Perfiles de ejecución (navegador, headless, timeouts). |
+
+El ambiente se valida en **dos niveles**: debe estar declarado en
+`environments.yaml` *y* existir para el sitio en `sites.yaml`.
+Una combinación inválida aborta la ejecución con `UnknownSiteError` /
+`UnknownEnvironmentError` en el arranque (`pytest_configure`); nunca
+hay redirección silenciosa ni defaults peligrosos.
+
 <!-- PENDIENTE: asignar el Case ID de Plane a test_guest_checkout_ma.py. Mientras tanto, el case_id solo llega con --case-id o MAVI_ECOM_CASE_ID. -->
 
 ### Quality gate
