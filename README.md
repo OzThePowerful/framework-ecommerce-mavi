@@ -1,60 +1,100 @@
 # Framework Ecommerce MAVI
 
-Framework de automatización UI multi-ecommerce construido sobre la
-arquitectura POM objetivo del departamento: Playwright + Pytest + BDD +
-Allure, con fronteras explícitas entre infraestructura, UI, dominio,
-workflows, datos y ejecución.
+Framework de automatización UI multi-ecommerce (Playwright + Pytest + BDD +
+Allure) construido sobre la arquitectura POM objetivo del departamento.
 
-Sitios soportados por configuración: **Muebles América (MA)**, **VIU** y
-**MAVI** (flujo funcional implementado inicialmente para MA).
+## Descripción
 
-## Requisitos
+Un solo framework valida los ecommerce **Muebles América (MA)**, **VIU** y
+**MAVI**. El sitio y el ambiente se eligen al ejecutar y llegan a todas las
+capas mediante `ExecutionContext`; los tests nunca definen URLs.
 
-- Python **3.13** (compatible `>=3.11`)
-- Git
+El flujo funcional está implementado inicialmente para MA: Home → categoría →
+PDP → carrito → checkout como invitado.
 
-## Instalación
-
-```bash
-python -m pip install -r requirements.lock
-python -m playwright install chromium
-```
-
-`requirements.in` declara las dependencias directas;
-`requirements.lock` fija las versiones resueltas.
-
-## Arquitectura
+### Arquitectura
 
 ```text
-Core            → infraestructura técnica (config, browser, contexto,
-                  evidencias, reporting, logging, errores técnicos)
+Core               → infraestructura técnica (config, browser, contexto,
+                     evidencias, reporting, logging, errores técnicos)
    ↓
-UI Automation   → pages/ (Page Objects + locators + componentes)
+UI Automation      → pages/ (Page Objects + locators + componentes)
    ↓
 Business Workflows → workflows/ (coordinación; sin locators ni asserts)
    ↓
-Test Execution  → tests/, fixtures/, steps BDD (validaciones)
+Test Execution     → tests/, fixtures/, steps BDD (validaciones)
 ```
 
-Reglas clave (verificables en `tests/architecture/`, detalle en
-`docs/architecture/dependency_rules.md`):
+Ejemplo del flujo de MA:
+
+| Capa | Archivo | Responsabilidad |
+|---|---|---|
+| Test | `tests/smoke/test_guest_checkout_ma.py` | Valida que el checkout muestre un precio mayor a cero. |
+| Workflow | `workflows/muebles_america/guest_checkout_workflow.py` | `GuestCheckoutWorkflow` coordina las pantallas y devuelve el precio como `Money`. |
+| Pages | `pages/muebles_america/<pantalla>/` | Un `*_page.py` y un `*_locators.py` por pantalla. |
+| Componentes | `pages/muebles_america/components/` | Menú de departamentos (`mega_menu`) y ventana de promociones (`promotions_window`). |
+| Datos | `data/muebles_america/guest_checkout.yaml` | Departamento, categoría y producto del flujo. |
+
+Los componentes propios de una marca viven en `pages/<sitio>/components/`.
+Solo pasan a `pages/common/components/` cuando se demuestra que son
+equivalentes en otra marca.
+
+### Reglas de dependencia
+
+Se verifican en `tests/architecture/`; el detalle está en
+`docs/architecture/dependency_rules.md`.
 
 - `core` nunca importa `pages`, `workflows` ni `tests`.
 - Los locators viven en `*_locators.py`, separados del comportamiento.
 - Los Page Objects no contienen asserts ni `expect`.
 - Los workflows no contienen locators.
 - Los tests no usan locators directamente.
-- Prohibido `except Exception:` tragado; errores clasificados.
+- Prohibido `except Exception:` tragado; los errores se clasifican.
 - Sin `print()` como diagnóstico: logging estructurado con
   `run_id`/`case_id`/`site`/`environment`.
 - Sin URLs literales en capas funcionales: se resuelven desde
   `config/sites.yaml` vía `ExecutionContext`.
 - `conftest.py` raíz mínimo: solo registra plugins de `fixtures/`.
 
-## Ejecución
+## Requisitos
+
+- Python **3.13** (compatible con `>=3.11`).
+- Git.
+- Chromium de Playwright (se instala en el paso 3 de la instalación).
+- Acceso de red a la tienda configurada para ejecutar las pruebas E2E.
+
+## Instalación
+
+1. Clona el repositorio y entra a la carpeta.
+
+<!-- PENDIENTE: indicar la URL del repositorio remoto -->
 
 ```bash
-# Suite completa (sitio/ambiente por defecto: muebles_america/stage)
+git clone <url-del-repositorio>
+cd framework-ecommerce-mavi
+```
+
+2. Instala las dependencias con versiones fijas.
+
+```bash
+python -m pip install -r requirements.lock
+```
+
+3. Instala el navegador de Playwright.
+
+```bash
+python -m playwright install chromium
+```
+
+`requirements.in` declara las dependencias directas y `requirements.lock`
+fija las versiones resueltas.
+
+## Uso
+
+### Ejecución
+
+```bash
+# Suite completa (sitio y ambiente por defecto: muebles_america/stage)
 pytest
 
 # Selección multi-ecommerce
@@ -67,14 +107,16 @@ pytest --exec-profile headed
 # Solo pruebas sin navegador
 pytest tests/unit tests/architecture
 
-# Primer test E2E migrado (requiere acceso a la tienda configurada)
-pytest tests/smoke/test_core_locators_grid_ma.py
+# E2E de MA: Home → categoría → PDP → carrito → checkout como invitado
+pytest tests/smoke/test_guest_checkout_ma.py
 ```
 
-Overrides por variables de entorno: `MAVI_ECOM_SITE`, `MAVI_ECOM_ENV`,
-`MAVI_ECOM_CASE_ID`.
+Variables de entorno que sobrescriben las opciones: `MAVI_ECOM_SITE`,
+`MAVI_ECOM_ENV` y `MAVI_ECOM_CASE_ID`.
 
-## Quality gate
+<!-- PENDIENTE: asignar el Case ID de Plane a test_guest_checkout_ma.py. Mientras tanto, el case_id solo llega con --case-id o MAVI_ECOM_CASE_ID. -->
+
+### Quality gate
 
 ```bash
 python scripts/quality_gate.py
@@ -89,21 +131,29 @@ pytest tests/architecture
 pytest --collect-only
 ```
 
-## Datos de prueba
+### Datos de prueba
 
-- **Entrada**: `data/<site>/*.yaml` vía `DataProvider`
-  (`YamlDataProvider` hoy; `ExcelDataProvider` intercambiable con
-  fallback a `data/common/`).
-- **Generados**: `repositories/` bajo `artifacts/generated/<run_id>/`
+- **Entrada**: `data/<sitio>/*.yaml` vía `DataProvider`. Hoy se usa
+  `YamlDataProvider`; `ExcelDataProvider` es intercambiable. Si un dataset no
+  existe para el sitio, se busca en `data/common/`.
+- **Generados**: `repositories/` escribe en `artifacts/generated/<run_id>/`
   con escritura atómica.
 
-## Reportes
+Para cambiar el producto o la categoría del flujo de MA, edita
+`data/muebles_america/guest_checkout.yaml`; no hace falta tocar el test.
+
+### Reportes
 
 Allure escribe resultados en `artifacts/allure-results` (configurado en
-`pytest.ini`). Evidencias por corrida en `artifacts/runs/<run_id>/`.
+`pytest.ini`). Las evidencias de cada corrida quedan en
+`artifacts/runs/<run_id>/`.
 
-## BDD
+### BDD
 
 Los `.feature` (contrato funcional) viven en `test_cases/<sitio>/` y los
-steps delgados en `tests/bdd/steps/`; el runner es
+steps delgados en `tests/bdd/steps/`. El runner es
 `tests/bdd/test_features.py`.
+
+## Licencia
+
+<!-- PENDIENTE: indicar la licencia; el repositorio no tiene archivo LICENSE -->

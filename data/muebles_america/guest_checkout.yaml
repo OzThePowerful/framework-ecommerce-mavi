@@ -1,0 +1,7 @@
+# Datos de entrada para el flujo Home → categoría → PDP → carrito → checkout
+# como invitado. Se leen vía DataProvider; los tests no conocen esta ruta.
+linea_blanca_parrilla:
+  department: "Departamentos"
+  category: "Línea blanca"
+  category_href: "/departamentos/linea-blanca.html"
+  product_name: "Parrilla Whirlpool WP3550S 90 Cm"

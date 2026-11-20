@@ -1,0 +1,28 @@
+flowchart TD
+    A([pytest --site --target-env --exec-profile --case-id]) --> B[conftest.py<br/>registra plugins de fixtures/]
+    B --> C[fixtures/execution_fixtures.py<br/>pytest_configure: valida sitio/ambiente]
+    C --> D{¿Sitio y ambiente<br/>existen en sites.yaml?}
+    D -- No --> E[[UnknownSiteError /<br/>UnknownEnvironmentError]]
+    D -- Sí --> F[RunContext<br/>genera Run ID]
+    F --> G[core/config<br/>config_loader + site_config]
+    G --> H[ExecutionContext inmutable<br/>site, env, base_url, timeouts, run_id]
+    H --> I[core/logging<br/>logs con run_id/site/env/case_id]
+    H --> J[fixtures/browser_fixtures.py<br/>Playwright → Browser → Context → Page]
+    H --> K[fixtures/data_fixtures.py<br/>DataProvider YAML / Excel]
+    J --> L[fixtures/page_fixtures.py<br/>PageFactory por sitio]
+    L --> M{Tipo de prueba}
+    M -- architecture/unit --> N[tests/architecture · tests/unit<br/>sin navegador]
+    M -- BDD --> O[test_cases/*.feature] --> P[tests/bdd/steps<br/>steps delgados]
+    M -- smoke/regression --> Q[tests/smoke]
+    P --> R[workflows/<br/>coordinación, sin locators]
+    Q --> S
+    R --> S[pages/ Page Objects<br/>+ components comunes]
+    S --> T[*_locators.py<br/>solo selectores]
+    S --> U((Sitio ecommerce<br/>MA · VIU · MAVI))
+    K --> R
+    R --> V[domain/ modelos<br/>Product · Cart · Order · Money]
+    Q --> W{Asserts en el test}
+    P --> W
+    W --> X[core/evidence + repositories<br/>artifacts/runs/run_id · escritura atómica]
+    X --> Y[core/reporting<br/>Allure: artifacts/allure-results]
+    Y --> Z([Resultado normalizado → MAVI AI Bridge → Plane<br/>pendiente tarea posterior])

@@ -22,7 +22,10 @@ test-results/
 # Material del curso / contexto no versionable
 Context_Contratos/
 Example_Valentin/
+# Script legado previo a la migración (referencia local; no forma parte del framework)
+/test_UIValidations.py
 
 # SO / editor
 .DS_Store
 Thumbs.db
+.idea/

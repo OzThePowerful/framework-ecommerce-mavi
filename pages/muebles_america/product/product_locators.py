@@ -1,4 +1,7 @@
-"""Locators de la PDP de Muebles América."""
+"""Locators de la PDP de Muebles América.
+
+Los de la ventana de promociones viven en components/promotions_window/.
+"""
 
 
 class ProductLocators:
@@ -7,4 +10,4 @@ class ProductLocators:
         ".btn-ripple:visible"
     )
     NOTIFICATION = "div.notifications.fixed span"
-    CART_NOTIFICATION_BUTTON = "button.fw-600.fs-15.cl-white"
+    CART_NOTIFICATION_BUTTON = "button.fw-600.fs-15.cl-white:visible"
