@@ -1,7 +1,7 @@
 """Browser Lifecycle centralizado: Playwright → Browser → Context → Page."""
 
 import pytest
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import expect, sync_playwright
 
 from core.browser.browser_context import create_browser_context
 from core.browser.browser_factory import launch_browser
@@ -28,7 +28,8 @@ def context(browser, execution_context):
 
 
 @pytest.fixture
-def page(context):
+def page(context, execution_context):
+    expect.set_options(timeout=execution_context.expect_timeout)
     test_page = context.new_page()
     yield test_page
     test_page.close()

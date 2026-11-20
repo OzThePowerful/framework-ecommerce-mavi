@@ -128,6 +128,24 @@ Una combinación inválida aborta la ejecución con `UnknownSiteError` /
 `UnknownEnvironmentError` en el arranque (`pytest_configure`); nunca
 hay redirección silenciosa ni defaults peligrosos.
 
+### Browser lifecycle
+
+Los plugins de `fixtures/` administran el ciclo completo sin lógica de
+ecommerce:
+
+```text
+playwright_instance (sesión)
+  → browser (sesión, headless/browser del ExecutionContext)
+    → context (por test, timeouts del ExecutionContext)
+      → page (por test, expect_timeout aplicado)
+        → pages (PageFactory del sitio activo)
+```
+
+Todas son yield-fixtures: el `close()` post-yield libera recursos tanto
+en PASS como en FAIL. El navegador se selecciona por
+`execution_profiles.yaml` (`chromium`, preparado para `firefox`/`webkit`)
+y `headless`/`headed` por `--exec-profile`.
+
 <!-- PENDIENTE: asignar el Case ID de Plane a test_guest_checkout_ma.py. Mientras tanto, el case_id solo llega con --case-id o MAVI_ECOM_CASE_ID. -->
 
 ### Quality gate
