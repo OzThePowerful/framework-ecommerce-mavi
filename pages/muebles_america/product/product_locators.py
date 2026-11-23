@@ -10,4 +10,5 @@ class ProductLocators:
         ".btn-ripple:visible"
     )
     NOTIFICATION = "div.notifications.fixed span"
+    NOTIFICATION_CLOSE = "button[aria-label='Cerrar']:visible"
     CART_NOTIFICATION_BUTTON = "button.fw-600.fs-15.cl-white:visible"

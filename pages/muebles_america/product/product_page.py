@@ -50,6 +50,14 @@ class ProductPage(BasePage):
     def add_to_cart(self) -> None:
         self.page.locator(ProductLocators.ADD_TO_CART_BUTTON).first.click()
 
+    def dismiss_post_add_overlays(self) -> None:
+        """Despeja promo y toast post-add para liberar el header."""
+        self.promotions_window.close_if_present()
+        if self.notifications.is_visible(ProductLocators.NOTIFICATION):
+            close = self.page.locator(ProductLocators.NOTIFICATION_CLOSE)
+            if close.count():
+                close.first.click()
+
     def open_cart_from_notification(self) -> None:
         """Confirma el toast de agregado y abre el carrito desde él.
 

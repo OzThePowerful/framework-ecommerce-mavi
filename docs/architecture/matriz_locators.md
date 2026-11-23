@@ -89,16 +89,23 @@ ambigüedad · texto promocional volátil.
 | VIU | MiniCart | Contador | Leer items | `.minicart-count` | — | Media | Common | Medio | Verificado VIU; clase semántica del tema |
 | VIU | MiniCart | Item de producto | Scope por producto | `.product-minicart` | — | Media | Common | Medio | Verificado VIU |
 | VIU | MiniCart | Eliminar item | Quitar producto | `.mini-cart-delete-product` | `role=button[name='Eliminar']` | Media | Common | Medio | Verificado VIU |
-| VIU | MiniCart | CTA ir al carrito | Navegar al cart | `role=link[name='Ir al carrito de compras']` | `a[href*='checkout/cart']` | Alta | Específico | Bajo | Verificado VIU → `/checkout/cart` |
-| MA | MiniCart | CTA ir al carrito | Navegar al carrito | `button` dentro de `div.notifications` / modal promo | — | Pendiente | Específico | Alto | MA navega vía notificación/modal `Añadido al carrito`; el selector actual (`fw-600.fs-15.cl-white`) es frágil → pendiente refactor con verificación |
+| Ambas | MiniCart | CTA ir al carrito | Navegar al carrito | `a[href*='checkout/cart']:has-text('carrito')` ("Ir al carrito de compras") | `role=link[name='Ir al carrito de compras']` | Alta | Common | Bajo | Verificado en ambos → `/checkout/cart` (EC-SP01-012). El botón `fw-600.fs-15.cl-white` de la notificación MA abre el mismo drawer |
 
 ### Cart
 
 | Marca | Pantalla | Elemento | Responsabilidad | Selector principal | Selector alternativo | Estabilidad | Common / específico | Riesgo | Observación |
 |---|---|---|---|---|---|---|---|---|---|
-| MA | Cart | URL del carrito | Navegación | `base_url + /carrito` (desde `sites.yaml`) | — | Alta | Específico | Bajo | Verificado en workflow |
-| VIU | Cart | URL del carrito | Navegación | `base_url + /checkout/cart` | — | Alta | Específico | Bajo | Verificado; `/carrito` redirige a 404 en VIU |
-| Ambas | Cart | Item de producto | Scope por producto | `.product-item-details` | `form` / `tr` dentro de la tabla del carrito | Media | Common | Medio | Verificado MA (count=1); clase Magento estándar |
+| Ambas | Cart | URL del carrito | Navegación | `base_url + /checkout/cart` | — | Alta | Common | Bajo | Verificado en ambos vía minicart (EC-SP01-012). Corregido: `/carrito` no existe (hallazgo de probe defectuoso) |
+| Ambas | Cart | Contenedor de ítems | Scope del listado | `.shopping-cart-products` | — | Alta | Common | Bajo | Verificado en ambos (EC-SP01-012) |
+| Ambas | Cart | Item de producto | Scope por producto | `.shopping-cart-products .shopping-tile` | — | Alta | Common | Bajo | Verificado en ambos; reemplaza `.product-item-details` (no existe en el DOM Vue real) |
+| Ambas | Cart | SKU del ítem | Identificar producto | `.shopping-tile .sku` (texto `SKU#: XXX`) | — | Alta | Common | Bajo | Verificado; el texto lleva prefijo `SKU#:` que se recorta |
+| Ambas | Cart | Nombre del ítem | Identificar producto | `.shopping-tile .name` | — | Alta | Common | Bajo | Verificado; puede duplicarse (layout móvil/desktop) → `.first` |
+| Ambas | Cart | Cantidad | Leer qty | `.shopping-tile .product-quantity.counter` (texto) | — | Media | Common | Medio | Verificado; es un contador, no input. `span.sum` es el botón "+", no el valor |
+| Ambas | Cart | Precio vigente / tachado | Leer importes | `.shopping-tile span.price.cl-accent` / `span.price.line-through` | — | Alta | Common | Bajo | Verificado; ambos pueden duplicarse por layout → `.first` |
+| Ambas | Cart | Eliminar ítem | Quitar producto | `.shopping-tile button.trash` ("Eliminar") | `role=button[name='Eliminar']` | Media | Common | Medio | Verificado MA |
+| Ambas | Cart | Resumen | Scope de importes | `div.expansion-panel:has-text('Resumen de compra')` | — | Media | Common | Medio | Verificado; "Subtotal:" se lee del texto del panel (sin clase propia) |
+| Ambas | Cart | Total | Leer total | `.total-price-value` | — | Alta | Common | Bajo | Verificado; label `Total (IVA incl.)` |
+| Ambas | Cart | Contador de ítems | Leer total de productos | `.total-products` ("Total de productos N") | — | Alta | Common | Bajo | Verificado en ambos |
 | Ambas | Cart | CTA Pagar / continuar | Ir al gate/checkout | `role=button[name='Pagar']` | `button.buy-now` largo actual (MA) | Alta (nuevo) / Baja (actual) | Common | Medio | `role=button[name='Pagar']` verificado count=1 en ambos. El selector actual MA (`button.buy-now` + clases largas) es frágil → refactor recomendado |
 | VIU | Cart | Cupón | Aplicar descuento | `role=button[name='Cupón de descuento']` + `role=button[name='Aplicar']` | — | Media | Específico | Medio | Verificado en dump de botones del carrito VIU |
 | VIU | Cart | Método de envío | Seleccionar/envío | `role=button[name='Método de envío']` | — | Media | Específico | Medio | Verificado en dump VIU |

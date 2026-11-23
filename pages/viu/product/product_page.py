@@ -5,6 +5,9 @@ from playwright.sync_api import Page
 from core.execution.execution_context import ExecutionContext
 from domain.models.product import Product
 from pages.base_page import BasePage
+from pages.common.components.notifications.notification_component import (
+    NotificationComponent,
+)
 from pages.common.components.pdp.pdp_component import PdpComponent
 from pages.viu.product.product_locators import ProductLocators
 
@@ -13,6 +16,7 @@ class ProductPage(BasePage):
     def __init__(self, page: Page, context: ExecutionContext) -> None:
         super().__init__(page, context)
         self.pdp = PdpComponent(page)
+        self.notifications = NotificationComponent(page)
 
     def read_product(self) -> Product:
         """Modelo de dominio del producto observado en la PDP."""
@@ -41,3 +45,10 @@ class ProductPage(BasePage):
 
     def add_to_cart(self) -> None:
         self.page.locator(ProductLocators.ADD_TO_CART_BUTTON).first.click()
+
+    def dismiss_post_add_overlays(self) -> None:
+        """Despeja el toast post-add; VIU no muestra promo al agregar."""
+        if self.notifications.is_visible(ProductLocators.NOTIFICATION):
+            close = self.page.locator(ProductLocators.NOTIFICATION_CLOSE)
+            if close.count():
+                close.first.click()
