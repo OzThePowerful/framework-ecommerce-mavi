@@ -115,6 +115,12 @@ ambigüedad · texto promocional volátil.
 | Marca | Pantalla | Elemento | Responsabilidad | Selector principal | Selector alternativo | Estabilidad | Common / específico | Riesgo | Observación |
 |---|---|---|---|---|---|---|---|---|---|
 | Ambas | Checkout | Continuar como invitado | Entrar al checkout guest | `role=button[name='Continuar como invitado']` | — | Alta | Common | Bajo | Verificado en ambos (E2E MA + probe VIU) |
+| Ambas | Checkout | Acordeón Entrega | Expandir dirección/envío | `#omniButtonShipping` | — | Alta | Common | Bajo | Verificado ambos (EC-SP01-013) |
+| Ambas | Checkout | Acordeón Forma de pago | Expandir pago | `#paymentExpansionButton` | — | Alta | Common | Bajo | Arranca `disabled`; se habilita con dirección válida (EC-SP01-013) |
+| Ambas | Checkout | Acordeón Resumen | Expandir resumen | `#omniButtonSummary` | — | Alta | Common | Bajo | Verificado ambos |
+| Ambas | Checkout | Finalizar compra | **Crear la orden (irreversible)** | `#_btnCheckout` | `button.action.primary.checkout` | Alta | Common | Alto | `disabled` hasta pago válido; NUNCA clickear sin estrategia de stage |
+| Ambas | Checkout | Toggle a domicilio | Envío a dirección | `#domicilio` | `button.action-select-shipping` | Alta | Common | Bajo | Default (`StorePickupSelected`) |
+| Ambas | Checkout | Toggle pickup | Retiro en sucursal | `#sucursal` | `button.action-select-store-pickup` | Alta | Common | Medio | Label difiere: "Retiro en sucursal" (MA) / "Click & Pick Up" (VIU) |
 | Ambas | Checkout | Loader de checkout | Esperar SPA listo | `#checkout-loader` | — | Alta | Common | Bajo | Verificado MA; mismo OSC en VIU |
 | Ambas | Checkout | Email | Identidad del guest | `input[name='username']` | — | Alta | Common | Bajo | Verificado ambos; el `id` (`customer-email`) es generado → no usar |
 | Ambas | Checkout | Nombre | Datos personales | `input[name='firstname']` | — | Alta | Common | Bajo | name estable de Magento |
@@ -123,15 +129,19 @@ ambigüedad · texto promocional volátil.
 | Ambas | Checkout | Teléfono | Contacto | `input[name='telephone']` | — | Alta | Common | Bajo | name estable |
 | Ambas | Checkout | Calle | Dirección | `input[name='street[0]']` | — | Alta | Common | Bajo | name estable |
 | Ambas | Checkout | Número exterior | Dirección | `input[name='custom_attributes[address_number]']` | — | Alta | Common | Bajo | Verificado ambos |
-| Ambas | Checkout | Código postal | Dirección | `input[name='postcode']` | — | Alta | Common | Bajo | name estable |
-| Ambas | Checkout | Colonia | Dirección | `input[name='custom_attributes[colonia]']` | — | Alta | Common | Bajo | Verificado ambos |
+| Ambas | Checkout | Código postal | Dirección | `input[name='postcode']:visible` | — | Alta | Common | Bajo | `maxlength=5`; dispara autocompletado de colonia/ciudad/estado |
+| Ambas | Checkout | Colonia | Dirección | `input[name='custom_attributes[colonia]']` | — | Alta | Common | Bajo | Input oculto autollenado por CP |
+| Ambas | Checkout | Colonia (select) | Elegir colonia del CP | `select[name='colonia_select_shipping']` | — | Media | Common | Medio | Opciones cargadas por CP (ej. AMERICANA para 44100) — verificado ambos (EC-SP01-013) |
 | Ambas | Checkout | Ciudad | Dirección | `input[name='city']` | — | Alta | Common | Bajo | name estable |
 | Ambas | Checkout | Estado | Dirección | `select[name='region_id']` | — | Alta | Common | Bajo | SELECT; elegir por `label`/value |
 | Ambas | Checkout | País | Dirección | `select[name='country_id']` | — | Alta | Common | Bajo | SELECT; usualmente prefijado MX |
 | Ambas | Checkout | Referencia | Dirección | `input[name='custom_attributes[address_reference]']` | — | Alta | Common | Bajo | Opcional |
 | Ambas | Checkout | Crear cuenta | Opción registro | `input[name='create-account-checkbox']` | `role=checkbox` con label | Alta | Common | Bajo | Dejar desmarcado para guest |
 | Ambas | Checkout | Radios método envío | Elegir envío | `input[type='radio']` dentro de sección shipping (por `value`/`id` observable) | — | Media | Common | Medio | MA observado: `mavis_store_pickup_store_pickup`, `flatrate_flatrate`; names genéricos (`radio`/`ko_unique_*`) → usar `value`/`id` del método, no el name |
-| Ambas | Checkout | Radios método pago | Elegir pago | `input[name='payment[method]']` por `id` del método | — | Alta | Common | Bajo | IDs observados estables: `openpay_cards`, `paypal_express`, `banktransfer`, `openpay_stores`, `omnipro_pago_credito` (set puede variar por marca) |
+| Ambas | Checkout | Radios método pago | Elegir pago | `input[name='payment[method]']` por `id` del método | `input[value='<metodo>']` | Alta | Common | Bajo | Mismo set en ambas (EC-SP01-013): `openpay_cards` (contado), `omnipro_pago_credito` (crédito marca), `paypal_express`, `banktransfer`, `openpay_stores` |
+| Ambas | Checkout | Tarjeta (OpenPay) | Datos de tarjeta | `#openpay_cards_cc_number`, `#openpay_cards_expiration`, `#openpay_cards_expiration_yr`, `#openpay_cards_cc_cid` | `payment[cc_*]` por name | Alta | Common | Bajo | Nativos, sin iframes; tokenización vía JS de OpenPay (EC-SP01-013) |
+| Ambas | Checkout | Facturación = envío | Toggle billing | `#billing-address-same-as-shipping` | `input[name='billing-address-same-as-shipping']` | Alta | Common | Bajo | Al desmarcar, segunda copia de campos de dirección |
+| Ambas | Checkout | Promotor | Num. empleado | `#mavi-promoter-enabled` | label "Num. Empleado:" | Media | Common | Medio | Checkbox de promotor; verificado ambos |
 | Ambas | Checkout | Cupón | Aplicar descuento | `input[name='discount_code']` | `#discount-code` | Alta | Common | Bajo | Verificado VIU (`id='discount-code'`); mismo name MA |
 | Ambas | Checkout | Total de la orden | Validar precio | `strong span.price` | — | Alta | Common | Bajo | Verificado count=1 en ambos checkouts (lo usa el test P0) |
 | Ambas | Checkout | Tipo de cliente (radio) | guest/registrado | `input[value='guest']` / `input[value='client']` | — | Media | Common | Medio | `name` son `ko_unique_*` (Knockout, regenerado) → seleccionar por `value` |

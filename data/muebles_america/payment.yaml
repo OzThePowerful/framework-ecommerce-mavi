@@ -4,9 +4,21 @@
 # reales: solo llaves de método y estado.
 # Casos relacionados: CP_EC_MA_PAY_001.
 card:
-  method: "tarjeta"
-  status: "pending"
+  method: "openpay_cards"   # Tarjeta Crédito / Débito — contado (OpenPay)
+  status: "verified"
+
+cash:
+  method: "openpay_stores"  # Efectivo en tiendas de conveniencia (OpenPay)
+  status: "verified"
 
 transfer:
-  method: "transferencia"
-  status: "pending"
+  method: "banktransfer"    # Transferencia bancaria / Pago en tienda
+  status: "verified"
+
+paypal:
+  method: "paypal_express"  # Redirección externa PayPal
+  status: "verified"
+
+brand_credit:
+  method: "omnipro_pago_credito"  # Crédito de la marca — NO contado
+  status: "verified"

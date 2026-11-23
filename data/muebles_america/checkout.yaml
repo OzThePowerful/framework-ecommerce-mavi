@@ -5,5 +5,5 @@
 guest:
   customer: "guest"
   address: "guadalajara"
-  shipping_method: "pending"  # TODO levantamiento de métodos de envío.
-  payment_method: "pending"   # TODO ver payment.yaml.
+  shipping_method: "a_domicilio"  # toggle #domicilio; alternativa "sucursal" (Retiro/Click & Pick Up).
+  payment_method: "openpay_cards"  # contado por tarjeta; ver payment.yaml.

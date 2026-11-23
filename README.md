@@ -49,7 +49,9 @@ y `checkout` (gate `Continuar como invitado`) y `footer`.
 Se verifican en `tests/architecture/`; el detalle está en
 `docs/architecture/dependency_rules.md`.
 La estrategia de selectores por pantalla/marca (verificada contra el DOM real)
-está en `docs/architecture/matriz_locators.md`.
+está en `docs/architecture/matriz_locators.md`; el levantamiento funcional del
+checkout (campos, métodos de pago, contado, fronteras e irreversibles) en
+`docs/architecture/levantamiento_checkout.md`.
 
 - `core` nunca importa `pages`, `workflows` ni `tests`.
 - Los locators viven en `*_locators.py`, separados del comportamiento.
