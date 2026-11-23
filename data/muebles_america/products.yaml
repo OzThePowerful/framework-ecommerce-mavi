@@ -7,3 +7,11 @@ parrilla_whirlpool:
   department: "Departamentos"
   category: "Línea blanca"
   category_href: "/departamentos/linea-blanca.html"
+
+# Producto configurable verificado en stage: el padre MA lleva prefijo 1,
+# los SKU hijos (AMER0073x) son compartidos con VIU.
+configurable_colchon:
+  term: "winer"
+  name_fragment: "Colchón America Winer"
+  expected_parent_sku: "1COLC08920"
+  expected_variants: 4

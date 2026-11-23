@@ -4,3 +4,11 @@ estufa_whirlpool:
   name: "Estufa De Piso Whirlpool 30'' WFR7050S 6 Quemadores"
   department: "Todos los departamentos"
   category: "Línea Blanca"
+
+# Producto configurable verificado en stage: el padre VIU lleva prefijo 2,
+# los SKU hijos (AMER0073x) son compartidos con MA.
+configurable_colchon:
+  term: "winer"
+  name_fragment: "Colchón America Winer"
+  expected_parent_sku: "2COLC08920"
+  expected_variants: 4

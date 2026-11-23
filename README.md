@@ -39,7 +39,8 @@ Los componentes propios de una marca viven en `pages/<sitio>/components/`.
 Solo pasan a `pages/common/components/` cuando se demuestra que son
 equivalentes en otra marca. Componentes comunes verificados: `header`
 (buscador, minicart, cuenta), `loader`, `blockers` (cookies/overlays),
-`notifications`, `search` (grid + scroll infinito), `product_card` y
+`notifications`, `search` (grid + scroll infinito), `product_card`, `pdp`
+(modelo `Product` desde el estado del SPA, incluidos configurables) y
 `footer`.
 
 ### Reglas de dependencia

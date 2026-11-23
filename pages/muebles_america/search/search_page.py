@@ -37,3 +37,4 @@ class SearchPage(BasePage):
             has_text=product_name
         )
         tile.first.click()
+        self.page.wait_for_url("**/*.html**", timeout=15000)
