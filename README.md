@@ -43,6 +43,8 @@ equivalentes en otra marca.
 
 Se verifican en `tests/architecture/`; el detalle está en
 `docs/architecture/dependency_rules.md`.
+La estrategia de selectores por pantalla/marca (verificada contra el DOM real)
+está en `docs/architecture/matriz_locators.md`.
 
 - `core` nunca importa `pages`, `workflows` ni `tests`.
 - Los locators viven en `*_locators.py`, separados del comportamiento.
