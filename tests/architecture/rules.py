@@ -74,6 +74,31 @@ def tree_of(path: Path) -> ast.AST:
     return ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
 
 
+def tree_of_source(source: str) -> ast.AST:
+    """AST de código sintético; usado por las pruebas negativas del gate."""
+    return ast.parse(source)
+
+
+def violations_importing(directory: str, forbidden: set[str]) -> dict:
+    """Archivos de `directory` que importan raíces prohibidas."""
+    result = {}
+    for path in iter_py(directory):
+        hits = import_roots(tree_of(path)) & forbidden
+        if hits:
+            result[str(path.relative_to(ROOT))] = sorted(hits)
+    return result
+
+
+def violations_calls(directory: str, forbidden: frozenset) -> dict:
+    """Archivos de `directory` que invocan nombres prohibidos."""
+    result = {}
+    for path in iter_py(directory):
+        hits = call_names(tree_of(path)) & forbidden
+        if hits:
+            result[str(path.relative_to(ROOT))] = sorted(hits)
+    return result
+
+
 def import_roots(tree: ast.AST) -> set[str]:
     roots = set()
     for node in ast.walk(tree):
@@ -136,3 +161,49 @@ def url_literals(tree: ast.AST) -> list[str]:
         and "://" in node.value
         and node.value not in ("http://", "https://")
     ]
+
+
+def module_graph() -> dict[str, set[str]]:
+    """Grafo de imports internos entre módulos del framework."""
+    graph: dict[str, set[str]] = {}
+    for directory in FRAMEWORK_DIRS:
+        for path in iter_py(directory):
+            module = str(path.relative_to(ROOT).as_posix())
+            module = module.removesuffix(".py").replace("/", ".")
+            if module.endswith(".__init__"):
+                module = module.removesuffix(".__init__")
+            graph[module] = {
+                m
+                for m in import_modules(tree_of(path))
+                if m.split(".")[0] in FRAMEWORK_DIRS
+            }
+    return graph
+
+
+def find_cycles(graph: dict[str, set[str]]) -> list[list[str]]:
+    """Ciclos de dependencia entre módulos (DFS con pila gris)."""
+    color: dict[str, int] = {}
+    stack: list[str] = []
+    cycles: list[list[str]] = []
+    seen: set[tuple] = set()
+
+    def visit(node: str) -> None:
+        color[node] = 1
+        stack.append(node)
+        for nxt in sorted(graph.get(node, ())):
+            if color.get(nxt, 0) == 1:
+                cycle = stack[stack.index(nxt):]
+                idx = cycle.index(min(cycle))
+                key = tuple(cycle[idx:] + cycle[:idx])
+                if key not in seen:
+                    seen.add(key)
+                    cycles.append(list(key) + [nxt])
+            elif color.get(nxt, 0) == 0:
+                visit(nxt)
+        stack.pop()
+        color[node] = 2
+
+    for node in sorted(graph):
+        if color.get(node, 0) == 0:
+            visit(node)
+    return cycles
