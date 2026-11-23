@@ -10,6 +10,7 @@ from core.execution.execution_context import ExecutionContext
 from core.execution.execution_errors import ElementStateError, NavigationError
 from domain.models.address import Address
 from domain.models.customer import Customer
+from domain.models.shipping import Shipping
 from domain.money.money import Money
 from pages.base_page import BasePage
 from pages.common.components.checkout.checkout_component import (
@@ -17,6 +18,9 @@ from pages.common.components.checkout.checkout_component import (
 )
 from pages.common.components.checkout.customer_form_component import (
     CustomerFormComponent,
+)
+from pages.common.components.checkout.shipping_component import (
+    ShippingComponent,
 )
 from pages.muebles_america.checkout.checkout_locators import CheckoutLocators
 
@@ -26,6 +30,7 @@ class CheckoutPage(BasePage):
         super().__init__(page, context)
         self.gate = CheckoutComponent(page, context.checkout_url_pattern)
         self.customer_form = CustomerFormComponent(page)
+        self.delivery = ShippingComponent(page)
 
     # --- Entrada --------------------------------------------------------
     def wait_for_guest_gate(self) -> None:
@@ -80,6 +85,22 @@ class CheckoutPage(BasePage):
 
     def validation_errors(self) -> list[str]:
         return self.customer_form.validation_errors()
+
+    # --- Entrega --------------------------------------------------------
+    def select_delivery_method(self, method: str) -> None:
+        self.delivery.select_delivery_method(method)
+
+    def current_delivery_mode(self) -> str | None:
+        return self.delivery.current_delivery_mode()
+
+    def shipping(self) -> Shipping:
+        return self.delivery.shipping()
+
+    def shipping_cost(self) -> Money:
+        return self.delivery.shipping_cost()
+
+    def delivery_estimate(self) -> str | None:
+        return self.delivery.delivery_estimate()
 
     # --- Resumen ----------------------------------------------------------
     def get_displayed_price(self) -> Money:

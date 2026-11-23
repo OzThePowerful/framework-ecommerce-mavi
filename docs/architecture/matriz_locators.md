@@ -120,7 +120,11 @@ ambigüedad · texto promocional volátil.
 | Ambas | Checkout | Acordeón Resumen | Expandir resumen | `#omniButtonSummary` | — | Alta | Common | Bajo | Verificado ambos |
 | Ambas | Checkout | Finalizar compra | **Crear la orden (irreversible)** | `#_btnCheckout` | `button.action.primary.checkout` | Alta | Common | Alto | `disabled` hasta pago válido; NUNCA clickear sin estrategia de stage |
 | Ambas | Checkout | Toggle a domicilio | Envío a dirección | `#domicilio` | `button.action-select-shipping` | Alta | Common | Bajo | Default (`StorePickupSelected`) |
-| Ambas | Checkout | Toggle pickup | Retiro en sucursal | `#sucursal` | `button.action-select-store-pickup` | Alta | Common | Medio | Label difiere: "Retiro en sucursal" (MA) / "Click & Pick Up" (VIU) |
+| Ambas | Checkout | Toggle pickup | Retiro en sucursal | `#sucursal` | `button.action-select-store-pickup` | Alta | Common | Medio | Label difiere: "Retiro en sucursal" (MA) / "Click & Pick Up" (VIU). Modo activo: clase `StorePickupSelected` |
+| Ambas | Checkout | Abrir store picker | Elegir sucursal | `button.action:has-text('Seleccionar tienda')` | — | Alta | Common | Bajo | Modal `.store-selector-popup` (EC-SP01-015) |
+| Ambas | Checkout | Store picker | Estado/sucursal | `select[name='store-selector-state']` + `.location` (`.location-name`/`.location-address`) + `button.action-select-shipping-item` | — | Alta | Common | Bajo | Tabs `.mavi-tab-button` (estado/CP); vacío `.store-selector-popup-empty-query` |
+| Ambas | Checkout | Contacto pickup | Quien recoge | `input[name='father-name']`, `input[name='mother-name']`, `input[name='phone']` | — | Media | Common | Medio | Aparecen al elegir sucursal; `firstname` comparte name con el de envío → filtrar `:visible` |
+| Ambas | Checkout | Costo de envío | Leer importe | `.omni-summary-totals` → fila `Envío`/`Costo de envío` | — | Alta | Common | Medio | Calcula asíncrono: "Aún no calculado" → `Gratis`/`$…`; esperar valor |
 | Ambas | Checkout | Loader de checkout | Esperar SPA listo | `#checkout-loader` | — | Alta | Common | Bajo | Verificado MA; mismo OSC en VIU |
 | Ambas | Checkout | Email | Identidad del guest | `input[name='username']` | — | Alta | Common | Bajo | Verificado ambos; el `id` (`customer-email`) es generado → no usar |
 | Ambas | Checkout | Nombre | Datos personales | `input[name='firstname']` | — | Alta | Common | Bajo | name estable de Magento |

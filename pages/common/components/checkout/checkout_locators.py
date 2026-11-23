@@ -40,3 +40,32 @@ class CheckoutLocators:
 
     REQUIRED_INPUTS = "input[required]:visible"
     FIELD_ERRORS = ".field-error:visible, .mage-error:visible, .message.error:visible"
+
+
+class ShippingLocators:
+    # Toggle de entrega (el modo activo lleva la clase SELECTED_FLAG)
+    DELIVERY_HOME = "#domicilio"
+    DELIVERY_PICKUP = "#sucursal"
+    SELECTED_FLAG = "StorePickupSelected"
+
+    # Totales del resumen del checkout (siempre renderizado)
+    SUMMARY_PANEL = ".omni-summary-totals"
+
+    # Store picker (modal)
+    OPEN_STORE_PICKER = "button.action:has-text('Seleccionar tienda')"
+    STORE_POPUP = ".store-selector-popup"
+    STORE_CLOSE = ".store-selector-popup .action-close"
+    STORE_STATE_TAB = ".mavi-tab-button:has-text('estado')"
+    STORE_CP_TAB = ".mavi-tab-button:has-text('postal')"
+    STORE_STATE_SELECT = "select[name='store-selector-state']"
+    STORE_ROW = ".store-selector-popup .location"
+    STORE_NAME = ".location-name"
+    STORE_ADDRESS = ".location-address"
+    STORE_DELIVER_HERE = "button.action-select-shipping-item"
+    STORE_EMPTY = ".store-selector-popup-empty-query"
+
+    # Contacto del retiro en sucursal
+    PICKUP_FIRSTNAME = "input[name='firstname']:visible"
+    PICKUP_FATHER = "input[name='father-name']:visible"
+    PICKUP_MOTHER = "input[name='mother-name']:visible"
+    PICKUP_PHONE = "input[name='phone']:visible"

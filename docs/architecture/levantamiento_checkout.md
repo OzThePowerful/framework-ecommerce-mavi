@@ -79,7 +79,10 @@ ciudad `GUADALAJARA`, estado `Jalisco`, en ambas marcas.
 | Cobertura | — | Label "Verifica la cobertura" observado; la validación ocurre al capturar CP (sin botón propio en lo sondeado) | Igual |
 | Estimado | resumen | "Entrega entre el 24 y el 26 de Noviembre." | Igual |
 | Costo envío | resumen | `Gratis` | `Gratis` |
-| Tras `#sucursal` | — | Resumen muestra "Recoge en tienda" | Igual; selector de tienda no quedó expuesto en la profundidad sondeada |
+| Tras `#sucursal` | — | Resumen muestra "Recoge en tienda"; aparece `button.action` "Seleccionar tienda" | Igual |
+| Store picker | `.store-selector-popup` | Modal con tabs `.mavi-tab-button` ("Buscar por estado" / "Buscar por código postal"), `select[name='store-selector-state']`, lista `.location` (`.location-name`/`.location-address`) y `button.action-select-shipping-item` "Entregar aquí"; vacío `.store-selector-popup-empty-query`; cierre `.action-close` | Igual (mapeado en EC-SP01-015) |
+| Contacto pickup | — | Tras elegir sucursal: `firstname`, `father-name`, `mother-name`, `phone` | Igual |
+| Costo de envío | `.omni-summary-totals` | `Envío`/`Costo de envío` → calcula asíncrono tras el CP ("Aún no calculado" → `Gratis`/importe) | Igual |
 
 ### Forma de pago (`input[name='payment[method]']`, 5 métodos en ambas)
 
@@ -165,7 +168,7 @@ real o datos inválidos el comportamiento puede incluir 3DS o rechazo —
 | Render lazy de campos | `wait_for(state='visible')` antes de cada fill |
 | `_btnCheckout` crea la orden | Los tests `PAY`/`ORDER`/`E2E` llegan hasta la validación previa; el click final solo con estrategia de stage confirmada |
 | 3DS / cargo real con tarjeta | Usar tarjetas de prueba de OpenPay sandbox; documentar credenciales por secrets, no por repo |
-| Selector de tienda en pickup no mapeado por completo | Sondeo adicional si un caso lo requiere (el toggle y el resumen sí están verificados) |
+| Selector de tienda en pickup | **Resuelto en EC-SP01-015**: modal `.store-selector-popup`, lista `.location`, "Entregar aquí" por sucursal |
 | Gate guest/login: el login real requiere credenciales de cuenta | Los casos guest están desbloqueados; login requiere fixture de cuenta de prueba |
 
 ## 9. Casos desbloqueados

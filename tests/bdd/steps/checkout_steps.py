@@ -75,6 +75,14 @@ def shipping_stage_and_required_fields(checkout_ctx) -> None:
     )
 
 
+@when("selecciona el método de entrega del dataset")
+def select_delivery_method(checkout_ctx, data_provider) -> None:
+    params = data_provider.get_record("checkout", "guest")
+    method = params["shipping_method"]
+    checkout_ctx["expected_method"] = method
+    checkout_ctx["checkout"].select_delivery_method(method)
+
+
 @then("los datos quedan aceptados y la etapa de pago queda habilitada")
 def customer_data_accepted(checkout_ctx) -> None:
     checkout = checkout_ctx["checkout"]
@@ -109,6 +117,36 @@ def customer_data_accepted(checkout_ctx) -> None:
                 "colonia": saved_address.neighborhood,
                 "ciudad": saved_address.city,
                 "estado": saved_address.state,
+                "payment_stage_enabled": checkout.is_payment_stage_enabled(),
+            },
+            ensure_ascii=False,
+        ),
+    )
+
+
+@then("el método de entrega queda activo y el costo de envío está disponible")
+def delivery_method_and_cost(checkout_ctx) -> None:
+    checkout = checkout_ctx["checkout"]
+    expected = checkout_ctx["expected_method"]
+    mode = checkout.current_delivery_mode()
+    assert mode == expected, (
+        f"Modo de entrega activo {mode!r} != dataset {expected!r}"
+    )
+    shipping = checkout.shipping()
+    assert shipping.method == expected, (
+        f"Método de Shipping {shipping.method!r} != esperado {expected!r}"
+    )
+    assert shipping.cost.amount >= 0, (
+        f"El costo de envío debería ser un importe >= 0: {shipping.cost.amount}"
+    )
+    checkout.wait_payment_stage_enabled()
+    attach_text(
+        "Shipping",
+        json.dumps(
+            {
+                "method": shipping.method,
+                "cost": str(shipping.cost.amount),
+                "estimate": checkout.delivery_estimate(),
                 "payment_stage_enabled": checkout.is_payment_stage_enabled(),
             },
             ensure_ascii=False,
