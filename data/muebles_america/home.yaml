@@ -1,0 +1,5 @@
+# Dataset de Home — Muebles América.
+# Caso relacionado: CP_EC_MA_HOME_001 (home utilizable y marca identificada).
+home_001:
+  expected_brand: "muebles_america"
+  expected_title_fragment: "Muebles América"

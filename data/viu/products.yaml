@@ -1,5 +1,6 @@
 # Catálogo de productos verificados en stage (viustage.mavi.mx).
 estufa_whirlpool:
+  sku: "WHIR00802"
   name: "Estufa De Piso Whirlpool 30'' WFR7050S 6 Quemadores"
   department: "Todos los departamentos"
   category: "Línea Blanca"

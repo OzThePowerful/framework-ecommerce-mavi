@@ -1,0 +1,5 @@
+# Dataset de Home — VIU.
+# Caso relacionado: CP_EC_VIU_HOME_001 (home utilizable y marca identificada).
+home_001:
+  expected_brand: "viu"
+  expected_title_fragment: "VIU"

@@ -41,19 +41,19 @@ ambigüedad · texto promocional volátil.
 | Ambas | Home | Header raíz | Scope de componentes del header | `header` | `role=banner` | Alta | Common | Bajo | Verificado (2 coincidencias: desktop/mobile → usar scope visible) |
 | Ambas | Home | Nav principal | Scope del mega-menú | `header nav` | `role=navigation` | Alta | Common | Bajo | 1 nav por header |
 | Ambas | Home | Logo | Marca / regreso a home | `header [class*='logo']` | `header a[href='/']` | Media | Common | Medio | Clase semántica del tema; sin data-testid |
-| Ambas | Home | Botón cuenta | Abrir login/cuenta | `[data-testid='accountButton']` | — | Alta | Common | Bajo | data-testid verificado en ambos |
-| Ambas | Home | Botón minicart | Abrir minicart | `[data-testid='openMicrocart']` | — | Alta | Common | Bajo | data-testid verificado en ambos |
-| Ambas | Home | Botón menú móvil | Abrir sidebar | `[data-testid='menuButton']` | — | Alta | Common | Bajo | data-testid verificado en ambos |
+| Ambas | Home | Acceso cuenta (desktop) | Abrir login | `header:visible a[href='/login']` | `role=link[name='Cuenta']` | Alta | Common | Bajo | Verificado en ambos; el `data-testid='accountButton'` pertenece al drawer móvil oculto |
+| Ambas | Home | Botón minicart (desktop) | Abrir minicart | `header:visible button[aria-label='Abrir minicart']` | `role=button[name='Abrir minicart']` | Alta | Common | Bajo | Verificado en ambos (EC-SP01-009); `data-testid='openMicrocart'` vive en el drawer móvil oculto |
+| Ambas | Home | Botón menú móvil | Abrir sidebar | `[data-testid='menuButton']` | — | Media | Common | Medio | Drawer móvil: oculto en viewport desktop; usar solo con viewport móvil |
+| Ambas | Home | Botón departamentos | Abrir menú de categorías | `role=button[name='Departamentos']` | `header:visible button:has-text('Departamentos')` | Alta | Common | Bajo | Verificado en ambos (el botón existe también en MA desktop) |
 | Ambas | Home | Sidebar | Contenedor menú lateral | `[data-testid='sidebar']` | — | Media | Common | Medio | 4 coincidencias (estados/duplicados) → scope + `:visible` |
 | MA | Home | Cerrar promo overlay | Cerrar ventana promocional de entrada | `button[title='Close'] svg` | `role=button[name='Close']` | Media | Específico | Medio | Verificado en flujo E2E; aparición condicional |
-| VIU | Home | Botón departamentos | Abrir menú de categorías | `role=button[name='Departamentos']` | `button:has-text('Departamentos')` | Alta | Específico | Bajo | Verificado count=1; nombre accesible estable |
 
 ### Search
 
 | Marca | Pantalla | Elemento | Responsabilidad | Selector principal | Selector alternativo | Estabilidad | Common / específico | Riesgo | Observación |
 |---|---|---|---|---|---|---|---|---|---|
 | Ambas | Header | Input de búsqueda | Capturar término | `input[type='search'][aria-label='Buscar']:visible` | `input.input-search__input:visible` | Alta | Common | Bajo | 2 instancias (desktop/mobile); la `:visible` es la del viewport. Sin `name`/`id` → el `type`+`aria-label` es la estrategia (dato confirmado por el usuario: `data-v-*` presente, ignorado) |
-| Ambas | Header | Botón/envío de búsqueda | Ejecutar búsqueda | `input[type='search']:visible` + `press('Enter')` | `button[type='submit']` dentro del form de búsqueda | Media | Common | Medio | No se verificó botón dedicado; Enter es el patrón del SPA. Pendiente verificar submit nativo |
+| Ambas | Header | Botón/envío de búsqueda | Ejecutar búsqueda | `button[data-testid='subscribeSubmit']:visible` | `input[type='search']:visible` + `press('Enter')` | Alta | Common | Bajo | Verificado en ambos (EC-SP01-009): es el botón lupa junto al input; el data-testid dice "subscribe" pero es el submit del buscador |
 
 ### Search Results
 
@@ -85,7 +85,7 @@ ambigüedad · texto promocional volátil.
 
 | Marca | Pantalla | Elemento | Responsabilidad | Selector principal | Selector alternativo | Estabilidad | Common / específico | Riesgo | Observación |
 |---|---|---|---|---|---|---|---|---|---|
-| Ambas | MiniCart | Abrir minicart | Desplegar | `[data-testid='openMicrocart']` | — | Alta | Common | Bajo | data-testid del header |
+| Ambas | MiniCart | Abrir minicart (desktop) | Desplegar | `header:visible button[aria-label='Abrir minicart']` | `[data-testid='openMicrocart']` (drawer móvil) | Alta | Common | Bajo | Verificado en ambos (EC-SP01-009) |
 | VIU | MiniCart | Contador | Leer items | `.minicart-count` | — | Media | Common | Medio | Verificado VIU; clase semántica del tema |
 | VIU | MiniCart | Item de producto | Scope por producto | `.product-minicart` | — | Media | Common | Medio | Verificado VIU |
 | VIU | MiniCart | Eliminar item | Quitar producto | `.mini-cart-delete-product` | `role=button[name='Eliminar']` | Media | Common | Medio | Verificado VIU |
@@ -142,7 +142,7 @@ ambigüedad · texto promocional volátil.
 
 ## Componentes realmente comunes (misma implementación MA/VIU)
 
-- **Header completo**: mismos `data-testid` (`accountButton`, `openMicrocart`, `menuButton`, `subscribeSubmit`, `sidebar`), mismo search input (`type=search` + `aria-label='Buscar'`).
+- **Header completo**: mismos `data-testid` (`accountButton`, `openMicrocart`, `menuButton`, `subscribeSubmit`, `sidebar` — los tres primeros en el drawer móvil), mismos controles desktop (`aria-label='Abrir minicart'`, `a[href='/login']`, botón `Departamentos`) y mismo search input (`type=search` + `aria-label='Buscar'`).
 - **Cookie banner**: `[data-testid='closeCookieButton']`.
 - **Grilla/tile de producto**: `div.product-tile`.
 - **PDP**: `button.add-to-cart`, notificación `div.notifications.fixed`, JSON-LD `Product`.
