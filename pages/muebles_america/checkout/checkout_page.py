@@ -8,10 +8,15 @@ from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
 
 from core.execution.execution_context import ExecutionContext
 from core.execution.execution_errors import ElementStateError, NavigationError
+from domain.models.address import Address
+from domain.models.customer import Customer
 from domain.money.money import Money
 from pages.base_page import BasePage
 from pages.common.components.checkout.checkout_component import (
     CheckoutComponent,
+)
+from pages.common.components.checkout.customer_form_component import (
+    CustomerFormComponent,
 )
 from pages.muebles_america.checkout.checkout_locators import CheckoutLocators
 
@@ -19,8 +24,10 @@ from pages.muebles_america.checkout.checkout_locators import CheckoutLocators
 class CheckoutPage(BasePage):
     def __init__(self, page: Page, context: ExecutionContext) -> None:
         super().__init__(page, context)
-        self.gate = CheckoutComponent(page)
+        self.gate = CheckoutComponent(page, context.checkout_url_pattern)
+        self.customer_form = CustomerFormComponent(page)
 
+    # --- Entrada --------------------------------------------------------
     def wait_for_guest_gate(self) -> None:
         self.gate.wait_for_guest_gate()
 
@@ -45,9 +52,36 @@ class CheckoutPage(BasePage):
                 "invitado"
             ) from exc
 
+    # --- Etapa / estructura ---------------------------------------------
     def wait_until_ready(self) -> None:
-        self.page.wait_for_selector(CheckoutLocators.CHECKOUT_LOADER, state="detached")
+        self.gate.wait_until_ready()
 
+    def current_stage(self) -> str | None:
+        return self.gate.current_stage()
+
+    def is_payment_stage_enabled(self) -> bool:
+        return self.gate.is_payment_stage_enabled()
+
+    def wait_payment_stage_enabled(self) -> None:
+        self.gate.wait_payment_stage_enabled()
+
+    def required_fields(self) -> list[str]:
+        return self.gate.required_fields()
+
+    # --- Datos del comprador --------------------------------------------
+    def fill_customer_form(self, customer: Customer, address: Address) -> None:
+        self.customer_form.fill(customer, address)
+
+    def read_customer(self) -> Customer:
+        return self.customer_form.read_customer()
+
+    def read_address(self) -> Address:
+        return self.customer_form.read_address()
+
+    def validation_errors(self) -> list[str]:
+        return self.customer_form.validation_errors()
+
+    # --- Resumen ----------------------------------------------------------
     def get_displayed_price(self) -> Money:
         """Expone el precio mostrado como Money; la validación la hace el test."""
         text = self.page.locator(CheckoutLocators.TOTAL_PRICE).first.inner_text()

@@ -41,8 +41,9 @@ equivalentes en otra marca. Componentes comunes verificados: `header`
 (buscador, minicart, cuenta), `loader`, `blockers` (cookies/overlays),
 `notifications`, `search` (grid + scroll infinito), `product_card`, `pdp`
 (modelo `Product` desde el estado del SPA, incluidos configurables),
-`cart` (minicart → `/checkout/cart`, ítems y resumen como `Cart`/`CartItem`)
-y `checkout` (gate `Continuar como invitado`) y `footer`.
+`cart` (minicart → `/checkout/cart`, ítems y resumen como `Cart`/`CartItem`),
+`checkout` (gate invitado + acordeón OSC) y `customer_form` (datos del
+comprador y dirección como `Customer`/`Address`) y `footer`.
 
 ### Reglas de dependencia
 

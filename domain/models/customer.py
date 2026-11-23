@@ -9,3 +9,4 @@ class Customer:
     last_name: str
     email: str
     phone: str | None = None
+    mothers_name: str | None = None
