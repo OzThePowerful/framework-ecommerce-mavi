@@ -1,7 +1,13 @@
 # Métodos de pago — Muebles América.
-# TODO levantamiento funcional de métodos disponibles en stage/prod
-# (fuera de alcance de EC-SP01-004). Nunca guardar datos de tarjeta
-# reales: solo llaves de método y estado.
+# Datos de tarjeta NUNCA versionados: llegan por variables de entorno
+#   MAVI_PAY_CARD_NUMBER / MAVI_PAY_CARD_CVV /
+#   MAVI_PAY_CARD_EXP_MONTH / MAVI_PAY_CARD_EXP_YEAR
+# (fixture `payment_card`, core/execution ConfigError si faltan).
+# Tarjetas públicas de sandbox OpenPay para stage:
+#   4111111111111111 → contado;  4242424242424242 → MSI
+#   (MSI también es contado: el banco difiere los meses).
+# Reglas verificadas: openpay_stores no seleccionable si total > $30,000;
+# paypal_express abre ventana del proveedor (popup, fuera del dominio).
 # Casos relacionados: CP_EC_MA_PAY_001.
 card:
   method: "openpay_cards"   # Tarjeta Crédito / Débito — contado (OpenPay)
@@ -10,14 +16,16 @@ card:
 cash:
   method: "openpay_stores"  # Efectivo en tiendas de conveniencia (OpenPay)
   status: "verified"
+  max_amount_mxn: 30000     # > límite → radio deshabilitado, no seleccionable
 
 transfer:
   method: "banktransfer"    # Transferencia bancaria / Pago en tienda
   status: "verified"
 
 paypal:
-  method: "paypal_express"  # Redirección externa PayPal
+  method: "paypal_express"  # Redirección/popup externo PayPal
   status: "verified"
+  external_provider: true
 
 brand_credit:
   method: "omnipro_pago_credito"  # Crédito de la marca — NO contado

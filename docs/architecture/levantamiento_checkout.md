@@ -178,3 +178,19 @@ y `E2E_001` de ambas marcas pueden implementarse hasta la acción previa a
 `Finalizar compra` sin suposiciones. La confirmación de orden
 (`ORDER_001/002` con éxito real) depende de definir si stage permite
 órdenes de prueba cancelables.
+
+## 10. Verificado en `PAY_001` (EC-SP01-016)
+
+- **Frontera final**: con `openpay_cards` + tarjeta válida, `#_btnCheckout`
+  queda **habilitado** en ambas marcas — el framework lo valida, nunca lo
+  ejecuta.
+- **Tarjetas sandbox OpenPay** (vía env `MAVI_PAY_*`, nunca versionadas):
+  `4111111111111111` contado; `4242424242424242` MSI — MSI también es
+  contado, el banco difiere los meses.
+- **`openpay_stores`**: límite $30,000 MXN; sobre el monto el radio queda
+  `disabled` → `is_method_selectable()` lo detecta (no se validó en vivo
+  por costo de armar un carrito >30k; la regla está documentada).
+- **`paypal_express`**: abre ventana del proveedor (popup externo; el pago
+  ocurre fuera del dominio) → `expects_external_provider()`.
+- `PaymentError` (taxonomía `core/execution`) para método no
+  seleccionable.

@@ -1,4 +1,4 @@
-"""Locators de pago. Pendiente de implementación (tarea posterior)."""
+"""Locators de pago de MA — todos common (verificados idénticos a VIU)."""
 
 
 class PaymentLocators:

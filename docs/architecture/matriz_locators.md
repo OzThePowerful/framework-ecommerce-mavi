@@ -154,7 +154,10 @@ ambigüedad · texto promocional volátil.
 
 | Marca | Pantalla | Elemento | Responsabilidad | Selector principal | Selector alternativo | Estabilidad | Common / específico | Riesgo | Observación |
 |---|---|---|---|---|---|---|---|---|---|
-| Ambas | Payment | Botón realizar pedido | Confirmar compra | **Pendiente** | `role=button` en sección payment (verificar nombre real al alcanzar la pantalla) | Pendiente | Common | Alto | No se ejecutó compra real; el radio `payment[method]` está verificado pero el CTA final requiere levantamiento con pago de prueba |
+| Ambas | Payment | Botón realizar pedido | Confirmar compra | `#_btnCheckout` | `button.action.primary.checkout` | Alta | Common | Alto | Frontera verificada en `PAY_001` (EC-SP01-016): se habilita con método + tarjeta válidos; **nunca** se clica desde el framework |
+| Ambas | Payment | Checkbox facturación | Billing = shipping | `#billing-address-same-as-shipping` | — | Media | Common | Bajo | Dirección de facturación igual a envío por defecto |
+| Ambas | Payment | Límite efectivo | openpay_stores | Radio `disabled` en `input[value='openpay_stores']` | — | Alta | Common | — | Regla: total > $30,000 MXN → método no seleccionable |
+| Ambas | Payment | Ventana proveedor | paypal_express | Popup del proveedor (context.new_page) | — | Alta | Common | — | Abre ventana externa de PayPal; pago ocurre fuera del dominio |
 | Ambas | Payment | Formulario de tarjeta | Captura de datos | **Pendiente** | — | Pendiente | Common | Alto | Depende del método (OpenPay/PayPal redirigen); no verificado |
 | Ambas | Order Confirmation | Número de orden | Confirmar compra | **Pendiente** | — | Pendiente | Common | Alto | Pantalla solo alcanzable tras compra; mapear en sprint de checkout completo |
 | Ambas | Order Confirmation | Resumen de orden | Validar pedido | **Pendiente** | — | Pendiente | Common | Alto | Ídem |

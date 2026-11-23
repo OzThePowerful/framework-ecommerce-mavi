@@ -45,7 +45,14 @@ equivalentes en otra marca. Componentes comunes verificados: `header`
 `checkout` (gate invitado + acordeón OSC), `customer_form` (datos del
 comprador como `Customer`), `address` (dirección → `Address`, CP con
 autocompletado), `shipping` (entrega domicilio/sucursal + store picker y
-costo como `Shipping`) y `footer`.
+costo como `Shipping`), `payment` (métodos de pago, contado OpenPay
+hasta `Finalizar compra` habilitado — nunca clickeado) y `footer`.
+
+Los datos de tarjeta de prueba llegan por variables de entorno
+`MAVI_PAY_CARD_NUMBER` / `MAVI_PAY_CARD_CVV` / `MAVI_PAY_CARD_EXP_MONTH`
+/ `MAVI_PAY_CARD_EXP_YEAR` (fixture `payment_card`); nunca se versionan.
+En stage se usan las tarjetas públicas de sandbox OpenPay
+(`4111…1111` contado, `4242…4242` MSI — también contado).
 
 ### Reglas de dependencia
 
