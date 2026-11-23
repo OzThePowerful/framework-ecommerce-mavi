@@ -1,28 +1,34 @@
 flowchart TD
-    A([pytest --site --target-env --exec-profile --case-id]) --> B[conftest.py<br/>registra plugins de fixtures/]
-    B --> C[fixtures/execution_fixtures.py<br/>pytest_configure: valida sitio/ambiente]
-    C --> D{¿Sitio y ambiente<br/>existen en sites.yaml?}
-    D -- No --> E[[UnknownSiteError /<br/>UnknownEnvironmentError]]
-    D -- Sí --> F[RunContext<br/>genera Run ID]
-    F --> G[core/config<br/>config_loader + site_config]
-    G --> H[ExecutionContext inmutable<br/>site, env, base_url, timeouts, run_id]
+    A([pytest --site --target-env --exec-profile --case-id<br/>o variables MAVI_ECOM_*]) --> B[conftest.py<br/>registra plugins de fixtures/]
+    B --> C[fixtures/execution_fixtures.py<br/>pytest_configure]
+    C --> D{¿Ambiente declarado en<br/>environments.yaml?}
+    D -- No --> E[[UnknownEnvironmentError]]
+    D -- Sí --> D2{¿Sitio existe y tiene ese<br/>ambiente en sites.yaml?}
+    D2 -- No --> E2[[UnknownSiteError /<br/>UnknownEnvironmentError]]
+    D2 -- Sí --> F[RunContext<br/>genera Run ID]
+    F --> H[ExecutionContext.build<br/>config_loader + site_config + perfil<br/>site, env, base_url, timeouts, run_id]
     H --> I[core/logging<br/>logs con run_id/site/env/case_id]
-    H --> J[fixtures/browser_fixtures.py<br/>Playwright → Browser → Context → Page]
-    H --> K[fixtures/data_fixtures.py<br/>DataProvider YAML / Excel]
+    H --> J[fixtures/browser_fixtures.py<br/>Playwright → Browser → Context → Page<br/>timeouts + expect_timeout · cierre en PASS/FAIL]
+    H --> K[fixtures/data_fixtures.py<br/>YamlDataProvider]
+    K --> K2[(data/sitio/*.yaml<br/>fallback data/common)]
     J --> L[fixtures/page_fixtures.py<br/>PageFactory por sitio]
     L --> M{Tipo de prueba}
-    M -- architecture/unit --> N[tests/architecture · tests/unit<br/>sin navegador]
-    M -- BDD --> O[test_cases/*.feature] --> P[tests/bdd/steps<br/>steps delgados]
-    M -- smoke/regression --> Q[tests/smoke]
-    P --> R[workflows/<br/>coordinación, sin locators]
-    Q --> S
-    R --> S[pages/ Page Objects<br/>+ components comunes]
-    S --> T[*_locators.py<br/>solo selectores]
-    S --> U((Sitio ecommerce<br/>MA · VIU · MAVI))
-    K --> R
-    R --> V[domain/ modelos<br/>Product · Cart · Order · Money]
-    Q --> W{Asserts en el test}
-    P --> W
+    M -- unit/architecture --> N[tests/unit · tests/architecture<br/>config, contexto, lifecycle, datasets, reglas<br/>sin navegador]
+    M -- BDD --> O[test_cases/*.feature<br/>@pending] --> P[tests/bdd/steps<br/>pendiente]
+    M -- smoke --> Q[tests/smoke/test_guest_checkout_ma.py]
+    K2 --> R0[GuestCheckoutRequest<br/>dataset guest_checkout]
+    Q --> R0
+    R0 --> R[workflows/muebles_america<br/>GuestCheckoutWorkflow<br/>sin locators ni asserts]
+    P -.-> R
+    R --> S1[HomePage<br/>+ MegaMenu + Header]
+    S1 --> S2[SearchPage]
+    S2 --> S3[ProductPage<br/>+ PromotionsWindow + Notification]
+    S3 --> S4[CartPage]
+    S4 --> S5[CheckoutPage<br/>precio como Money]
+    S1 & S3 & S5 --> T[*_locators.py<br/>solo selectores]
+    S5 --> U((Sitio ecommerce<br/>MA · VIU · MAVI))
+    S5 --> V[domain/money · Money]
+    V --> W{Assert en el test<br/>precio mayor a cero}
     W --> X[core/evidence + repositories<br/>artifacts/runs/run_id · escritura atómica]
     X --> Y[core/reporting<br/>Allure: artifacts/allure-results]
     Y --> Z([Resultado normalizado → MAVI AI Bridge → Plane<br/>pendiente tarea posterior])

@@ -163,6 +163,15 @@ pytest tests/architecture
 pytest --collect-only
 ```
 
+### Dominio
+
+`domain/` contiene los modelos de negocio independientes de la UI
+(`Product`, `Cart`/`CartItem`, `Customer`, `Address`, `Shipping`,
+`Order`) y `Money` — importes con `Decimal`, cuantizados a 2
+decimales, con operaciones y comparaciones que rechazan mezclar
+monedas. Las capas funcionales intercambian estos objetos, no
+diccionarios genéricos.
+
 ### Datos de prueba
 
 - **Entrada**: `data/<sitio>/*.yaml` vía `DataProvider`. Hoy se usa

@@ -9,4 +9,8 @@ class Address:
     city: str
     state: str
     zip_code: str
+    exterior_number: str | None = None
+    interior_number: str | None = None
+    neighborhood: str | None = None
+    references: str | None = None
     country: str = "MX"
