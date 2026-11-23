@@ -200,11 +200,29 @@ No se almacenan datos personales reales ni secretos.
 Para cambiar el producto o la categoría del flujo de MA, edita
 `data/muebles_america/guest_checkout.yaml`; no hace falta tocar el test.
 
-### Reportes
+### Reportes y evidencias
 
 Allure escribe resultados en `artifacts/allure-results` (configurado en
-`pytest.ini`). Las evidencias de cada corrida quedan en
-`artifacts/runs/<run_id>/`.
+`pytest.ini`). Cada test queda etiquetado con `run_id`, `case_id`,
+`site`, `environment` y `browser`, y `environment.properties` resume la
+ejecución.
+
+La evidencia por ejecución y por caso queda en:
+
+```text
+artifacts/runs/<run_id>/<case_id>/
+├── screenshots/   # failure.png full-page ante un fallo
+├── logs/          # current_url.txt, exception.txt
+├── traces/        # preparado para Playwright trace (futuro)
+├── videos/        # preparado para video (futuro)
+└── manifest.json  # run_id, case_id, outcome, sitio, ambiente,
+                   # navegador, URL de la página y excepción original
+```
+
+La captura es automática: si un test que usó `page` falla, el teardown
+de la fixture genera la evidencia y la adjunta a Allure antes de
+liberar el navegador. Los logs estructurados incluyen `run_id`,
+`case_id`, `site`, `environment` y `browser` por línea.
 
 ### BDD
 

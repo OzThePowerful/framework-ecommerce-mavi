@@ -10,7 +10,7 @@ import logging.config
 from core.config.config_loader import load_logging_config
 from core.execution.execution_errors import ConfigError
 
-_CONTEXT_FIELDS = ("run_id", "case_id", "site", "environment")
+_CONTEXT_FIELDS = ("run_id", "case_id", "site", "environment", "browser")
 _DEFAULT_FORMAT = "%(asctime)s [%(levelname)s] %(name)s %(message)s"
 
 

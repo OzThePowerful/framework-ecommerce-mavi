@@ -5,6 +5,7 @@ import os
 import pytest
 
 from core.config.site_config import resolve_site
+from core.evidence.artifact_paths import allure_results_dir
 from core.execution.execution_context import ExecutionContext
 from core.execution.run_context import RunContext
 from core.logging.logger import configure_logging, get_logger
@@ -65,10 +66,28 @@ def execution_context(request, run_context) -> ExecutionContext:
         "--target-env"
     )
     case_id = os.environ.get(_CASE_ENV_VAR) or request.config.getoption("--case-id")
-    return ExecutionContext.build(
+    context = ExecutionContext.build(
         site=site,
         environment=environment,
         profile_name=request.config.getoption("--exec-profile"),
         case_id=case_id,
         run_id=run_context.run_id,
+    )
+    _write_allure_environment(context)
+    return context
+
+
+def _write_allure_environment(context: ExecutionContext) -> None:
+    """environment.properties: Allure identifica la ejecución completa."""
+    lines = "\n".join(
+        (
+            f"RUN_ID={context.run_id}",
+            f"SITE={context.site}",
+            f"ENVIRONMENT={context.environment}",
+            f"BROWSER={context.browser}",
+            f"BASE_URL={context.base_url}",
+        )
+    )
+    (allure_results_dir() / "environment.properties").write_text(
+        lines + "\n", encoding="utf-8"
     )

@@ -6,7 +6,7 @@ formatters:
     format: >-
       %(asctime)s [%(levelname)s] %(name)s
       run_id=%(run_id)s site=%(site)s environment=%(environment)s
-      case_id=%(case_id)s %(message)s
+      browser=%(browser)s case_id=%(case_id)s %(message)s
 handlers:
   console:
     class: logging.StreamHandler
