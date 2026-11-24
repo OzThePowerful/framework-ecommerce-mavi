@@ -6,6 +6,7 @@ Feature: Smoke de venta de contado
   Recorrido rápido Home → departamento → PDP → carrito → checkout como
   invitado que verifica el precio del pedido sin crear la orden.
 
+  @smoke
   @SMOKE_001
   Scenario: Navegar al checkout como invitado muestra el precio del pedido
     Given el usuario abre la home del sitio activo
