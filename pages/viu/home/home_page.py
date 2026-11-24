@@ -39,3 +39,6 @@ class HomePage(BasePage):
     def has_blockers(self) -> bool:
         """Detecta overlays/backdrops que interceptan la interacción."""
         return self.blockers.has_overlay()
+
+    def close_promo_if_present(self) -> None:
+        """Paridad de fachada con MA: VIU no muestra popup promocional."""

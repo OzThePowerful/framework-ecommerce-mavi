@@ -414,7 +414,8 @@ casos:
   postcondicion: Orden REAL creada en stage.
   automatizable: true
   estado_automatizacion: In Development
-  implementacion: Cadena completa cubierta por escenarios ORDER; escenario E2E consolidado pendiente (sale_cash.feature @pending)
+  implementacion: SaleCashWorkflow multi-ecommerce implementado (workflows/common); escenario E2E consolidado pendiente de wiring BDD (sale_cash.feature
+    @pending)
   tags: &id021
   - e2e
   - contado
@@ -774,5 +775,6 @@ casos:
   postcondicion: Orden REAL creada en stage.
   automatizable: true
   estado_automatizacion: In Development
-  implementacion: Cadena completa cubierta por escenarios ORDER; escenario E2E consolidado pendiente (sale_cash.feature @pending)
+  implementacion: SaleCashWorkflow multi-ecommerce implementado (workflows/common); escenario E2E consolidado pendiente de wiring BDD (sale_cash.feature
+    @pending)
   tags: *id021

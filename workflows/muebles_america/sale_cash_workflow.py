@@ -1,19 +1,12 @@
-"""Workflow de venta de contado (coordinación de pages; sin locators).
+"""Alias de compatibilidad: la implementación vive en workflows/common.
 
-El flujo completo de venta se implementará en una tarea posterior;
-EC-SP01-001 solo deja preparada la capa.
+El SaleCashWorkflow es multi-ecommerce (EC-SP01-018-1); se mantiene
+este módulo para no romper imports históricos del namespace MA.
 """
 
-from core.execution.execution_errors import FrameworkError
-
-
-class SaleCashWorkflow:
-    """Coordinará Home → Listing → PDP → Cart → Checkout → Payment → Order."""
-
-    def __init__(self, pages) -> None:
-        self._pages = pages
-
-    def execute(self) -> None:
-        raise FrameworkError(
-            "SaleCashWorkflow aún no implementado (fuera del alcance EC-SP01-001)."
-        )
+from workflows.common.sale_cash_workflow import (  # noqa: F401
+    PaymentCard,
+    SaleCashWorkflow,
+    SaleRequest,
+    SaleResult,
+)

@@ -492,8 +492,9 @@ CASES = [
         "automatizable": True,
         "estado_automatizacion": "In Development",
         "implementacion": (
-            "Cadena completa cubierta por escenarios ORDER; escenario "
-            "E2E consolidado pendiente (sale_cash.feature @pending)"
+            "SaleCashWorkflow multi-ecommerce implementado "
+            "(workflows/common); escenario E2E consolidado pendiente "
+            "de wiring BDD (sale_cash.feature @pending)"
         ),
         "tags": ["e2e", "contado", "irreversible"],
     },
