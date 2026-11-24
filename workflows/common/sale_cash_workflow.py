@@ -18,6 +18,7 @@ from dataclasses import dataclass
 from typing import Any, TypeVar
 
 from core.execution.execution_context import ExecutionContext
+from core.execution.execution_errors import PaymentError
 from core.logging.logger import get_logger
 from domain.errors.precondition_error import PreconditionError
 from domain.models.address import Address
@@ -211,12 +212,15 @@ class SaleCashWorkflow:
     def _prepare_payment(self, request: SaleRequest) -> None:
         payment = self._pages.payment()
         payment.open_payment_stage()
-        if not payment.is_method_selectable(request.payment_method):
+        try:
+            # select_method espera la habilitación asíncrona del radio (KO)
+            # y falla si el método no es seleccionable para este carrito.
+            payment.select_method(request.payment_method)
+        except PaymentError as exc:
             raise PreconditionError(
                 f"El método '{request.payment_method}' no es seleccionable "
                 "para este carrito."
-            )
-        payment.select_method(request.payment_method)
+            ) from exc
         payment.fill_card(
             number=request.card.number,
             exp_month=request.card.exp_month,

@@ -249,9 +249,23 @@ liberar el navegador. Los logs estructurados incluyen `run_id`,
 
 ### BDD
 
-Los `.feature` (contrato funcional) viven en `test_cases/<sitio>/` y los
-steps delgados en `tests/bdd/steps/`. El runner es
+Los `.feature` (contrato funcional) viven en `test_cases/common/<modulo>/`
+y se materializan por marca con `--site <muebles_america|viu>`; los
+steps delgados están en `tests/bdd/steps/` y el runner es
 `tests/bdd/test_features.py`.
+
+Cada escenario lleva su Case ID como tag (`@<MODULO>_<NNN>`); un hook
+de colección renombra el item a `CP_EC_<MA|VIU>_<MODULO>_<NNN>`, así
+`-k CP_EC_VIU_CART_001` ejecuta un caso puntual. Escenarios marcados
+`@pending` se coleccionan como `skipped` — nunca como PASS.
+
+```bash
+pytest tests/bdd/test_features.py --site viu                    # suite BDD VIU
+pytest tests/bdd/test_features.py -k CP_EC_MA_ORDER_001 --site muebles_america
+```
+
+Nota operativa: `E2E_001` y `ORDER_001/002` crean órdenes reales en
+stage — excluirlos de regresiones habituales con `-k "not E2E and not ORDER"`.
 
 ### Catálogo de Test Cases (Plane)
 
@@ -259,6 +273,9 @@ El catálogo normalizado `test_cases/plane_catalog.yaml` (42 casos,
 12 módulos) se regenera con `python scripts/build_plane_catalog.py`.
 Plane es la fuente de verdad; el framework produce el artefacto.
 Convención: `CP_EC_<MA|VIU>_<MODULO>_<NNN>`. Ver `docs/test_catalog/`.
+
+Distribución actual: 38 Automated · 4 Not Automated
+(`PAY_002`/`PAY_003` ×2 marcas — reglas de negocio sin dataset).
 
 ## Licencia
 

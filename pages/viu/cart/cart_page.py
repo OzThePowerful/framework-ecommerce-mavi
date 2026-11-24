@@ -7,6 +7,7 @@ from domain.models.cart import Cart, CartItem
 from domain.money.money import Money
 from pages.base_page import BasePage
 from pages.common.components.cart.cart_component import CartComponent
+from pages.viu.cart.cart_locators import CartLocators
 
 
 class CartPage(BasePage):
@@ -37,3 +38,7 @@ class CartPage(BasePage):
 
     def continue_to_checkout(self) -> None:
         self.cart.continue_to_checkout()
+
+    def buy_now(self) -> None:
+        """Avanza del minicart hacia la identificación/checkout."""
+        self.page.locator(CartLocators.BUY_NOW_BUTTON).click()

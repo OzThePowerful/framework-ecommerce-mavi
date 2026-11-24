@@ -63,13 +63,25 @@ class ShippingComponent:
         self.page.locator(ShippingLocators.STORE_CLOSE).first.click()
 
     def select_picker_state(self, state: str) -> None:
-        """Elige el estado en el picker y espera las sucursales."""
+        """Elige el estado en el picker y espera las sucursales.
+
+        Al cambiar de estado la lista se re-renderiza de forma asíncrona;
+        esperar solo al primer renglón devuelve sucursales del estado
+        anterior, así que se espera a que la lista quede estable.
+        """
         self.page.locator(ShippingLocators.STORE_STATE_SELECT).select_option(
             label=state
         )
         self.page.locator(ShippingLocators.STORE_ROW).first.wait_for(
             state="visible"
         )
+        previous: list[str] | None = None
+        for _ in range(10):
+            self.page.wait_for_timeout(300)
+            current = self.stores()
+            if current and current == previous:
+                return
+            previous = current
 
     def stores(self) -> list[str]:
         """Nombres de sucursales visibles en el picker (debe estar abierto)."""
@@ -159,6 +171,16 @@ class ShippingComponent:
             "shipping": self._money_row(text, r"(?:costo de )?env\S*"),
             "total": self._money_row(text, r"total(?: \(iva incl\.?\))?", last=True),
         }
+
+    def summary_total(self) -> Money:
+        """Solo la fila Total del resumen.
+
+        Tolera etapas donde el envío aún no está calculado
+        ('Envío: Aún no calculado'), a diferencia de summary_totals().
+        """
+        return self._money_row(
+            self._summary_text(), r"total(?: \(iva incl\.?\))?", last=True
+        )
 
     def _money_row(self, text: str, label_re: str, last: bool = False) -> Money:
         matches = re.findall(

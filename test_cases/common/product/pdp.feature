@@ -4,6 +4,7 @@
 Feature: Página de detalle de producto
   La PDP expone el modelo de dominio Product independientemente del DOM.
 
+  @PDP_001
   Scenario: Abrir una PDP desde la búsqueda expone el modelo Product
     Given el usuario abre la home del sitio activo
     When busca el término con resultados del dataset
@@ -12,6 +13,7 @@ Feature: Página de detalle de producto
     And el precio es válido y la disponibilidad cumple las reglas de venta
     And el CTA de agregar al carrito está habilitado
 
+  @PDP_002
   Scenario: Un configurable expone su padre y sus variantes como Product
     Given el usuario abre la home del sitio activo
     When busca el término del producto configurable del dataset

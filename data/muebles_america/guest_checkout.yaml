@@ -1,6 +1,6 @@
 # Datos de entrada para el flujo Home → categoría → PDP → carrito → checkout
 # como invitado. Se leen vía DataProvider; los tests no conocen esta ruta.
-linea_blanca_parrilla:
+linea_blanca:
   department: "Departamentos"
   category: "Línea blanca"
   category_href: "/departamentos/linea-blanca.html"

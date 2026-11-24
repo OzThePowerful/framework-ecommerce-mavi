@@ -10,6 +10,9 @@ from pages.common.components.loader.loader_component import LoaderComponent
 from pages.common.components.notifications.notification_component import (
     NotificationComponent,
 )
+from pages.viu.components.mega_menu.mega_menu_component import (
+    MegaMenuComponent,
+)
 
 
 class HomePage(BasePage):
@@ -18,6 +21,7 @@ class HomePage(BasePage):
         self.header = HeaderComponent(page)
         self.blockers = BlockerComponent(page)
         self.loader = LoaderComponent(page)
+        self.mega_menu = MegaMenuComponent(page)
         self.notifications = NotificationComponent(page)
 
     def open_home(self) -> None:
@@ -42,3 +46,9 @@ class HomePage(BasePage):
 
     def close_promo_if_present(self) -> None:
         """Paridad de fachada con MA: VIU no muestra popup promocional."""
+
+    def open_category_from_menu(
+        self, department: str, category: str, href: str
+    ) -> None:
+        """Departamentos → departamento → link de categoría (hover menu)."""
+        self.mega_menu.open_category(department, category, href)

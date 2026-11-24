@@ -7,6 +7,7 @@
 Feature: Búsqueda de productos
   Búsquedas positivas y negativas con un contrato común entre marcas.
 
+  @SEARCH_001
   Scenario: Buscar un término con resultados devuelve cards elegibles
     Given el usuario abre la home del sitio activo
     When busca el término con resultados del dataset
@@ -15,6 +16,7 @@ Feature: Búsqueda de productos
     And existe al menos una card elegible con nombre, precio e identificador
     And la card elegible abre la PDP del producto
 
+  @SEARCH_002
   Scenario: Buscar un término sin resultados muestra el estado vacío
     Given el usuario abre la home del sitio activo
     When busca el término sin resultados del dataset

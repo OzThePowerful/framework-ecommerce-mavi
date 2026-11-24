@@ -8,6 +8,7 @@ Feature: Confirmación de orden en checkout
   orden REAL en el ambiente (acción autorizada solo en stage).
   Fuera de alcance: cancelación, devolución o historial de pedidos.
 
+  @ORDER_001
   Scenario: Confirmar la compra genera una orden con folio verificable
     Given el usuario abre la home del sitio activo
     When busca el término con resultados del dataset
@@ -23,6 +24,7 @@ Feature: Confirmación de orden en checkout
     And confirma la compra
     Then se genera una orden con folio y mensaje de confirmación
 
+  @ORDER_002
   Scenario: La orden creada es consistente con los datos comerciales del flujo
     Given el usuario abre la home del sitio activo
     When busca el término con resultados del dataset

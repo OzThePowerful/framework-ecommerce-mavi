@@ -1,6 +1,7 @@
 """Fixtures de contexto: CLI pytest → ConfigLoader → ExecutionContext."""
 
 import os
+import re
 
 import pytest
 
@@ -91,3 +92,41 @@ def _write_allure_environment(context: ExecutionContext) -> None:
     (allure_results_dir() / "environment.properties").write_text(
         lines + "\n", encoding="utf-8"
     )
+
+
+_CASE_TAG = re.compile(r"^[A-Z0-9]+_\d{3}$")
+_PENDING_REASON = "Caso definido y trazable; automatización pendiente"
+
+
+def case_id_from_tags(tag_names, site_code: str) -> str | None:
+    """Resuelve el Case ID: tag @<MODULO>_<NNN> + código de marca.
+
+    Un escenario BDD debe llevar exactamente un tag de caso; con más de
+    uno o sin él no hay materialización (conserva su nombre).
+    """
+    tags = [name for name in tag_names if _CASE_TAG.match(name)]
+    if len(tags) != 1:
+        return None
+    return f"CP_EC_{site_code}_{tags[0]}"
+
+
+@pytest.hookimpl(tryfirst=True)
+def pytest_collection_modifyitems(config, items):
+    """Materializa Case IDs y trata @pending como skip explícito.
+
+    Corre antes del deselect por -k: `pytest -k CP_EC_MA_…` filtra por
+    el identificador oficial del caso.
+    """
+    site = os.environ.get(_SITE_ENV_VAR) or config.getoption("--site")
+    env = os.environ.get(_ENV_ENV_VAR) or config.getoption("--target-env")
+    site_code = resolve_site(site, env).code
+
+    for item in items:
+        tags = {mark.name for mark in item.iter_markers()}
+        case_id = case_id_from_tags(tags, site_code)
+        if case_id:
+            item.name = case_id
+            item.keywords[case_id] = True
+            item._nodeid = f"{item.nodeid.rsplit('::', 1)[0]}::{case_id}"
+        if "pending" in tags:
+            item.add_marker(pytest.mark.skip(reason=_PENDING_REASON))

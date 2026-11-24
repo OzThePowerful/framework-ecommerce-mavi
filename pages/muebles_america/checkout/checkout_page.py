@@ -105,6 +105,30 @@ class CheckoutPage(BasePage):
     def delivery_estimate(self) -> str | None:
         return self.delivery.delivery_estimate()
 
+    # --- Recoger en sucursal -------------------------------------------
+    def open_store_picker(self) -> None:
+        self.delivery.open_store_picker()
+
+    def select_picker_state(self, state: str) -> None:
+        self.delivery.select_picker_state(state)
+
+    def stores(self) -> list[str]:
+        return self.delivery.stores()
+
+    def select_store(self, store_name: str) -> None:
+        self.delivery.select_store(store_name)
+
+    def fill_pickup_contact(
+        self,
+        firstname: str,
+        father_name: str,
+        phone: str,
+        mother_name: str | None = None,
+    ) -> None:
+        self.delivery.fill_pickup_contact(
+            firstname, father_name, phone, mother_name
+        )
+
     # --- Resumen ----------------------------------------------------------
     def get_displayed_price(self) -> Money:
         """Expone el precio mostrado como Money; la validación la hace el test."""

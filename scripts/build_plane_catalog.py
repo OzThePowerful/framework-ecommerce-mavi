@@ -45,7 +45,7 @@ CASES = [
         "postcondicion": "Sin cambios de estado en el sitio.",
         "automatizable": True,
         "estado_automatizacion": "Automated",
-        "implementacion": "tests/smoke/test_home.py (--site)",
+        "implementacion": "test_cases/common/home/home.feature",
         "tags": ["smoke", "regression", "home"],
     },
     {
@@ -71,7 +71,7 @@ CASES = [
         "postcondicion": "Sin cambios de estado.",
         "automatizable": True,
         "estado_automatizacion": "Automated",
-        "implementacion": "test_cases/common/search.feature",
+        "implementacion": "test_cases/common/search/search.feature",
         "tags": ["search", "regression", "scroll-infinito"],
     },
     {
@@ -88,7 +88,7 @@ CASES = [
         "postcondicion": "Sin cambios de estado.",
         "automatizable": True,
         "estado_automatizacion": "Automated",
-        "implementacion": "test_cases/common/search.feature",
+        "implementacion": "test_cases/common/search/search.feature",
         "tags": ["search", "estado-vacio"],
     },
     {
@@ -111,7 +111,7 @@ CASES = [
         "postcondicion": "Sin cambios de estado.",
         "automatizable": True,
         "estado_automatizacion": "Automated",
-        "implementacion": "test_cases/common/pdp.feature",
+        "implementacion": "test_cases/common/product/pdp.feature",
         "tags": ["pdp", "product", "regression"],
     },
     {
@@ -136,7 +136,7 @@ CASES = [
         "postcondicion": "Sin cambios de estado.",
         "automatizable": True,
         "estado_automatizacion": "Automated",
-        "implementacion": "test_cases/common/pdp.feature",
+        "implementacion": "test_cases/common/product/pdp.feature",
         "tags": ["pdp", "configurable"],
     },
     {
@@ -159,7 +159,7 @@ CASES = [
         "postcondicion": "Producto queda en el carrito de la sesión.",
         "automatizable": True,
         "estado_automatizacion": "Automated",
-        "implementacion": "test_cases/common/cart.feature",
+        "implementacion": "test_cases/common/cart/cart.feature",
         "tags": ["cart", "integridad", "regression"],
     },
     {
@@ -176,7 +176,7 @@ CASES = [
         "postcondicion": "En la puerta del checkout.",
         "automatizable": True,
         "estado_automatizacion": "Automated",
-        "implementacion": "test_cases/common/cart.feature",
+        "implementacion": "test_cases/common/cart/cart.feature",
         "tags": ["cart", "checkout", "gate"],
     },
     {
@@ -196,7 +196,7 @@ CASES = [
         "postcondicion": "Checkout en etapa Entrega.",
         "automatizable": True,
         "estado_automatizacion": "Automated",
-        "implementacion": "test_cases/common/checkout.feature",
+        "implementacion": "test_cases/common/checkout/checkout.feature",
         "tags": ["checkout", "guest"],
     },
     {
@@ -222,7 +222,7 @@ CASES = [
         "postcondicion": "Dirección registrada en la sesión.",
         "automatizable": True,
         "estado_automatizacion": "Automated",
-        "implementacion": "test_cases/common/checkout.feature",
+        "implementacion": "test_cases/common/checkout/checkout.feature",
         "tags": ["checkout", "customer", "address"],
     },
     {
@@ -242,7 +242,7 @@ CASES = [
         "postcondicion": "Método de entrega seleccionado.",
         "automatizable": True,
         "estado_automatizacion": "Automated",
-        "implementacion": "test_cases/common/checkout.feature",
+        "implementacion": "test_cases/common/checkout/checkout.feature",
         "tags": ["checkout", "shipping"],
     },
     {
@@ -259,7 +259,7 @@ CASES = [
         "postcondicion": "Comprador registrado en la sesión.",
         "automatizable": True,
         "estado_automatizacion": "Automated",
-        "implementacion": "Cubierto por CHECKOUT_002 (common/checkout.feature)",
+        "implementacion": "test_cases/common/customer/customer.feature",
         "tags": ["customer"],
     },
     {
@@ -282,7 +282,7 @@ CASES = [
         "postcondicion": "Dirección registrada.",
         "automatizable": True,
         "estado_automatizacion": "Automated",
-        "implementacion": "Cubierto por CHECKOUT_002 (common/checkout.feature)",
+        "implementacion": "test_cases/common/address/address.feature",
         "tags": ["address", "cp-autocomplete"],
     },
     {
@@ -302,7 +302,7 @@ CASES = [
         "postcondicion": "Envío calculado.",
         "automatizable": True,
         "estado_automatizacion": "Automated",
-        "implementacion": "Cubierto por CHECKOUT_003 (common/checkout.feature)",
+        "implementacion": "test_cases/common/shipping/shipping.feature",
         "tags": ["shipping", "costo-envio"],
     },
     {
@@ -324,11 +324,8 @@ CASES = [
         "resultado_esperado": "Tienda seleccionada; modo StorePickupSelected activo.",
         "postcondicion": "Entrega en tienda configurada.",
         "automatizable": True,
-        "estado_automatizacion": "In Development",
-        "implementacion": (
-            "Store picker mapeado en ShippingComponent; "
-            "escenario pendiente"
-        ),
+        "estado_automatizacion": "Automated",
+        "implementacion": "test_cases/common/shipping/shipping.feature",
         "tags": ["shipping", "pickup", "store-selector"],
     },
     {
@@ -354,7 +351,7 @@ CASES = [
         "postcondicion": "Orden lista para confirmar; NO se crea orden.",
         "automatizable": True,
         "estado_automatizacion": "Automated",
-        "implementacion": "test_cases/common/payment.feature",
+        "implementacion": "test_cases/common/payment/payment.feature",
         "tags": ["payment", "contado", "openpay"],
     },
     {
@@ -375,8 +372,8 @@ CASES = [
         "automatizable": True,
         "estado_automatizacion": "Not Automated",
         "implementacion": (
-            "is_method_selectable() detecta el radio disabled; "
-            "falta dataset de alto monto"
+            "Escenario @pending en test_cases/common/payment/"
+            "payment.feature; falta dataset de alto monto"
         ),
         "tags": ["payment", "regla-negocio", "openpay-stores"],
     },
@@ -397,7 +394,7 @@ CASES = [
         "postcondicion": "Orden lista; NO se confirma.",
         "automatizable": True,
         "estado_automatizacion": "Not Automated",
-        "implementacion": "Dataset card_msi listo; escenario pendiente",
+        "implementacion": ("Escenario @pending en test_cases/common/payment/payment.feature; falta wiring MSI"),
         "tags": ["payment", "msi", "contado"],
     },
     {
@@ -423,7 +420,7 @@ CASES = [
         "postcondicion": "Orden REAL creada en stage (folio en Allure).",
         "automatizable": True,
         "estado_automatizacion": "Automated",
-        "implementacion": "test_cases/common/order.feature",
+        "implementacion": "test_cases/common/order/order.feature",
         "tags": ["order", "e2e", "irreversible"],
     },
     {
@@ -446,7 +443,7 @@ CASES = [
         "postcondicion": "Orden REAL creada en stage.",
         "automatizable": True,
         "estado_automatizacion": "Automated",
-        "implementacion": "test_cases/common/order.feature",
+        "implementacion": "test_cases/common/order/order.feature",
         "tags": ["order", "consistencia", "irreversible"],
     },
     {
@@ -466,9 +463,10 @@ CASES = [
         "postcondicion": "Sin cambios.",
         "automatizable": True,
         "estado_automatizacion": "Automated",
-        "implementacion": "tests/smoke/test_guest_checkout_ma.py",
-        "implementacion_viu": "tests/smoke/test_home.py (guest_checkout workflow solo MA)",
-        "estado_automatizacion_viu": "Not Automated",
+        "implementacion": (
+            "test_cases/common/smoke/sale_cash.feature "
+            "(GuestCheckoutWorkflow)"
+        ),
         "tags": ["smoke", "regression"],
     },
     {
@@ -490,11 +488,10 @@ CASES = [
         "resultado_esperado": "Orden creada con folio y datos consistentes de extremo a extremo.",
         "postcondicion": "Orden REAL creada en stage.",
         "automatizable": True,
-        "estado_automatizacion": "In Development",
+        "estado_automatizacion": "Automated",
         "implementacion": (
-            "SaleCashWorkflow multi-ecommerce implementado "
-            "(workflows/common); escenario E2E consolidado pendiente "
-            "de wiring BDD (sale_cash.feature @pending)"
+            "test_cases/common/e2e/e2e.feature "
+            "(SaleCashWorkflow, confirm_order=True)"
         ),
         "tags": ["e2e", "contado", "irreversible"],
     },

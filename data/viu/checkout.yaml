@@ -6,4 +6,5 @@ guest:
   customer: "guest"
   address: "guadalajara"
   shipping_method: "a_domicilio"  # toggle #domicilio; alternativa "sucursal" (Retiro/Click & Pick Up).
+  store_state: "Jalisco"        # estado del store picker (SHIPPING_002; se elige la primera tienda).
   payment_method: "openpay_cards"  # contado por tarjeta; ver payment.yaml.

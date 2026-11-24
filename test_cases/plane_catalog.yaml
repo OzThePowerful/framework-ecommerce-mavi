@@ -23,7 +23,7 @@ casos:
   postcondicion: Sin cambios de estado en el sitio.
   automatizable: true
   estado_automatizacion: Automated
-  implementacion: tests/smoke/test_home.py (--site)
+  implementacion: test_cases/common/home/home.feature
   tags: &id001
   - smoke
   - regression
@@ -43,7 +43,7 @@ casos:
   postcondicion: Sin cambios de estado.
   automatizable: true
   estado_automatizacion: Automated
-  implementacion: test_cases/common/search.feature
+  implementacion: test_cases/common/search/search.feature
   tags: &id002
   - search
   - regression
@@ -63,7 +63,7 @@ casos:
   postcondicion: Sin cambios de estado.
   automatizable: true
   estado_automatizacion: Automated
-  implementacion: test_cases/common/search.feature
+  implementacion: test_cases/common/search/search.feature
   tags: &id003
   - search
   - estado-vacio
@@ -82,7 +82,7 @@ casos:
   postcondicion: Sin cambios de estado.
   automatizable: true
   estado_automatizacion: Automated
-  implementacion: test_cases/common/pdp.feature
+  implementacion: test_cases/common/product/pdp.feature
   tags: &id004
   - pdp
   - product
@@ -102,7 +102,7 @@ casos:
   postcondicion: Sin cambios de estado.
   automatizable: true
   estado_automatizacion: Automated
-  implementacion: test_cases/common/pdp.feature
+  implementacion: test_cases/common/product/pdp.feature
   tags: &id005
   - pdp
   - configurable
@@ -121,7 +121,7 @@ casos:
   postcondicion: Producto queda en el carrito de la sesión.
   automatizable: true
   estado_automatizacion: Automated
-  implementacion: test_cases/common/cart.feature
+  implementacion: test_cases/common/cart/cart.feature
   tags: &id006
   - cart
   - integridad
@@ -141,7 +141,7 @@ casos:
   postcondicion: En la puerta del checkout.
   automatizable: true
   estado_automatizacion: Automated
-  implementacion: test_cases/common/cart.feature
+  implementacion: test_cases/common/cart/cart.feature
   tags: &id007
   - cart
   - checkout
@@ -161,7 +161,7 @@ casos:
   postcondicion: Checkout en etapa Entrega.
   automatizable: true
   estado_automatizacion: Automated
-  implementacion: test_cases/common/checkout.feature
+  implementacion: test_cases/common/checkout/checkout.feature
   tags: &id008
   - checkout
   - guest
@@ -180,7 +180,7 @@ casos:
   postcondicion: Dirección registrada en la sesión.
   automatizable: true
   estado_automatizacion: Automated
-  implementacion: test_cases/common/checkout.feature
+  implementacion: test_cases/common/checkout/checkout.feature
   tags: &id009
   - checkout
   - customer
@@ -200,7 +200,7 @@ casos:
   postcondicion: Método de entrega seleccionado.
   automatizable: true
   estado_automatizacion: Automated
-  implementacion: test_cases/common/checkout.feature
+  implementacion: test_cases/common/checkout/checkout.feature
   tags: &id010
   - checkout
   - shipping
@@ -219,7 +219,7 @@ casos:
   postcondicion: Comprador registrado en la sesión.
   automatizable: true
   estado_automatizacion: Automated
-  implementacion: Cubierto por CHECKOUT_002 (common/checkout.feature)
+  implementacion: test_cases/common/customer/customer.feature
   tags: &id011
   - customer
 - id: CP_EC_MA_ADDRESS_001
@@ -237,7 +237,7 @@ casos:
   postcondicion: Dirección registrada.
   automatizable: true
   estado_automatizacion: Automated
-  implementacion: Cubierto por CHECKOUT_002 (common/checkout.feature)
+  implementacion: test_cases/common/address/address.feature
   tags: &id012
   - address
   - cp-autocomplete
@@ -256,7 +256,7 @@ casos:
   postcondicion: Envío calculado.
   automatizable: true
   estado_automatizacion: Automated
-  implementacion: Cubierto por CHECKOUT_003 (common/checkout.feature)
+  implementacion: test_cases/common/shipping/shipping.feature
   tags: &id013
   - shipping
   - costo-envio
@@ -274,8 +274,8 @@ casos:
   resultado_esperado: Tienda seleccionada; modo StorePickupSelected activo.
   postcondicion: Entrega en tienda configurada.
   automatizable: true
-  estado_automatizacion: In Development
-  implementacion: Store picker mapeado en ShippingComponent; escenario pendiente
+  estado_automatizacion: Automated
+  implementacion: test_cases/common/shipping/shipping.feature
   tags: &id014
   - shipping
   - pickup
@@ -295,7 +295,7 @@ casos:
   postcondicion: Orden lista para confirmar; NO se crea orden.
   automatizable: true
   estado_automatizacion: Automated
-  implementacion: test_cases/common/payment.feature
+  implementacion: test_cases/common/payment/payment.feature
   tags: &id015
   - payment
   - contado
@@ -315,7 +315,7 @@ casos:
   postcondicion: Sin cambios.
   automatizable: true
   estado_automatizacion: Not Automated
-  implementacion: is_method_selectable() detecta el radio disabled; falta dataset de alto monto
+  implementacion: Escenario @pending en test_cases/common/payment/payment.feature; falta dataset de alto monto
   tags: &id016
   - payment
   - regla-negocio
@@ -335,7 +335,7 @@ casos:
   postcondicion: Orden lista; NO se confirma.
   automatizable: true
   estado_automatizacion: Not Automated
-  implementacion: Dataset card_msi listo; escenario pendiente
+  implementacion: Escenario @pending en test_cases/common/payment/payment.feature; falta wiring MSI
   tags: &id017
   - payment
   - msi
@@ -355,7 +355,7 @@ casos:
   postcondicion: Orden REAL creada en stage (folio en Allure).
   automatizable: true
   estado_automatizacion: Automated
-  implementacion: test_cases/common/order.feature
+  implementacion: test_cases/common/order/order.feature
   tags: &id018
   - order
   - e2e
@@ -375,7 +375,7 @@ casos:
   postcondicion: Orden REAL creada en stage.
   automatizable: true
   estado_automatizacion: Automated
-  implementacion: test_cases/common/order.feature
+  implementacion: test_cases/common/order/order.feature
   tags: &id019
   - order
   - consistencia
@@ -395,7 +395,7 @@ casos:
   postcondicion: Sin cambios.
   automatizable: true
   estado_automatizacion: Automated
-  implementacion: tests/smoke/test_guest_checkout_ma.py
+  implementacion: test_cases/common/smoke/sale_cash.feature (GuestCheckoutWorkflow)
   tags: &id020
   - smoke
   - regression
@@ -413,9 +413,8 @@ casos:
   resultado_esperado: Orden creada con folio y datos consistentes de extremo a extremo.
   postcondicion: Orden REAL creada en stage.
   automatizable: true
-  estado_automatizacion: In Development
-  implementacion: SaleCashWorkflow multi-ecommerce implementado (workflows/common); escenario E2E consolidado pendiente de wiring BDD (sale_cash.feature
-    @pending)
+  estado_automatizacion: Automated
+  implementacion: test_cases/common/e2e/e2e.feature (SaleCashWorkflow, confirm_order=True)
   tags: &id021
   - e2e
   - contado
@@ -435,7 +434,7 @@ casos:
   postcondicion: Sin cambios de estado en el sitio.
   automatizable: true
   estado_automatizacion: Automated
-  implementacion: tests/smoke/test_home.py (--site)
+  implementacion: test_cases/common/home/home.feature
   tags: *id001
 - id: CP_EC_VIU_SEARCH_001
   titulo: Búsqueda con resultados devuelve cards elegibles y contador consistente
@@ -452,7 +451,7 @@ casos:
   postcondicion: Sin cambios de estado.
   automatizable: true
   estado_automatizacion: Automated
-  implementacion: test_cases/common/search.feature
+  implementacion: test_cases/common/search/search.feature
   tags: *id002
 - id: CP_EC_VIU_SEARCH_002
   titulo: Búsqueda sin resultados muestra el estado vacío
@@ -469,7 +468,7 @@ casos:
   postcondicion: Sin cambios de estado.
   automatizable: true
   estado_automatizacion: Automated
-  implementacion: test_cases/common/search.feature
+  implementacion: test_cases/common/search/search.feature
   tags: *id003
 - id: CP_EC_VIU_PDP_001
   titulo: La PDP expone el modelo Product con datos comerciales válidos
@@ -486,7 +485,7 @@ casos:
   postcondicion: Sin cambios de estado.
   automatizable: true
   estado_automatizacion: Automated
-  implementacion: test_cases/common/pdp.feature
+  implementacion: test_cases/common/product/pdp.feature
   tags: *id004
 - id: CP_EC_VIU_PDP_002
   titulo: Un configurable expone padre y variantes como Product
@@ -503,7 +502,7 @@ casos:
   postcondicion: Sin cambios de estado.
   automatizable: true
   estado_automatizacion: Automated
-  implementacion: test_cases/common/pdp.feature
+  implementacion: test_cases/common/product/pdp.feature
   tags: *id005
 - id: CP_EC_VIU_CART_001
   titulo: La integridad comercial Product→Cart se conserva
@@ -520,7 +519,7 @@ casos:
   postcondicion: Producto queda en el carrito de la sesión.
   automatizable: true
   estado_automatizacion: Automated
-  implementacion: test_cases/common/cart.feature
+  implementacion: test_cases/common/cart/cart.feature
   tags: *id006
 - id: CP_EC_VIU_CART_002
   titulo: Continuar al checkout desde el carrito muestra el gate de invitado
@@ -537,7 +536,7 @@ casos:
   postcondicion: En la puerta del checkout.
   automatizable: true
   estado_automatizacion: Automated
-  implementacion: test_cases/common/cart.feature
+  implementacion: test_cases/common/cart/cart.feature
   tags: *id007
 - id: CP_EC_VIU_CHECKOUT_001
   titulo: Acceder al checkout como invitado expone los campos requeridos
@@ -554,7 +553,7 @@ casos:
   postcondicion: Checkout en etapa Entrega.
   automatizable: true
   estado_automatizacion: Automated
-  implementacion: test_cases/common/checkout.feature
+  implementacion: test_cases/common/checkout/checkout.feature
   tags: *id008
 - id: CP_EC_VIU_CHECKOUT_002
   titulo: Registrar los datos del comprador habilita la etapa de pago
@@ -571,7 +570,7 @@ casos:
   postcondicion: Dirección registrada en la sesión.
   automatizable: true
   estado_automatizacion: Automated
-  implementacion: test_cases/common/checkout.feature
+  implementacion: test_cases/common/checkout/checkout.feature
   tags: *id009
 - id: CP_EC_VIU_CHECKOUT_003
   titulo: Seleccionar el método de entrega expone el costo de envío
@@ -588,7 +587,7 @@ casos:
   postcondicion: Método de entrega seleccionado.
   automatizable: true
   estado_automatizacion: Automated
-  implementacion: test_cases/common/checkout.feature
+  implementacion: test_cases/common/checkout/checkout.feature
   tags: *id010
 - id: CP_EC_VIU_CUSTOMER_001
   titulo: La captura del comprador persiste nombre, correo y teléfono
@@ -605,7 +604,7 @@ casos:
   postcondicion: Comprador registrado en la sesión.
   automatizable: true
   estado_automatizacion: Automated
-  implementacion: Cubierto por CHECKOUT_002 (common/checkout.feature)
+  implementacion: test_cases/common/customer/customer.feature
   tags: *id011
 - id: CP_EC_VIU_ADDRESS_001
   titulo: La dirección autocompleta colonia, ciudad y estado desde el CP
@@ -622,7 +621,7 @@ casos:
   postcondicion: Dirección registrada.
   automatizable: true
   estado_automatizacion: Automated
-  implementacion: Cubierto por CHECKOUT_002 (common/checkout.feature)
+  implementacion: test_cases/common/address/address.feature
   tags: *id012
 - id: CP_EC_VIU_SHIPPING_001
   titulo: La entrega a domicilio expone costo y estimación
@@ -639,7 +638,7 @@ casos:
   postcondicion: Envío calculado.
   automatizable: true
   estado_automatizacion: Automated
-  implementacion: Cubierto por CHECKOUT_003 (common/checkout.feature)
+  implementacion: test_cases/common/shipping/shipping.feature
   tags: *id013
 - id: CP_EC_VIU_SHIPPING_002
   titulo: El retiro en sucursal abre el store picker y selecciona tienda
@@ -655,8 +654,8 @@ casos:
   resultado_esperado: Tienda seleccionada; modo StorePickupSelected activo.
   postcondicion: Entrega en tienda configurada.
   automatizable: true
-  estado_automatizacion: In Development
-  implementacion: Store picker mapeado en ShippingComponent; escenario pendiente
+  estado_automatizacion: Automated
+  implementacion: test_cases/common/shipping/shipping.feature
   tags: *id014
 - id: CP_EC_VIU_PAY_001
   titulo: Seleccionar contado y preparar la orden sin confirmarla
@@ -673,7 +672,7 @@ casos:
   postcondicion: Orden lista para confirmar; NO se crea orden.
   automatizable: true
   estado_automatizacion: Automated
-  implementacion: test_cases/common/payment.feature
+  implementacion: test_cases/common/payment/payment.feature
   tags: *id015
 - id: CP_EC_VIU_PAY_002
   titulo: El pago en efectivo no es seleccionable por encima de $30,000
@@ -690,7 +689,7 @@ casos:
   postcondicion: Sin cambios.
   automatizable: true
   estado_automatizacion: Not Automated
-  implementacion: is_method_selectable() detecta el radio disabled; falta dataset de alto monto
+  implementacion: Escenario @pending en test_cases/common/payment/payment.feature; falta dataset de alto monto
   tags: *id016
 - id: CP_EC_VIU_PAY_003
   titulo: El contado a MSI se prepara con la tarjeta 4242
@@ -707,7 +706,7 @@ casos:
   postcondicion: Orden lista; NO se confirma.
   automatizable: true
   estado_automatizacion: Not Automated
-  implementacion: Dataset card_msi listo; escenario pendiente
+  implementacion: Escenario @pending en test_cases/common/payment/payment.feature; falta wiring MSI
   tags: *id017
 - id: CP_EC_VIU_ORDER_001
   titulo: Confirmar la compra genera una orden con folio verificable
@@ -724,7 +723,7 @@ casos:
   postcondicion: Orden REAL creada en stage (folio en Allure).
   automatizable: true
   estado_automatizacion: Automated
-  implementacion: test_cases/common/order.feature
+  implementacion: test_cases/common/order/order.feature
   tags: *id018
 - id: CP_EC_VIU_ORDER_002
   titulo: La orden es consistente con los datos comerciales del flujo
@@ -741,7 +740,7 @@ casos:
   postcondicion: Orden REAL creada en stage.
   automatizable: true
   estado_automatizacion: Automated
-  implementacion: test_cases/common/order.feature
+  implementacion: test_cases/common/order/order.feature
   tags: *id019
 - id: CP_EC_VIU_SMOKE_001
   titulo: 'Smoke: guest checkout muestra un precio de pedido mayor a cero'
@@ -757,8 +756,8 @@ casos:
   resultado_esperado: Precio del pedido > 0 como Money.
   postcondicion: Sin cambios.
   automatizable: true
-  estado_automatizacion: Not Automated
-  implementacion: tests/smoke/test_home.py (guest_checkout workflow solo MA)
+  estado_automatizacion: Automated
+  implementacion: test_cases/common/smoke/sale_cash.feature (GuestCheckoutWorkflow)
   tags: *id020
 - id: CP_EC_VIU_E2E_001
   titulo: Flujo completo de venta de contado Home→Order
@@ -774,7 +773,6 @@ casos:
   resultado_esperado: Orden creada con folio y datos consistentes de extremo a extremo.
   postcondicion: Orden REAL creada en stage.
   automatizable: true
-  estado_automatizacion: In Development
-  implementacion: SaleCashWorkflow multi-ecommerce implementado (workflows/common); escenario E2E consolidado pendiente de wiring BDD (sale_cash.feature
-    @pending)
+  estado_automatizacion: Automated
+  implementacion: test_cases/common/e2e/e2e.feature (SaleCashWorkflow, confirm_order=True)
   tags: *id021

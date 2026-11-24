@@ -18,7 +18,7 @@ pytestmark = pytest.mark.smoke
 
 @pytest.fixture
 def guest_checkout_request(data_provider) -> GuestCheckoutRequest:
-    record = data_provider.get_record("guest_checkout", "linea_blanca_parrilla")
+    record = data_provider.get_record("guest_checkout", "linea_blanca")
     return GuestCheckoutRequest.from_record(record)
 
 

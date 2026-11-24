@@ -7,6 +7,7 @@ Feature: Checkout y datos del comprador
   Los datos del comprador y la dirección provienen del DataProvider.
   Fuera de alcance: selección de pago y confirmación de compra.
 
+  @CHECKOUT_001
   Scenario: Acceder al checkout como invitado y exponer los campos requeridos
     Given el usuario abre la home del sitio activo
     When busca el término con resultados del dataset
@@ -17,6 +18,7 @@ Feature: Checkout y datos del comprador
     And continúa como invitado
     Then la etapa de entrega está activa y los campos del comprador son obligatorios
 
+  @CHECKOUT_002
   Scenario: Registrar los datos del comprador habilita la etapa de pago
     Given el usuario abre la home del sitio activo
     When busca el término con resultados del dataset
@@ -28,6 +30,7 @@ Feature: Checkout y datos del comprador
     And registra los datos del comprador del dataset
     Then los datos quedan aceptados y la etapa de pago queda habilitada
 
+  @CHECKOUT_003
   Scenario: Seleccionar el método de entrega expone el costo de envío
     Given el usuario abre la home del sitio activo
     When busca el término con resultados del dataset

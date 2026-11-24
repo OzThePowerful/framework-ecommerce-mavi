@@ -1,6 +1,7 @@
 """PDP de Muebles América."""
 
 from playwright.sync_api import Page
+from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
 
 from core.execution.execution_context import ExecutionContext
 from domain.models.product import Product
@@ -51,7 +52,17 @@ class ProductPage(BasePage):
         self.page.locator(ProductLocators.ADD_TO_CART_BUTTON).first.click()
 
     def dismiss_post_add_overlays(self) -> None:
-        """Despeja promo y toast post-add para liberar el header."""
+        """Despeja promo y toast post-add para liberar el header.
+
+        El toast es la confirmación del add asíncrono: se espera primero
+        para no continuar antes de que el producto quede en el carrito.
+        """
+        try:
+            self.page.locator(ProductLocators.NOTIFICATION).first.wait_for(
+                state="visible", timeout=10000
+            )
+        except PlaywrightTimeoutError:
+            pass
         self.promotions_window.close_if_present()
         if self.notifications.is_visible(ProductLocators.NOTIFICATION):
             close = self.page.locator(ProductLocators.NOTIFICATION_CLOSE)

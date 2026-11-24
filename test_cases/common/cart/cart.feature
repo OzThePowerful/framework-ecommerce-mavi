@@ -6,6 +6,7 @@ Feature: Carrito de compras
     viu             → CP_EC_VIU_CART_001 / CP_EC_VIU_CART_002
   Los términos de búsqueda provienen del dataset del sitio activo.
 
+  @CART_001
   Scenario: Agregar un producto y validar la integridad comercial del carrito
     Given el usuario abre la home del sitio activo
     When busca el término con resultados del dataset
@@ -15,6 +16,7 @@ Feature: Carrito de compras
     Then el carrito contiene el producto con datos coherentes con la PDP
     And los importes del carrito son consistentes con el subtotal y el total
 
+  @CART_002
   Scenario: Continuar al checkout desde el carrito muestra la opción de invitado
     Given el usuario abre la home del sitio activo
     When busca el término con resultados del dataset

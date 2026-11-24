@@ -10,7 +10,7 @@ from decimal import Decimal
 import pytest
 
 from core.execution.execution_context import ExecutionContext
-from core.execution.execution_errors import NavigationError
+from core.execution.execution_errors import NavigationError, PaymentError
 from domain.errors.precondition_error import PreconditionError
 from domain.models.address import Address
 from domain.models.cart import Cart, CartItem
@@ -183,6 +183,10 @@ class FakePayment:
         return self._selectable
 
     def select_method(self, method):
+        # Contrato real: falla con PaymentError si el método no es
+        # seleccionable tras esperar la habilitación del radio.
+        if not self._selectable:
+            raise PaymentError(f"método '{method}' no seleccionable")
         self._c.append(f"payment.select:{method}")
 
     def fill_card(self, number, exp_month, exp_year, cvv):

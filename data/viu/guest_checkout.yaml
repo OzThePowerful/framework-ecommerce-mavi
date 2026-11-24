@@ -1,0 +1,8 @@
+# Datos de entrada para el flujo Home → categoría → PDP → carrito → checkout
+# como invitado. Se leen vía DataProvider; los tests no conocen esta ruta.
+# Menú VIU: 'Departamentos' (trigger) → departamento → link de categoría.
+linea_blanca:
+  department: "Línea blanca"
+  category: "Estufas"
+  category_href: "/departamentos/linea-blanca/cocina/estufas.html"
+  product_name: "Estufa De Piso Whirlpool 30'' WFR7050S 6 Quemadores"
