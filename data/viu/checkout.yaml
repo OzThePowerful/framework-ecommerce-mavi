@@ -1,6 +1,6 @@
 # Parámetros del checkout — VIU.
-# Los valores de customer/address referencian claves de
-# customers.yaml y addresses.yaml.
+# `customer` selecciona la identidad MAVI_GUEST_VIU_* del .env (privada,
+# nunca versionada); `address` referencia claves de addresses.yaml.
 # Casos relacionados: CP_EC_VIU_CHECKOUT_002, CP_EC_VIU_CHECKOUT_003.
 guest:
   customer: "guest"

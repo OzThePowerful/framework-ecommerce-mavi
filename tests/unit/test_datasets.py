@@ -13,7 +13,6 @@ pytestmark = pytest.mark.unit
 REQUIRED_DATASETS = (
     "search",
     "products",
-    "customers",
     "addresses",
     "checkout",
     "payment",
@@ -32,7 +31,12 @@ def test_datasets_base_presentes(site):
         )
 
 
-def test_fallback_common_resuelve_cliente():
-    """mavi aún no tiene datasets propios: customers viene de common."""
-    data = YamlDataProvider("mavi").get_dataset("customers")
-    assert "default_guest" in data
+def test_cliente_no_esta_en_dataset():
+    """La identidad del comprador es privada del equipo: no existe
+    dataset `customers` versionado (resuelve MAVI_GUEST_* del .env)."""
+    provider = YamlDataProvider("muebles_america")
+    try:
+        provider.get_dataset("customers")
+    except Exception:
+        return
+    raise AssertionError("customers.yaml no debe existir en data/")

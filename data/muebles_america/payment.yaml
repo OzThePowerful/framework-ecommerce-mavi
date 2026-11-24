@@ -1,9 +1,7 @@
 # Métodos de pago — Muebles América.
-# Datos de tarjeta NUNCA versionados: llegan por variables de entorno
-#   MAVI_PAY_CARD_NUMBER / MAVI_PAY_CARD_CVV /
-#   MAVI_PAY_CARD_EXP_MONTH / MAVI_PAY_CARD_EXP_YEAR
-# (fixture `payment_card`, core/execution ConfigError si faltan).
-# Tarjetas públicas de sandbox OpenPay para stage:
+# Las tarjetas son datos ficticios de sandbox OpenPay (públicos):
+# versionadas aquí por decisión del equipo — las credenciales reales
+# (login, API) viven en .env, nunca versionadas.
 #   4111111111111111 → contado;  4242424242424242 → MSI
 #   (MSI también es contado: el banco difiere los meses).
 # Reglas verificadas: openpay_stores no seleccionable si total > $30,000;
@@ -12,6 +10,19 @@
 card:
   method: "openpay_cards"   # Tarjeta Crédito / Débito — contado (OpenPay)
   status: "verified"
+  # Tarjeta pública de sandbox OpenPay (ficticia — no es un PAN real)
+  number: "4111111111111111"
+  exp_month: "11"
+  exp_year: "2028"
+  cvv: "123"
+
+card_msi:
+  method: "openpay_cards"   # Mismo método; MSI = contado diferido bancario
+  status: "verified"
+  number: "4242424242424242"
+  exp_month: "11"
+  exp_year: "2028"
+  cvv: "123"
 
 cash:
   method: "openpay_stores"  # Efectivo en tiendas de conveniencia (OpenPay)

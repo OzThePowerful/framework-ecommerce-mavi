@@ -12,7 +12,7 @@ marcas, hasta la última frontera permitida: `#_btnCheckout`
 |---|---|
 | `pages/common/components/payment/` | `PaymentComponent` + `PaymentLocators`: `open_payment_stage()`, `payment_methods()`, `is_method_selectable()`, `select_method()` (raise `PaymentError` si no seleccionable), `selected_method()`, `expects_external_provider()`, `fill_card()`, `set_billing_same_as_shipping()` / `is_billing_same_as_shipping()`, `is_place_order_enabled()` / `wait_place_order_enabled()` (la frontera), `validation_errors()` |
 | `pages/muebles_america/payment/` + `pages/viu/payment/` | Fachadas `PaymentPage` (convención `pages.<site>.payment.payment_page` → `pages.payment()`) |
-| `fixtures/data_fixtures.py` | Fixture `payment_card`: lee `MAVI_PAY_CARD_NUMBER` / `_CVV` / `_EXP_MONTH` / `_EXP_YEAR`; `ConfigError` con las variables faltantes si no están. Los datos de tarjeta **nunca** se versionan |
+| `fixtures/data_fixtures.py` | Fixture `payment_card`: lee el registro `payment`/`card` del DataProvider — las tarjetas sandbox son ficticias (públicas) y van versionadas por decisión del equipo; las credenciales reales (login/API) viven en `.env` |
 | `test_cases/common/payment.feature` | Escenario `PAY_001` (→ `CP_EC_MA_PAY_001` / `CP_EC_VIU_PAY_001`) |
 | `tests/bdd/steps/payment_steps.py` | Steps delgados: abre etapa de pago, selecciona contado del dataset + tarjeta de env, valida método seleccionado, sin errores y `Finalizar compra` habilitado. Allure adjunta método/estado/métodos disponibles — nunca datos de tarjeta |
 
@@ -48,8 +48,11 @@ marcas, hasta la última frontera permitida: `#_btnCheckout`
 
 ## Seguridad
 
-- Tarjetas por env vars `MAVI_PAY_*`; fixture falla explícito si faltan.
-- Ningún PAN/CVV/token en repo ni en evidencia Allure.
+- Tarjetas ficticias de sandbox OpenPay (públicas) en
+  `data/<sitio>/payment.yaml`; ningún PAN/CVV real en repo ni en
+  evidencia Allure.
+- Credenciales privadas (login `MAVI_LOGIN_*`, API `MAVI_API_*`) solo
+  en `.env` — gitignored — o secrets de CI.
 - `#_btnCheckout` solo se valida habilitado; el click no existe en el
   framework.
 

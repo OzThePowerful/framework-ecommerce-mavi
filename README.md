@@ -45,14 +45,18 @@ equivalentes en otra marca. Componentes comunes verificados: `header`
 `checkout` (gate invitado + acordeón OSC), `customer_form` (datos del
 comprador como `Customer`), `address` (dirección → `Address`, CP con
 autocompletado), `shipping` (entrega domicilio/sucursal + store picker y
-costo como `Shipping`), `payment` (métodos de pago, contado OpenPay
-hasta `Finalizar compra` habilitado — nunca clickeado) y `footer`.
+costo como `Shipping`), `payment` (métodos de pago, contado OpenPay;
+`confirm_order()` ejecuta la compra solo desde casos ORDER/E2E
+autorizados), `order` (éxito inequívoco + folio de la orden) y `footer`.
 
-Los datos de tarjeta de prueba llegan por variables de entorno
-`MAVI_PAY_CARD_NUMBER` / `MAVI_PAY_CARD_CVV` / `MAVI_PAY_CARD_EXP_MONTH`
-/ `MAVI_PAY_CARD_EXP_YEAR` (fixture `payment_card`); nunca se versionan.
-En stage se usan las tarjetas públicas de sandbox OpenPay
-(`4111…1111` contado, `4242…4242` MSI — también contado).
+Las tarjetas de prueba son datos ficticios de sandbox OpenPay
+(`4111…1111` contado, `4242…4242` MSI — también contado): viven
+versionadas en `data/<sitio>/payment.yaml` (fixture `payment_card`).
+Los datos privados del equipo van en `.env` — gitignored — cargados por
+`conftest.py` vía `load_dotenv()` (en CI llegan como secrets): login
+`MAVI_LOGIN_<SITIO>_*` (fixture `site_credentials`), API `MAVI_API_*`
+e identidad del comprador `MAVI_GUEST_<SITIO>_*` (fixture
+`guest_customer` — correo real, el checkout lo valida externamente).
 
 ### Reglas de dependencia
 

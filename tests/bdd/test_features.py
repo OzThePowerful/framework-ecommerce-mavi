@@ -11,6 +11,7 @@ from pytest_bdd import scenarios
 
 from tests.bdd.steps.cart_steps import *  # noqa: F401,F403  (registra steps)
 from tests.bdd.steps.checkout_steps import *  # noqa: F401,F403  (registra steps)
+from tests.bdd.steps.order_steps import *  # noqa: F401,F403  (registra steps)
 from tests.bdd.steps.payment_steps import *  # noqa: F401,F403  (registra steps)
 from tests.bdd.steps.pdp_steps import *  # noqa: F401,F403  (registra steps)
 from tests.bdd.steps.search_steps import *  # noqa: F401,F403  (registra steps)
@@ -22,3 +23,4 @@ scenarios(str(_COMMON / "pdp.feature"))
 scenarios(str(_COMMON / "cart.feature"))
 scenarios(str(_COMMON / "checkout.feature"))
 scenarios(str(_COMMON / "payment.feature"))
+scenarios(str(_COMMON / "order.feature"))

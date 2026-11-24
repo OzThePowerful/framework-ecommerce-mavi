@@ -78,5 +78,8 @@ class CheckoutPage(BasePage):
     def shipping_cost(self) -> Money:
         return self.delivery.shipping_cost()
 
+    def summary_totals(self) -> dict[str, Money]:
+        return self.delivery.summary_totals()
+
     def delivery_estimate(self) -> str | None:
         return self.delivery.delivery_estimate()

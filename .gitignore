@@ -15,6 +15,7 @@ test-results/
 # Configuración local / secretos (nunca versionar)
 .env
 .env.*
+!.env.example
 *.local
 *.local.yaml
 *.local.yml

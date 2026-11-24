@@ -184,7 +184,8 @@ y `E2E_001` de ambas marcas pueden implementarse hasta la acción previa a
 - **Frontera final**: con `openpay_cards` + tarjeta válida, `#_btnCheckout`
   queda **habilitado** en ambas marcas — el framework lo valida, nunca lo
   ejecuta.
-- **Tarjetas sandbox OpenPay** (vía env `MAVI_PAY_*`, nunca versionadas):
+- **Tarjetas sandbox OpenPay** (ficticias, versionadas en
+  `data/<sitio>/payment.yaml` por decisión del equipo):
   `4111111111111111` contado; `4242424242424242` MSI — MSI también es
   contado, el banco difiere los meses.
 - **`openpay_stores`**: límite $30,000 MXN; sobre el monto el radio queda
@@ -194,3 +195,21 @@ y `E2E_001` de ambas marcas pueden implementarse hasta la acción previa a
   ocurre fuera del dominio) → `expects_external_provider()`.
 - `PaymentError` (taxonomía `core/execution`) para método no
   seleccionable.
+
+## 11. Verificado en `ORDER_001/002` (EC-SP01-017)
+
+- **El email se valida contra un servicio externo**: dominios ficticios
+  (`@example.com`) son **rechazados silenciosamente** al confirmar — el
+  click no produce error visible ni navegación. Los datasets usan un
+  correo real del equipo.
+- **Éxito**: redirect a `…/checkout/onepage/success/`, `.checkout-success`
+  con "¡Gracias por tu compra! Hemos recibido tu pedido. Tu N° de pedido
+  es: # NNNNNNNNNN". Folio solo como texto (sin selector dedicado).
+  La página **no** expone items ni totales — la consistencia comercial
+  se verifica contra `.omni-summary-totals` previo a confirmar.
+- **Tokenización OpenPay**: ocurre en el submit (`openpay_token` oculto);
+  `device_session_id` no es requerido en stage.
+- KO valida campos de tarjeta **en blur**: `fill_card` presiona `Tab`
+  tras cada campo.
+- Órdenes de prueba creadas en stage (referencia): MA `2000058324`,
+  `2000058327`, `2000058330`; VIU `12000050087`, `12000050090`.

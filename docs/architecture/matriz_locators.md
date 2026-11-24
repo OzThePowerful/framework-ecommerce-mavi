@@ -154,7 +154,11 @@ ambigüedad · texto promocional volátil.
 
 | Marca | Pantalla | Elemento | Responsabilidad | Selector principal | Selector alternativo | Estabilidad | Common / específico | Riesgo | Observación |
 |---|---|---|---|---|---|---|---|---|---|
-| Ambas | Payment | Botón realizar pedido | Confirmar compra | `#_btnCheckout` | `button.action.primary.checkout` | Alta | Common | Alto | Frontera verificada en `PAY_001` (EC-SP01-016): se habilita con método + tarjeta válidos; **nunca** se clica desde el framework |
+| Ambas | Payment | Botón realizar pedido | Confirmar compra | `#_btnCheckout` | `button.action.primary.checkout` | Alta | Common | Alto | `PAY_001` valida habilitado; `confirm_order()` ejecuta el click **solo** desde casos ORDER/E2E autorizados (crea la orden) |
+| Ambas | Order | Página de éxito | Éxito inequívoco | `.checkout-success` + URL `**/onepage/success/` | — | Alta | Common | Bajo | Verificado órdenes reales (EC-SP01-017): "¡Gracias por tu compra! Hemos recibido tu pedido." |
+| Ambas | Order | Folio | N° de pedido | Texto `# NNNNNNNNNN` dentro de `.checkout-success` (regex) | — | Alta | Common | Bajo | Sin selector dedicado; la página no expone items ni totales |
+| Ambas | Checkout | Resumen de compra | Subtotal/Envío/Total | `.omni-summary-totals` | — | Alta | Common | Bajo | `summary_totals()`: "Subtotal", "Envío"/"Costo de envío", "Total (IVA incl.)" |
+| Ambas | Payment | Campos tarjeta | Validación KO | Blur (`Tab`) tras cada fill | — | Alta | Common | Medio | KO valida en blur: sin Tab `_btnCheckout` permanece disabled |
 | Ambas | Payment | Checkbox facturación | Billing = shipping | `#billing-address-same-as-shipping` | — | Media | Common | Bajo | Dirección de facturación igual a envío por defecto |
 | Ambas | Payment | Límite efectivo | openpay_stores | Radio `disabled` en `input[value='openpay_stores']` | — | Alta | Common | — | Regla: total > $30,000 MXN → método no seleccionable |
 | Ambas | Payment | Ventana proveedor | paypal_express | Popup del proveedor (context.new_page) | — | Alta | Common | — | Abre ventana externa de PayPal; pago ocurre fuera del dominio |

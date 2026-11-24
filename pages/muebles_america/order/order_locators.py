@@ -1,4 +1,4 @@
-"""Locators de confirmación de orden. Pendiente de implementación."""
+"""Locators de confirmación de orden de MA — todos common."""
 
 
 class OrderLocators:

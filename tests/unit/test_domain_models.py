@@ -80,16 +80,39 @@ def test_order_campos_minimos():
 
 
 @pytest.mark.parametrize("site", SITES)
-def test_customer_desde_dataset(site):
-    record = YamlDataProvider(site).get_record("customers", "guest")
-    customer = Customer(
-        name=record["first_name"],
-        last_name=record["last_name"],
-        email=record["email"],
-        phone=record.get("phone"),
-    )
+def test_customer_desde_env(site, monkeypatch):
+    """La identidad del comprador resuelve desde MAVI_GUEST_<SITIO>_*
+    (.env/entorno), nunca de un dataset versionado."""
+    from data_providers.customer_provider import resolve_guest_customer
+
+    key = {"muebles_america": "MA", "viu": "VIU"}[site]
+    prefix = f"MAVI_GUEST_{key}_"
+    monkeypatch.setenv(f"{prefix}FIRST_NAME", "QA")
+    monkeypatch.setenv(f"{prefix}LAST_NAME", "Automation")
+    monkeypatch.setenv(f"{prefix}MOTHERS_NAME", "Team")
+    monkeypatch.setenv(f"{prefix}EMAIL", "qa@equipo.test")
+    monkeypatch.setenv(f"{prefix}PHONE", "3300000000")
+
+    customer = resolve_guest_customer(site)
     assert isinstance(customer, Customer)
-    assert customer.email.endswith("@example.com")
+    assert customer.email == "qa@equipo.test"
+    assert customer.mothers_name == "Team"
+
+
+def test_customer_env_incompleto_error_explicito(monkeypatch):
+    """Sin las variables requeridas el resolver falla con ConfigError."""
+    from core.execution.execution_errors import ConfigError
+    from data_providers.customer_provider import resolve_guest_customer
+
+    for var in (
+        "MAVI_GUEST_MA_FIRST_NAME",
+        "MAVI_GUEST_MA_LAST_NAME",
+        "MAVI_GUEST_MA_EMAIL",
+        "MAVI_GUEST_MA_PHONE",
+    ):
+        monkeypatch.delenv(var, raising=False)
+    with pytest.raises(ConfigError):
+        resolve_guest_customer("muebles_america")
 
 
 @pytest.mark.parametrize("site", SITES)

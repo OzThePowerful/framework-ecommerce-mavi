@@ -147,6 +147,35 @@ class ShippingComponent:
         )
         return summary.inner_text()
 
+    def summary_totals(self) -> dict[str, Money]:
+        """Importes del resumen del checkout (Subtotal/Envío/Total) en Money.
+
+        Etiquetas tolerantes: 'Envío' o 'Costo de envío';
+        'Total (IVA incl.)' o 'Total'.
+        """
+        text = self._summary_text()
+        return {
+            "subtotal": self._money_row(text, r"subtotal"),
+            "shipping": self._money_row(text, r"(?:costo de )?env\S*"),
+            "total": self._money_row(text, r"total(?: \(iva incl\.?\))?", last=True),
+        }
+
+    def _money_row(self, text: str, label_re: str, last: bool = False) -> Money:
+        matches = re.findall(
+            rf"{label_re}\s*:?\s*(Gratis|\$[\d,]+\.\d+)",
+            text,
+            re.IGNORECASE,
+        )
+        if not matches:
+            raise FrameworkError(
+                f"El resumen no expone la fila {label_re!r}: {text[:200]!r}"
+            )
+        raw = matches[-1] if last else matches[0]
+        if raw.lower().startswith("gratis"):
+            return Money(Decimal("0"))
+        digits = re.sub(r"[^\d.]", "", raw)
+        return Money(Decimal(digits))
+
     def delivery_estimate(self) -> str | None:
         match = re.search(
             r"Entrega entre el [^\n]+", self._summary_text()

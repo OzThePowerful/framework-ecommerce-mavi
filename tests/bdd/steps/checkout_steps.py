@@ -11,7 +11,6 @@ from pytest_bdd import then, when
 
 from core.reporting.allure_manager import attach_text
 from domain.models.address import Address
-from domain.models.customer import Customer
 
 
 @when("continúa como invitado", target_fixture="checkout_ctx")
@@ -24,16 +23,10 @@ def continue_as_guest(pages) -> dict:
 
 
 @when("registra los datos del comprador del dataset")
-def fill_customer_form(checkout_ctx, data_provider) -> None:
+def fill_customer_form(checkout_ctx, data_provider, guest_customer) -> None:
     params = data_provider.get_record("checkout", "guest")
-    customer_data = data_provider.get_record("customers", params["customer"])
     address_data = data_provider.get_record("addresses", params["address"])
-    customer = Customer(
-        name=customer_data["first_name"],
-        last_name=customer_data["last_name"],
-        email=customer_data["email"],
-        phone=customer_data.get("phone"),
-    )
+    customer = guest_customer
     address = Address(
         street=address_data["street"],
         exterior_number=address_data.get("exterior_number"),

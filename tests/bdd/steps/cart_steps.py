@@ -28,6 +28,7 @@ def open_cart(pages, cart_ctx) -> None:
     cart_page = pages.cart()
     cart_page.open_cart()
     cart_ctx["cart_page"] = cart_page
+    cart_ctx["cart"] = cart_page.read_cart()
 
 
 @when("continúa al checkout desde el carrito")

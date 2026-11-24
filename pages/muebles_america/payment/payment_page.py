@@ -44,8 +44,11 @@ class PaymentPage(BasePage):
     def is_place_order_enabled(self) -> bool:
         return self.payment.is_place_order_enabled()
 
-    def wait_place_order_enabled(self) -> None:
-        self.payment.wait_place_order_enabled()
+    def wait_place_order_enabled(self, timeout: int = 20000) -> None:
+        self.payment.wait_place_order_enabled(timeout=timeout)
+
+    def confirm_order(self) -> None:
+        self.payment.confirm_order()
 
     def validation_errors(self) -> list[str]:
         return self.payment.validation_errors()
