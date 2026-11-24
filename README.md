@@ -278,6 +278,16 @@ El ID se valida contra `test_cases/plane_catalog.yaml`: formato
 inválido, ID inexistente o conflicto de marca son errores explícitos
 (exit 4) con sugerencias — nunca una corrida vacía.
 
+### Smoke suite
+
+Verificación rápida no transaccional del camino comercial (Home →
+Search → PDP → Cart → Checkout invitado). Nunca crea órdenes.
+
+```bash
+pytest -m smoke --site muebles_america   # suite smoke MA (3 items)
+pytest --case-id CP_EC_MA_SMOKE_001      # el caso, sitio derivado
+```
+
 Nota operativa: `E2E_001` y `ORDER_001/002` crean órdenes reales en
 stage — excluirlos de regresiones habituales con `-k "not E2E and not ORDER"`.
 

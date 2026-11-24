@@ -8,7 +8,7 @@ ExecutionContext. El test solo valida el resultado.
 
 import pytest
 
-from workflows.muebles_america.guest_checkout_workflow import (
+from workflows.common.guest_checkout_workflow import (
     GuestCheckoutRequest,
     GuestCheckoutWorkflow,
 )
