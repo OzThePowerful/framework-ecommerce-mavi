@@ -13,3 +13,4 @@ Feature: Venta de contado de extremo a extremo
     Given el usuario prepara una venta de contado con datos de prueba
     When ejecuta el flujo completo de venta de contado
     Then se genera una orden con folio y mensaje de confirmación
+    And la integridad comercial del flujo es consistente de extremo a extremo
