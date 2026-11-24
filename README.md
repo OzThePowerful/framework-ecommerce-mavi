@@ -253,6 +253,13 @@ Los `.feature` (contrato funcional) viven en `test_cases/<sitio>/` y los
 steps delgados en `tests/bdd/steps/`. El runner es
 `tests/bdd/test_features.py`.
 
+### Catálogo de Test Cases (Plane)
+
+El catálogo normalizado `test_cases/plane_catalog.yaml` (42 casos,
+12 módulos) se regenera con `python scripts/build_plane_catalog.py`.
+Plane es la fuente de verdad; el framework produce el artefacto.
+Convención: `CP_EC_<MA|VIU>_<MODULO>_<NNN>`. Ver `docs/test_catalog/`.
+
 ## Licencia
 
 <!-- PENDIENTE: indicar la licencia; el repositorio no tiene archivo LICENSE -->
