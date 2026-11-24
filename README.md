@@ -264,6 +264,20 @@ pytest tests/bdd/test_features.py --site viu                    # suite BDD VIU
 pytest tests/bdd/test_features.py -k CP_EC_MA_ORDER_001 --site muebles_america
 ```
 
+### Ejecución selectiva por Case ID
+
+`--case-id` ejecuta un único Test Case y **deriva el sitio de su marca**
+(no hace falta `--site`; uno explícito que contradiga la marca falla):
+
+```bash
+pytest --case-id CP_EC_MA_CART_001    # ejecuta solo ese caso en MA
+pytest --case-id CP_EC_VIU_HOME_001   # ejecuta solo ese caso en VIU
+```
+
+El ID se valida contra `test_cases/plane_catalog.yaml`: formato
+inválido, ID inexistente o conflicto de marca son errores explícitos
+(exit 4) con sugerencias — nunca una corrida vacía.
+
 Nota operativa: `E2E_001` y `ORDER_001/002` crean órdenes reales en
 stage — excluirlos de regresiones habituales con `-k "not E2E and not ORDER"`.
 
