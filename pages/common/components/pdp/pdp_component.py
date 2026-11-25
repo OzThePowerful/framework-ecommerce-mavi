@@ -59,7 +59,9 @@ class PdpComponent:
         return int(self._current().get("qty") or 1)
 
     def is_available(self) -> bool:
-        """Regla de venta: activo, visible y con stock positivo."""
+        """Regla de venta: activo, visible, con stock positivo y con la
+        etiqueta 'Disponible' — la verdad observable (el JSON del SPA
+        llega desfasado; el badge solo se renderiza con stock real)."""
         cur = self._current()
         stock = cur.get("stock") or {}
         return bool(
@@ -67,6 +69,7 @@ class PdpComponent:
             and int(stock.get("qty") or 0) > 0
             and cur.get("status") == self.REQUIRED_STATUS
             and cur.get("visibility") == self.REQUIRED_VISIBILITY
+            and self.page.locator(PdpLocators.AVAILABILITY_BADGE).count() > 0
         )
 
     def is_add_to_cart_enabled(self) -> bool:

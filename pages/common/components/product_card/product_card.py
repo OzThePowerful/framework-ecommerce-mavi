@@ -43,7 +43,11 @@ class ProductCard:
             return Decimal("0")
 
     def is_purchasable(self) -> bool:
-        """El tile muestra acción de compra (botón agregar al carrito)."""
+        """El tile muestra acción de compra (botón agregar al carrito).
+
+        Nota: el botón NO refleja stock — en VIU/MA aparece deshabilitado
+        en todas las cards (la compra se decide en la PDP).
+        """
         return (
             self._tile.locator(ProductCardLocators.ADD_TO_CART).count() > 0
         )

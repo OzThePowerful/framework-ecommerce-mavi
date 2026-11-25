@@ -31,6 +31,9 @@ class CommonSearchPage(BasePage):
     def eligible_card(self) -> ProductCard | None:
         return self.search_component.eligible_card()
 
+    def eligible_cards(self, max_cards: int = 4) -> list[ProductCard]:
+        return self.search_component.eligible_cards(max_cards)
+
     def open_product(self, product_name: str) -> None:
         """Abre la PDP del tile cuyo texto contiene `product_name`."""
         tile = self.page.locator(SearchLocators.GRID).filter(
@@ -38,3 +41,10 @@ class CommonSearchPage(BasePage):
         )
         tile.first.click()
         self.page.wait_for_url("**/*.html**", timeout=15000)
+
+    def back_to_results(self) -> None:
+        """Regresa a la PLP tras abrir una PDP; el SPA re-renderiza el grid."""
+        self.page.go_back()
+        self.page.locator(SearchLocators.GRID).first.wait_for(
+            state="visible", timeout=15000
+        )

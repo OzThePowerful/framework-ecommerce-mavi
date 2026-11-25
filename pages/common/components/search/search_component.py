@@ -7,6 +7,7 @@ común y los resultados son `div.product-tile` + contador textual.
 import re
 
 from playwright.sync_api import Page
+from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
 
 from pages.common.components.header.header_locators import HeaderLocators
 from pages.common.components.product_card.product_card import ProductCard
@@ -70,15 +71,32 @@ class SearchComponent:
             loaded = current
         return loaded
 
+    def eligible_cards(self, max_cards: int = 4) -> list[ProductCard]:
+        """Primeras `max_cards` cards elegibles por criterios observables:
+        visibles, navegables (href), precio válido y con CTA en el tile.
+
+        La evaluación es perezosa: los tiles fuera de pantalla pueden
+        estar a medio renderizar por el lazy-load del SPA; una card que
+        no responde a tiempo se omite y se continúa con la siguiente.
+        """
+        result: list[ProductCard] = []
+        for card in self.cards():
+            try:
+                if (
+                    card.is_visible()
+                    and card.identifier()
+                    and card.price() > 0
+                    and card.is_purchasable()
+                ):
+                    result.append(card)
+            except PlaywrightTimeoutError:
+                continue
+            if len(result) >= max_cards:
+                break
+        return result
+
     def eligible_card(self) -> ProductCard | None:
         """Primera card elegible por criterios observables (no posicional):
         visible, navegable (href), precio válido y comprable."""
-        for card in self.cards():
-            if (
-                card.is_visible()
-                and card.identifier()
-                and card.price() > 0
-                and card.is_purchasable()
-            ):
-                return card
-        return None
+        cards = self.eligible_cards()
+        return cards[0] if cards else None
