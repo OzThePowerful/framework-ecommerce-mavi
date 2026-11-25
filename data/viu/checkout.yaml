@@ -5,6 +5,7 @@
 guest:
   customer: "guest"
   address: "guadalajara"
+  search_term: "MIDE00067"      # SKU con stock (E2E_001): Estufa Midea MGS30FS1BIABBF $6,699.
   shipping_method: "a_domicilio"  # toggle #domicilio; alternativa "sucursal" (Retiro/Click & Pick Up).
   store_state: "Jalisco"        # estado del store picker (SHIPPING_002; se elige la primera tienda).
   payment_method: "openpay_cards"  # contado por tarjeta; ver payment.yaml.

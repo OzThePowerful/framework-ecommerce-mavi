@@ -76,6 +76,8 @@ class ShippingComponent:
             state="visible"
         )
         previous: list[str] | None = None
+        # KO repinta la lista de forma asíncrona: se sondea hasta que dos
+        # lecturas consecutivas coinciden (no hay evento determinista).
         for _ in range(10):
             self.page.wait_for_timeout(300)
             current = self.stores()

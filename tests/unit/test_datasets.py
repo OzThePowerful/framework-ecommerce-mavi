@@ -6,6 +6,7 @@ físicas: un dataset ausente produce DataError del propio proveedor.
 
 import pytest
 
+from core.execution.execution_errors import DataError
 from data_providers.yaml_data_provider import YamlDataProvider
 
 pytestmark = pytest.mark.unit
@@ -35,8 +36,5 @@ def test_cliente_no_esta_en_dataset():
     """La identidad del comprador es privada del equipo: no existe
     dataset `customers` versionado (resuelve MAVI_GUEST_* del .env)."""
     provider = YamlDataProvider("muebles_america")
-    try:
+    with pytest.raises(DataError):
         provider.get_dataset("customers")
-    except Exception:
-        return
-    raise AssertionError("customers.yaml no debe existir en data/")

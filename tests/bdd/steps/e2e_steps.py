@@ -27,9 +27,8 @@ from workflows.common.sale_cash_workflow import (
 def prepare_sale_request(data_provider, guest_customer, payment_card) -> dict:
     checkout = data_provider.get_record("checkout", "guest")
     address = data_provider.get_record("addresses", checkout["address"])
-    search = data_provider.get_record("search", "with_results")
     request = SaleRequest(
-        search_term=search["term"],
+        search_term=checkout["search_term"],
         customer=guest_customer,
         address=Address(
             street=address["street"],

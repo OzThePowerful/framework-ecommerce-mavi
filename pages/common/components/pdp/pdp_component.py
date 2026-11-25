@@ -10,6 +10,7 @@ precio de lista → si final < regular hay `promotional_price`.
 from decimal import Decimal
 
 from playwright.sync_api import Page
+from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
 
 from core.execution.execution_errors import FrameworkError
 from domain.models.product import Product
@@ -69,8 +70,18 @@ class PdpComponent:
         )
 
     def is_add_to_cart_enabled(self) -> bool:
-        """Estado del CTA de agregar al carrito."""
-        return self.page.locator(PdpLocators.ADD_TO_CART).first.is_enabled()
+        """Estado del CTA de agregar al carrito.
+
+        Es un sondeo (`is_*`): cuando el producto está agotado el CTA no
+        existe — devuelve False en vez de tronar con timeout, para que el
+        llamador distinga 'no comprable' de 'no habilitado'.
+        """
+        cta = self.page.locator(PdpLocators.ADD_TO_CART)
+        try:
+            cta.first.wait_for(state="visible", timeout=5000)
+        except PlaywrightTimeoutError:
+            return False
+        return cta.first.is_enabled()
 
     def type_id(self) -> str:
         """`simple` o `configurable` según el producto cargado."""

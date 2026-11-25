@@ -80,6 +80,9 @@ class PaymentComponent:
         radio = self.page.locator(
             PaymentLocators.METHOD_BY_VALUE.format(value=method)
         ).first
+        # El input real queda oculto tras el label estilizado de KO: el
+        # estado enabled ya está garantizado por wait_method_selectable y
+        # force evita el actionability-check de visibilidad.
         radio.check(force=True)
 
     def selected_method(self) -> str | None:
