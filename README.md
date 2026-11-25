@@ -90,20 +90,26 @@ checkout (campos, métodos de pago, contado, fronteras e irreversibles) en
 
 1. Clona el repositorio y entra a la carpeta.
 
-<!-- PENDIENTE: indicar la URL del repositorio remoto -->
-
 ```bash
-git clone <url-del-repositorio>
+git clone https://github.com/OzThePowerful/framework-ecommerce-mavi.git
 cd framework-ecommerce-mavi
 ```
 
-2. Instala las dependencias con versiones fijas.
+2. Crea y activa un entorno virtual.
+
+```bash
+python -m venv .venv
+.venv\Scripts\activate      # Windows
+# source .venv/bin/activate  # Linux/macOS
+```
+
+3. Instala las dependencias con versiones fijas.
 
 ```bash
 python -m pip install -r requirements.lock
 ```
 
-3. Instala el navegador de Playwright.
+4. Instala el navegador de Playwright.
 
 ```bash
 python -m playwright install chromium
@@ -111,6 +117,19 @@ python -m playwright install chromium
 
 `requirements.in` declara las dependencias directas y `requirements.lock`
 fija las versiones resueltas.
+
+5. (Opcional, para reportes) Instala la CLI de Allure.
+
+```bash
+# Windows (scoop/choco) o npm en cualquier plataforma
+npm install -g allure-commandline
+```
+
+Ver el reporte de una corrida:
+
+```bash
+allure serve artifacts/allure-results
+```
 
 ## Uso
 
@@ -302,6 +321,17 @@ Convención: `CP_EC_<MA|VIU>_<MODULO>_<NNN>`. Ver `docs/test_catalog/`.
 
 Distribución actual: 38 Automated · 4 Not Automated
 (`PAY_002`/`PAY_003` ×2 marcas — reglas de negocio sin dataset).
+
+## Documentación
+
+| Documento | Contenido |
+|---|---|
+| [docs/standards/arquitectura.md](docs/standards/arquitectura.md) | Mapa completo del repo: capas, directorios y reglas |
+| [docs/standards/guia_desarrollo.md](docs/standards/guia_desarrollo.md) | Cómo crear Page Objects, locators, componentes, workflows, modelos, datasets, features y steps; cómo agregar un ecommerce nuevo |
+| [docs/standards/guia_operacion.md](docs/standards/guia_operacion.md) | Runbook de ejecución: site/env, Case ID, suites, Allure, evidencias y Quality Gate |
+| [docs/architecture/](docs/architecture/) | Reglas de dependencia y estrategia de locators verificada |
+| [docs/execution/](docs/execution/) | Bitácora de cambios por contrato (CAMBIOS_EC-SP01-*) |
+| [docs/test_catalog/](docs/test_catalog/) | Catálogo de Test Cases (Plane) |
 
 ## Licencia
 
