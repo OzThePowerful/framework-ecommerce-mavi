@@ -11,3 +11,5 @@ Feature: Home del ecommerce
     Given el usuario abre la home del sitio activo
     Then la home identifica la marca del sitio activo
     And el buscador está accesible
+    And el acceso al carrito está disponible
+    And la navegación principal está disponible

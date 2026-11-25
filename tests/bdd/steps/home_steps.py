@@ -31,3 +31,19 @@ def search_box_accessible(pages) -> None:
     assert header.is_search_submittable(), (
         "El buscador del header no está en estado accesible"
     )
+
+
+@then("el acceso al carrito está disponible")
+def cart_access_available(pages) -> None:
+    header = pages.home().header
+    assert header.is_cart_accessible(), (
+        "El acceso al carrito del header no está disponible"
+    )
+
+
+@then("la navegación principal está disponible")
+def main_navigation_available(pages) -> None:
+    header = pages.home().header
+    assert header.is_navigation_accessible(), (
+        "La navegación principal del header no está disponible"
+    )

@@ -29,6 +29,11 @@ class HeaderComponent:
     def is_search_submittable(self) -> bool:
         return self.page.locator(HeaderLocators.SEARCH_SUBMIT).count() > 0
 
+    def is_navigation_accessible(self) -> bool:
+        """La navegación principal (menú de departamentos y links) está
+        visible — es la vía para comenzar una compra."""
+        return self.page.locator(HeaderLocators.NAV).count() > 0
+
     def wait_until_ready(self) -> None:
         """Estado utilizable del header: barra visible y buscador disponible."""
         self.page.locator(HeaderLocators.VISIBLE_ROOT).first.wait_for(
