@@ -281,11 +281,13 @@ inválido, ID inexistente o conflicto de marca son errores explícitos
 ### Smoke suite
 
 Verificación rápida no transaccional del camino comercial (Home →
-Search → PDP → Cart → Checkout invitado). Nunca crea órdenes.
+departamento → PDP → Cart → Checkout invitado). Nunca crea órdenes.
 
 ```bash
-pytest -m smoke --site muebles_america   # suite smoke MA (3 items)
+pytest -m smoke --site muebles_america   # suite smoke MA
+pytest -m smoke --site viu               # suite smoke VIU
 pytest --case-id CP_EC_MA_SMOKE_001      # el caso, sitio derivado
+```
 ```
 
 Nota operativa: `E2E_001` y `ORDER_001/002` crean órdenes reales en
