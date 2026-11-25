@@ -22,3 +22,4 @@ Feature: Búsqueda de productos
     Given el usuario abre la home del sitio activo
     When busca el término sin resultados del dataset
     Then se muestran cero resultados
+    And no se muestran productos en el listado

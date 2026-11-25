@@ -90,3 +90,11 @@ def zero_results_shown(search_ctx) -> None:
     assert count == expected, (
         f"Se esperaban {expected} resultados; el contador reportó {count}"
     )
+
+
+@then("no se muestran productos en el listado")
+def no_product_cards_shown(search_ctx) -> None:
+    cards = search_ctx["results"].cards()
+    assert not cards, (
+        f"El grid debería quedar vacío pero renderizó {len(cards)} cards"
+    )
