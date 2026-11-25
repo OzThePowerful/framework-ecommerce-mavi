@@ -26,3 +26,7 @@ class CartLocators:
     TOTAL_PRODUCTS = ".total-products"  # "Total de productos N"
     TOTAL_VALUE = ".total-price-value"
     CONTINUE = "role=button[name='Pagar']"
+
+    # CTA "Comprar ahora" del minicart — las clases de plataforma son las
+    # mismas en MA y VIU; `:visible` discrimina la copia móvil oculta.
+    BUY_NOW_BUTTON = "button.buy-now:visible"
