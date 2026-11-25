@@ -26,6 +26,10 @@ class HeaderComponent:
     def is_account_accessible(self) -> bool:
         return self.page.locator(HeaderLocators.ACCOUNT_LINK).count() > 0
 
+    def is_search_box_visible(self) -> bool:
+        """El input de búsqueda está visible en el header activo."""
+        return self.search_box().is_visible()
+
     def is_search_submittable(self) -> bool:
         return self.page.locator(HeaderLocators.SEARCH_SUBMIT).count() > 0
 

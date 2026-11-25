@@ -15,6 +15,17 @@ def open_active_site_home(pages) -> None:
     home.wait_until_ready()
 
 
+@given("el buscador está disponible")
+def searcher_available(pages) -> None:
+    header = pages.home().header
+    assert header.is_search_box_visible(), (
+        "El buscador del header no es visible"
+    )
+    assert header.is_search_submittable(), (
+        "El buscador del header no está habilitado"
+    )
+
+
 @when("busca el término con resultados del dataset", target_fixture="search_ctx")
 def search_with_results(pages, data_provider) -> dict:
     record = data_provider.get_record("search", "with_results")
