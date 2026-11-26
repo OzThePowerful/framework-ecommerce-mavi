@@ -438,6 +438,39 @@ CASES = [
         "estado_automatizacion": "Automated",
         "implementacion": "test_cases/common/checkout/checkout.feature",
         "tags": ["checkout", "customer", "address"],
+        # CP_EC_MA_CHECKOUT_002 — exclusivo de MA (MA-AISLAMIENTO-001).
+        "muebles_america": {
+            "titulo": "Registrar datos válidos del comprador",
+            "objetivo": (
+                "Validar que los datos requeridos del comprador son "
+                "aceptados durante Checkout."
+            ),
+            "tipo": "Funcional positivo",
+            "precondiciones": "Checkout iniciado; dataset de cliente disponible.",
+            "datos": (
+                "Identidad `MAVI_GUEST_MA_*` (.env) vía DataProvider: nombre, "
+                "apellidos, correo y teléfono; dirección `addresses`/"
+                "`guadalajara` (`checkout`/`guest`)."
+            ),
+            "pasos": (
+                "1. Obtener datos de cliente. 2. Capturar nombre. 3. Capturar "
+                "apellidos. 4. Capturar correo. 5. Capturar teléfono. "
+                "6. Completar otros campos obligatorios. 7. Continuar."
+            ),
+            "resultado_esperado": (
+                "Dataset completo; cada campo conserva el valor y no muestra "
+                "error (aria-invalid, .field._error, mensaje de correo); "
+                "calle, número y CP aceptados con colonia/ciudad "
+                "autocompletadas; tras continuar, etapa 'forma_de_pago' sin "
+                "errores ni campos inválidos y datos del comprador intactos."
+            ),
+            "postcondicion": (
+                "Checkout en la etapa 'Forma de pago' con el comprador "
+                "registrado (sin orden creada)."
+            ),
+            "implementacion": "test_cases/muebles_america/checkout/checkout.feature",
+            "tags": ["checkout", "customer", "address"],
+        },
     },
     {
         "suffix": "CHECKOUT_003",
