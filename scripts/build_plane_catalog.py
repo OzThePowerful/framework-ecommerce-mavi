@@ -63,22 +63,30 @@ CASES = [
     {
         "suffix": "SEARCH_001",
         "modulo": "Search",
-        "titulo": "Búsqueda con resultados devuelve cards elegibles y contador consistente",
+        "titulo": "Buscar producto utilizando un término válido",
         "objetivo": (
-            "Verificar que el buscador devuelve resultados y que el "
-            "scroll infinito carga todas las cards del contador."
+            "Validar que el sitio permite buscar productos mediante un "
+            "término válido y muestra resultados utilizables para continuar "
+            "una compra."
         ),
         "prioridad": "Alta",
         "tipo": "Funcional",
-        "precondiciones": "Ambiente stage; catálogo con productos indexados.",
+        "precondiciones": (
+            "Home operativo; dataset de búsqueda disponible; existe al menos "
+            "un producto relacionado con el término configurado."
+        ),
         "datos": "Dataset `search`/`with_results` (término, mínimo).",
         "pasos": (
-            "1. Abrir home. 2. Buscar el término. 3. Leer contador. "
-            "4. Cargar todas las cards por scroll."
+            "1. Abrir el Home. 2. Ubicar el buscador. 3. Capturar un término "
+            "válido. 4. Ejecutar la búsqueda. 5. Esperar resultados. "
+            "6. Revisar productos encontrados. 7. Revisar que los resultados "
+            "puedan seleccionarse."
         ),
         "resultado_esperado": (
-            "Contador >= mínimo; cards cargadas == contador; "
-            "existe card elegible."
+            "Home utilizable; buscador habilitado acepta el término; la ruta "
+            "de resultados corresponde al término; contador >= mínimo y al "
+            "menos una card visible; cards cargadas == contador; existe card "
+            "elegible que abre su PDP."
         ),
         "postcondicion": "Sin cambios de estado.",
         "automatizable": True,

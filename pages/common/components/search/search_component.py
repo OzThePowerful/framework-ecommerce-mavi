@@ -5,6 +5,7 @@ común y los resultados son `div.product-tile` + contador textual.
 """
 
 import re
+from urllib.parse import parse_qs, urlparse
 
 from playwright.sync_api import Page
 
@@ -19,8 +20,19 @@ class SearchComponent:
 
     def search(self, term: str) -> None:
         """Captura el término y ejecuta la búsqueda desde el header."""
-        box = self.page.locator(HeaderLocators.SEARCH_INPUT)
-        box.fill(term)
+        self.type_term(term)
+        self.submit_search()
+
+    def type_term(self, term: str) -> None:
+        """Captura el término en el buscador del header (sin enviarlo)."""
+        self.page.locator(HeaderLocators.SEARCH_INPUT).fill(term)
+
+    def typed_term(self) -> str:
+        """Valor que el buscador del header contiene actualmente."""
+        return self.page.locator(HeaderLocators.SEARCH_INPUT).input_value()
+
+    def submit_search(self) -> None:
+        """Ejecuta la búsqueda capturada y espera la pantalla de resultados."""
         self.page.locator(HeaderLocators.SEARCH_SUBMIT).first.click()
         self.wait_for_results()
 
@@ -30,6 +42,25 @@ class SearchComponent:
         self.page.locator(SearchLocators.RESULT_COUNT).first.wait_for(
             state="visible"
         )
+
+    def is_results_view_ready(self) -> bool:
+        """Pantalla de resultados disponible: contador visible."""
+        return self.page.locator(SearchLocators.RESULT_COUNT).first.is_visible()
+
+    def results_query(self) -> str | None:
+        """Término procesado según la ruta de resultados (`?q=`).
+
+        None si la URL actual no es la ruta de resultados de búsqueda.
+        """
+        url = urlparse(self.page.url)
+        if not url.path.rstrip("/").endswith(SearchLocators.RESULTS_ROUTE):
+            return None
+        values = parse_qs(url.query).get(SearchLocators.QUERY_PARAM) or [""]
+        return values[0]
+
+    def visible_card_count(self) -> int:
+        """Cards de producto visibles en el listado de resultados."""
+        return sum(1 for card in self.cards() if card.is_visible())
 
     def result_count(self) -> int:
         """Total declarado por el sitio (puede diferir de tiles por paginación)."""

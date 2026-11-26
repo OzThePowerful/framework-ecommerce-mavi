@@ -7,11 +7,20 @@
 Feature: Búsqueda de productos
   Búsquedas positivas y negativas con un contrato común entre marcas.
 
-  @SEARCH_001
-  Scenario: Buscar un término con resultados devuelve cards elegibles
+  # Intercalado 1:1 con los pasos de Context_Contratos/MA/CP_EC_MA_SEARCH_001.md.
+  # El step de scroll vs contador es cobertura adicional (EC-SP01-010).
+  @SEARCH_001 @search
+  Scenario: Buscar un término válido muestra resultados navegables
     Given el usuario abre la home del sitio activo
-    When busca el término con resultados del dataset
-    Then se muestran al menos los resultados mínimos esperados
+    Then la home queda en estado utilizable
+    And el buscador está visible y habilitado
+    When captura en el buscador el término con resultados del dataset
+    Then el buscador acepta el término capturado
+    When ejecuta la búsqueda
+    Then la búsqueda se procesa para el término capturado
+    And la pantalla de resultados queda disponible
+    And se muestran al menos los resultados mínimos esperados
+    And se muestra al menos un producto en el listado
     And las cards cargadas por scroll coinciden con el contador de resultados
     And existe al menos una card elegible con nombre, precio e identificador
     And la card elegible abre la PDP del producto
