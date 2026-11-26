@@ -3,3 +3,6 @@
 home_001:
   expected_brand: "viu"
   expected_title_fragment: "VIU"
+  # Entrada estructural al catálogo para comenzar una compra (paso 6).
+  expected_nav_items:
+    - "Departamentos"

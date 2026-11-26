@@ -10,16 +10,18 @@ total_casos: 42
 casos:
 - id: CP_EC_MA_HOME_001
   titulo: La home carga en estado utilizable e identifica la marca
-  objetivo: Verificar que la home abre con header, buscador y elementos de marca operativos.
+  objetivo: Comprobar que la página principal carga correctamente y proporciona los controles mínimos para iniciar un flujo de compra.
   prioridad: Alta
   tipo: Smoke
   ecommerce: Muebles América
   ecommerce_key: muebles_america
   modulo: Home
-  precondiciones: Ambiente stage accesible; sitio resuelto por ExecutionContext.
-  datos: Dataset `home`/`home_001` (expectativas de marca).
-  pasos: 1. Abrir la home. 2. Aceptar cookies si aparecen. 3. Esperar estado listo.
-  resultado_esperado: Header visible, buscador accesible único, marca identificada.
+  precondiciones: Ambiente stage disponible; URL del sitio configurada; navegador soportado; conexión con el sitio.
+  datos: Dataset `home`/`home_001` (título de marca y elementos de navegación esperados).
+  pasos: 1. Navegar a la URL configurada. 2. Esperar la carga inicial. 3. Validar la identidad visual. 4. Localizar el buscador. 5. Localizar
+    el acceso al carrito. 6. Revisar la navegación principal.
+  resultado_esperado: Sitio responde 2xx/3xx; home utilizable sin bloqueos; logo y título de la marca; buscador visible y habilitado; carrito
+    disponible; navegación principal con 'Departamentos'.
   postcondicion: Sin cambios de estado en el sitio.
   automatizable: true
   estado_automatizacion: Automated
@@ -421,16 +423,18 @@ casos:
   - irreversible
 - id: CP_EC_VIU_HOME_001
   titulo: La home carga en estado utilizable e identifica la marca
-  objetivo: Verificar que la home abre con header, buscador y elementos de marca operativos.
+  objetivo: Comprobar que la página principal carga correctamente y proporciona los controles mínimos para iniciar un flujo de compra.
   prioridad: Alta
   tipo: Smoke
   ecommerce: VIU
   ecommerce_key: viu
   modulo: Home
-  precondiciones: Ambiente stage accesible; sitio resuelto por ExecutionContext.
-  datos: Dataset `home`/`home_001` (expectativas de marca).
-  pasos: 1. Abrir la home. 2. Aceptar cookies si aparecen. 3. Esperar estado listo.
-  resultado_esperado: Header visible, buscador accesible único, marca identificada.
+  precondiciones: Ambiente stage disponible; URL del sitio configurada; navegador soportado; conexión con el sitio.
+  datos: Dataset `home`/`home_001` (título de marca y elementos de navegación esperados).
+  pasos: 1. Navegar a la URL configurada. 2. Esperar la carga inicial. 3. Validar la identidad visual. 4. Localizar el buscador. 5. Localizar
+    el acceso al carrito. 6. Revisar la navegación principal.
+  resultado_esperado: Sitio responde 2xx/3xx; home utilizable sin bloqueos; logo y título de la marca; buscador visible y habilitado; carrito
+    disponible; navegación principal con 'Departamentos'.
   postcondicion: Sin cambios de estado en el sitio.
   automatizable: true
   estado_automatizacion: Automated

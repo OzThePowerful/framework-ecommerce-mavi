@@ -31,16 +31,28 @@ CASES = [
         "modulo": "Home",
         "titulo": "La home carga en estado utilizable e identifica la marca",
         "objetivo": (
-            "Verificar que la home abre con header, buscador y "
-            "elementos de marca operativos."
+            "Comprobar que la página principal carga correctamente y "
+            "proporciona los controles mínimos para iniciar un flujo de compra."
         ),
         "prioridad": "Alta",
         "tipo": "Smoke",
-        "precondiciones": "Ambiente stage accesible; sitio resuelto por ExecutionContext.",
-        "datos": "Dataset `home`/`home_001` (expectativas de marca).",
-        "pasos": "1. Abrir la home. 2. Aceptar cookies si aparecen. 3. Esperar estado listo.",
+        "precondiciones": (
+            "Ambiente stage disponible; URL del sitio configurada; "
+            "navegador soportado; conexión con el sitio."
+        ),
+        "datos": (
+            "Dataset `home`/`home_001` (título de marca y elementos de "
+            "navegación esperados)."
+        ),
+        "pasos": (
+            "1. Navegar a la URL configurada. 2. Esperar la carga inicial. "
+            "3. Validar la identidad visual. 4. Localizar el buscador. "
+            "5. Localizar el acceso al carrito. 6. Revisar la navegación principal."
+        ),
         "resultado_esperado": (
-            "Header visible, buscador accesible único, marca identificada."
+            "Sitio responde 2xx/3xx; home utilizable sin bloqueos; logo y "
+            "título de la marca; buscador visible y habilitado; carrito "
+            "disponible; navegación principal con 'Departamentos'."
         ),
         "postcondicion": "Sin cambios de estado en el sitio.",
         "automatizable": True,

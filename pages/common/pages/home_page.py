@@ -29,9 +29,16 @@ class CommonHomePage(BasePage):
         self.notifications = NotificationComponent(page)
         self.mega_menu = self.MEGA_MENU(page) if self.MEGA_MENU else None
 
-    def open_home(self) -> None:
-        """Abre la home resolviendo la URL desde el ExecutionContext."""
-        self.open("/")
+    def open_home(self) -> int | None:
+        """Abre la home resolviendo la URL desde el ExecutionContext.
+
+        Devuelve el status HTTP de la respuesta (ver BasePage.open).
+        """
+        return self.open("/")
+
+    def title(self) -> str:
+        """Título del documento (identidad de marca en la pestaña)."""
+        return self.page.title()
 
     def wait_until_ready(self) -> None:
         """Estado utilizable: header operativo y loaders resueltos."""
