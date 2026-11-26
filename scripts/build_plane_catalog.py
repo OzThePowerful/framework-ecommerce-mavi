@@ -325,6 +325,40 @@ CASES = [
         "estado_automatizacion": "Automated",
         "implementacion": "test_cases/common/cart/cart.feature",
         "tags": ["cart", "checkout", "gate"],
+        # CP_EC_MA_CART_002 — exclusivo de MA (MA-AISLAMIENTO-001).
+        "muebles_america": {
+            "titulo": "Validar producto, cantidad, precio y subtotal del carrito",
+            "objetivo": (
+                "Verificar que la información transferida desde PDP al "
+                "carrito mantiene consistencia comercial."
+            ),
+            "tipo": "Validación comercial",
+            "precondiciones": (
+                "Producto agregado al carrito; información de PDP "
+                "previamente capturada."
+            ),
+            "datos": (
+                "Producto elegible obtenido desde Search (dataset "
+                "`search`/`with_results`); cantidad seleccionada en la PDP."
+            ),
+            "pasos": (
+                "1. Abrir carrito. 2. Obtener nombre del producto. "
+                "3. Obtener identificador/SKU si está disponible. "
+                "4. Obtener cantidad. 5. Obtener precio unitario. "
+                "6. Obtener subtotal. 7. Calcular subtotal esperado. "
+                "8. Comparar subtotal observado contra esperado."
+            ),
+            "resultado_esperado": (
+                "Carrito disponible con 1 ítem; nombre y SKU iguales a la "
+                "PDP (SKU ausente documentado); cantidad = seleccionada; "
+                "precio unitario = precio aplicable de la PDP; subtotal del "
+                "resumen disponible e igual a cantidad × precio (Decimal, "
+                "antes de descuentos); gate 'Continuar como invitado' visible."
+            ),
+            "postcondicion": "En la puerta del checkout con el producto en el carrito.",
+            "implementacion": "test_cases/muebles_america/cart/cart.feature",
+            "tags": ["cart", "commercial_validation", "checkout", "gate"],
+        },
     },
     {
         "suffix": "CHECKOUT_001",

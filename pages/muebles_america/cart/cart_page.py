@@ -1,18 +1,22 @@
 """Carrito de Muebles América: fachada sobre la base common.
 
-Agrega los sondeos que usa CP_EC_MA_CART_001 (MA-AISLAMIENTO-001):
-estado del SPA tras agregar, contador del minicart y carrito abierto.
+Agrega los sondeos que usan CP_EC_MA_CART_001 / _002 (MA-AISLAMIENTO-001):
+estado del SPA tras agregar, contador del minicart, carrito abierto y
+subtotal del resumen.
 Devuelven estado, sin asserts.
 """
 
 import re
 import time
+from decimal import Decimal
 from urllib.parse import urlparse
 
+from domain.money.money import Money
 from pages.common.pages.cart_page import CommonCartPage
 from pages.muebles_america.cart.cart_locators import CartLocators
 
 _POLL_MS = 250
+_SUMMARY_SUBTOTAL = re.compile(r"Subtotal:\s*\$?\s*([\d,]+\.\d{2})")
 
 
 class CartPage(CommonCartPage):
@@ -47,6 +51,21 @@ class CartPage(CommonCartPage):
             if count == expected or time.monotonic() >= deadline:
                 return count
             self.page.wait_for_timeout(_POLL_MS)
+
+    def summary_subtotal(self) -> Money | None:
+        """'Subtotal:' del resumen de compra (CP_EC_MA_CART_002 paso 6).
+
+        A diferencia de `page_subtotal()` (0 si no lo encuentra), devuelve
+        None cuando el resumen no muestra subtotal, para que el llamador
+        distinga 'ausente' de 'cero'.
+        """
+        summary = self.page.locator(CartLocators.SUMMARY)
+        if not summary.count():
+            return None
+        match = _SUMMARY_SUBTOTAL.search(summary.first.inner_text() or "")
+        if not match:
+            return None
+        return Money(Decimal(match.group(1).replace(",", "")))
 
     def is_open(self) -> bool:
         """Página del carrito abierta: ruta del carrito + contenedor visible."""

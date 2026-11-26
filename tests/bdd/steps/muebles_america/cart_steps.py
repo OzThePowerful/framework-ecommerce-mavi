@@ -1,7 +1,8 @@
 """Steps BDD de Cart exclusivos de Muebles América
-(test_cases/muebles_america/cart/ — CP_EC_MA_CART_001).
+(test_cases/muebles_america/cart/ — CP_EC_MA_CART_001 / _002).
 
-Siguen 1:1 los pasos 2–7 del contrato. Reutilizan los steps de PDP de MA
+CART_001: pasos 2–7 del contrato. CART_002: pasos 2–8 (comparación
+PDP→Cart y subtotal con precisión decimal). Reutilizan los steps de PDP de MA
 (`selecciona una card elegible y abre su PDP`, `se abre la PDP del
 producto seleccionado`) y los comunes `abre el carrito de compras`,
 `el carrito contiene el producto…` y `los importes del carrito…`. Los
@@ -11,12 +12,15 @@ rama VIU (MA-AISLAMIENTO-001). Sin locators ni Playwright.
 """
 
 import json
+from decimal import Decimal
 
 from pytest_bdd import then, when
 
 from core.reporting.allure_manager import attach_text
+from domain.money.money import Money
 
 _ADDED_TEXT = "agregado a tu carrito"
+_ABSENT = "ausente"
 
 
 def _normalize(text: str) -> str:
@@ -153,3 +157,116 @@ def registered_product_in_cart(cart_ctx) -> None:
         f"Nombre en carrito {item.product.name!r} != registrado {expected.name!r}"
     )
     assert item.quantity == 1, f"Cantidad en carrito {item.quantity}; se esperaba 1"
+
+
+# --- CP_EC_MA_CART_002 ------------------------------------------------------
+def _single_cart_item(cart_ctx):
+    """El único ítem del carrito (precondición: un producto agregado)."""
+    items = cart_ctx["cart"].items
+    assert len(items) == 1, f"El carrito debería tener 1 ítem; tiene {len(items)}"
+    return items[0]
+
+
+# Paso 2 — nombre.
+@then("el nombre del producto en el carrito coincide con la PDP")
+def cart_name_matches_pdp(cart_ctx) -> None:
+    item = _single_cart_item(cart_ctx)
+    expected = cart_ctx["expected"].name
+    assert _normalize(item.product.name) == _normalize(expected), (
+        f"Nombre en carrito {item.product.name!r} != PDP {expected!r}"
+    )
+
+
+# Paso 3 — identificador/SKU si está disponible.
+@then(
+    "el identificador del producto en el carrito coincide con la PDP "
+    "o se documenta su ausencia"
+)
+def cart_sku_matches_pdp(cart_ctx) -> None:
+    item = _single_cart_item(cart_ctx)
+    expected = cart_ctx["expected"].sku
+    attach_text(
+        "Identificador en carrito",
+        json.dumps(
+            {"cart_sku": item.product.sku or _ABSENT, "pdp_sku": expected or _ABSENT},
+            ensure_ascii=False,
+        ),
+    )
+    if item.product.sku:
+        assert item.product.sku == expected, (
+            f"SKU en carrito {item.product.sku!r} != PDP {expected!r}"
+        )
+
+
+# Paso 4 — cantidad.
+@then("la cantidad en el carrito coincide con la cantidad seleccionada")
+def cart_quantity_matches_selected(cart_ctx) -> None:
+    item = _single_cart_item(cart_ctx)
+    assert item.quantity == cart_ctx["expected_qty"], (
+        f"Cantidad en carrito {item.quantity} != seleccionada "
+        f"{cart_ctx['expected_qty']}"
+    )
+
+
+# Paso 5 — precio unitario aplicable (promocional si existe).
+@then("el precio unitario en el carrito coincide con el precio aplicable de la PDP")
+def cart_unit_price_matches_pdp(cart_ctx) -> None:
+    item = _single_cart_item(cart_ctx)
+    expected = cart_ctx["expected"].effective_price
+    observed = item.effective_unit_price
+    assert observed.amount == expected.amount, (
+        f"Precio unitario en carrito {observed.amount} != precio aplicable "
+        f"de la PDP {expected.amount}"
+    )
+
+
+# Paso 6 — subtotal disponible.
+@then("el subtotal del carrito está disponible")
+def cart_subtotal_available(cart_ctx) -> None:
+    observed = cart_ctx["cart_page"].summary_subtotal()
+    cart_ctx["observed_subtotal"] = observed
+    assert observed is not None, "El resumen del carrito no muestra el subtotal"
+    assert observed.amount > 0, f"El subtotal del carrito es {observed.amount}"
+
+
+# Paso 7 — subtotal esperado con precisión decimal (sin floats).
+@when("calcula el subtotal esperado con precisión decimal")
+def compute_expected_subtotal(cart_ctx) -> None:
+    unit = cart_ctx["expected"].effective_price
+    qty = cart_ctx["expected_qty"]
+    cart_ctx["expected_subtotal"] = Money(unit.amount * Decimal(qty), unit.currency)
+
+
+# Paso 8 — comparación (el subtotal se compara antes de descuentos).
+@then("el subtotal observado coincide con el esperado")
+def subtotal_matches_expected(cart_ctx) -> None:
+    observed = cart_ctx["observed_subtotal"]
+    expected = cart_ctx["expected_subtotal"]
+    attach_text(
+        "Subtotal esperado",
+        json.dumps(
+            {
+                "quantity": cart_ctx["expected_qty"],
+                "unit_price_pdp": str(cart_ctx["expected"].effective_price.amount),
+                "expected_subtotal": str(expected.amount),
+                "observed_subtotal": str(observed.amount),
+                "discount": str(cart_ctx["cart_page"].page_discount().amount),
+                "currency": expected.currency,
+            },
+            ensure_ascii=False,
+        ),
+    )
+    assert observed == expected, (
+        f"Subtotal observado {observed.amount} != esperado {expected.amount} "
+        f"({cart_ctx['expected_qty']} × {cart_ctx['expected'].effective_price.amount})"
+    )
+
+
+# Cobertura adicional (CART_002 anterior): transición al gate de invitado.
+@then("se muestra la opción de continuar el checkout como invitado")
+def guest_checkout_option_visible(pages) -> None:
+    checkout = pages.checkout()
+    checkout.wait_for_guest_gate()
+    assert checkout.is_guest_gate_visible(), (
+        "El gate 'Continuar como invitado' no se mostró tras continuar"
+    )
