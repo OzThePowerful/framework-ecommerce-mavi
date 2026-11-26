@@ -4,20 +4,14 @@
 Feature: Página de detalle de producto
   La PDP expone el modelo de dominio Product independientemente del DOM.
 
-  # Intercalado 1:1 con los pasos de Context_Contratos/MA/CP_EC_MA_PDP_001.md.
-  @PDP_001 @pdp
-  Scenario: Un producto disponible abierto desde la búsqueda tiene la información para comprarlo
+  @PDP_001
+  Scenario: Abrir una PDP desde la búsqueda expone el modelo Product
     Given el usuario abre la home del sitio activo
     When busca el término con resultados del dataset
-    Then se muestran al menos los resultados mínimos esperados
-    And se muestra al menos un producto en el listado
-    When abre la PDP de una card elegible
-    Then se abre la PDP del producto seleccionado
-    And el producto tiene nombre no vacío
-    And el producto expone un identificador válido o se documenta su ausencia
-    And el precio es un importe válido mayor a cero
-    And la disponibilidad permite comprar el producto
-    And la acción de agregar al carrito está disponible y habilitada
+    And abre la PDP de una card elegible
+    Then el modelo Product tiene nombre, sku e identificador
+    And el precio es válido y la disponibilidad cumple las reglas de venta
+    And el CTA de agregar al carrito está habilitado
 
   @PDP_002
   Scenario: Un configurable expone su padre y sus variantes como Product

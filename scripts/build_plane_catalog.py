@@ -24,145 +24,208 @@ ECOMMERCES = (
 
 VALID_STATES = ("Not Automated", "In Development", "Automated", "Blocked")
 
-# Definición única por módulo: `suffix` completa el Case ID.
+# Definición única por módulo: `suffix` completa el Case ID. Un bloque
+# `muebles_america: {...}` / `viu: {...}` sobrescribe campos para esa marca.
 CASES = [
     {
         "suffix": "HOME_001",
         "modulo": "Home",
         "titulo": "La home carga en estado utilizable e identifica la marca",
         "objetivo": (
-            "Comprobar que la página principal carga correctamente y "
-            "proporciona los controles mínimos para iniciar un flujo de compra."
+            "Verificar que la home abre con header, buscador y "
+            "elementos de marca operativos."
         ),
         "prioridad": "Alta",
         "tipo": "Smoke",
-        "precondiciones": (
-            "Ambiente stage disponible; URL del sitio configurada; "
-            "navegador soportado; conexión con el sitio."
-        ),
-        "datos": (
-            "Dataset `home`/`home_001` (título de marca y elementos de "
-            "navegación esperados)."
-        ),
-        "pasos": (
-            "1. Navegar a la URL configurada. 2. Esperar la carga inicial. "
-            "3. Validar la identidad visual. 4. Localizar el buscador. "
-            "5. Localizar el acceso al carrito. 6. Revisar la navegación principal."
-        ),
+        "precondiciones": "Ambiente stage accesible; sitio resuelto por ExecutionContext.",
+        "datos": "Dataset `home`/`home_001` (expectativas de marca).",
+        "pasos": "1. Abrir la home. 2. Aceptar cookies si aparecen. 3. Esperar estado listo.",
         "resultado_esperado": (
-            "Sitio responde 2xx/3xx; home utilizable sin bloqueos; logo y "
-            "título de la marca; buscador visible y habilitado; carrito "
-            "disponible; navegación principal con 'Departamentos'."
+            "Header visible, buscador accesible único, marca identificada."
         ),
         "postcondicion": "Sin cambios de estado en el sitio.",
         "automatizable": True,
         "estado_automatizacion": "Automated",
         "implementacion": "test_cases/common/home/home.feature",
         "tags": ["smoke", "regression", "home"],
+        # CP_EC_MA_HOME_001 — exclusivo de MA (MA-AISLAMIENTO-001).
+        "muebles_america": {
+            "objetivo": (
+                "Comprobar que la página principal carga correctamente y "
+                "proporciona los controles mínimos para iniciar un flujo de compra."
+            ),
+            "precondiciones": (
+                "Ambiente stage disponible; URL del sitio configurada; "
+                "navegador soportado; conexión con el sitio."
+            ),
+            "datos": (
+                "Dataset `home`/`home_001` (título de marca y elementos de "
+                "navegación esperados)."
+            ),
+            "pasos": (
+                "1. Navegar a la URL configurada. 2. Esperar la carga inicial. "
+                "3. Validar la identidad visual. 4. Localizar el buscador. "
+                "5. Localizar el acceso al carrito. 6. Revisar la navegación principal."
+            ),
+            "resultado_esperado": (
+                "Sitio responde 2xx/3xx; home utilizable sin bloqueos; logo y "
+                "título de la marca; buscador visible y habilitado; carrito "
+                "disponible; navegación principal con 'Departamentos'."
+            ),
+            "implementacion": "test_cases/muebles_america/home/home.feature",
+        },
     },
     {
         "suffix": "SEARCH_001",
         "modulo": "Search",
-        "titulo": "Buscar producto utilizando un término válido",
+        "titulo": "Búsqueda con resultados devuelve cards elegibles y contador consistente",
         "objetivo": (
-            "Validar que el sitio permite buscar productos mediante un "
-            "término válido y muestra resultados utilizables para continuar "
-            "una compra."
+            "Verificar que el buscador devuelve resultados y que el "
+            "scroll infinito carga todas las cards del contador."
         ),
         "prioridad": "Alta",
         "tipo": "Funcional",
-        "precondiciones": (
-            "Home operativo; dataset de búsqueda disponible; existe al menos "
-            "un producto relacionado con el término configurado."
-        ),
+        "precondiciones": "Ambiente stage; catálogo con productos indexados.",
         "datos": "Dataset `search`/`with_results` (término, mínimo).",
         "pasos": (
-            "1. Abrir el Home. 2. Ubicar el buscador. 3. Capturar un término "
-            "válido. 4. Ejecutar la búsqueda. 5. Esperar resultados. "
-            "6. Revisar productos encontrados. 7. Revisar que los resultados "
-            "puedan seleccionarse."
+            "1. Abrir home. 2. Buscar el término. 3. Leer contador. "
+            "4. Cargar todas las cards por scroll."
         ),
         "resultado_esperado": (
-            "Home utilizable; buscador habilitado acepta el término; la ruta "
-            "de resultados corresponde al término; contador >= mínimo y al "
-            "menos una card visible; cards cargadas == contador; existe card "
-            "elegible que abre su PDP."
+            "Contador >= mínimo; cards cargadas == contador; "
+            "existe card elegible."
         ),
         "postcondicion": "Sin cambios de estado.",
         "automatizable": True,
         "estado_automatizacion": "Automated",
         "implementacion": "test_cases/common/search/search.feature",
         "tags": ["search", "regression", "scroll-infinito"],
+        # CP_EC_MA_SEARCH_001 — exclusivo de MA (MA-AISLAMIENTO-001).
+        "muebles_america": {
+            "titulo": "Buscar producto utilizando un término válido",
+            "objetivo": (
+                "Validar que el sitio permite buscar productos mediante un "
+                "término válido y muestra resultados utilizables para continuar "
+                "una compra."
+            ),
+            "precondiciones": (
+                "Home operativo; dataset de búsqueda disponible; existe al menos "
+                "un producto relacionado con el término configurado."
+            ),
+            "pasos": (
+                "1. Abrir el Home. 2. Ubicar el buscador. 3. Capturar un término "
+                "válido. 4. Ejecutar la búsqueda. 5. Esperar resultados. "
+                "6. Revisar productos encontrados. 7. Revisar que los resultados "
+                "puedan seleccionarse."
+            ),
+            "resultado_esperado": (
+                "Home utilizable; buscador habilitado acepta el término; la ruta "
+                "de resultados corresponde al término; contador >= mínimo y al "
+                "menos una card visible; cards cargadas == contador; existe card "
+                "elegible que abre su PDP."
+            ),
+            "implementacion": "test_cases/muebles_america/search/search.feature",
+        },
     },
     {
         "suffix": "SEARCH_002",
         "modulo": "Search",
-        "titulo": "Validar búsqueda sin resultados",
-        "objetivo": (
-            "Comprobar que el ecommerce maneja correctamente una búsqueda "
-            "para la cual no existen productos."
-        ),
+        "titulo": "Búsqueda sin resultados muestra el estado vacío",
+        "objetivo": "Verificar el estado vacío correcto ante un término inexistente.",
         "prioridad": "Media",
-        "tipo": "Funcional negativo",
-        "precondiciones": (
-            "Home operativo; existe un término controlado que no devuelve "
-            "productos."
-        ),
-        "datos": "Dataset `search`/`without_results` (término controlado, 0 esperados).",
-        "pasos": (
-            "1. Abrir Home. 2. Capturar término sin resultados. 3. Ejecutar "
-            "búsqueda. 4. Revisar listado. 5. Revisar estado vacío."
-        ),
-        "resultado_esperado": (
-            "Home utilizable; el buscador acepta el término; la ruta de "
-            "resultados corresponde al término; ninguna card visible; "
-            "contador '0 resultados de búsqueda'."
-        ),
-        "postcondicion": "No se selecciona ningún producto.",
+        "tipo": "Funcional",
+        "precondiciones": "Ambiente stage.",
+        "datos": "Dataset `search`/`without_results`.",
+        "pasos": "1. Abrir home. 2. Buscar término inexistente.",
+        "resultado_esperado": "Contador/estado de 0 resultados visible.",
+        "postcondicion": "Sin cambios de estado.",
         "automatizable": True,
         "estado_automatizacion": "Automated",
         "implementacion": "test_cases/common/search/search.feature",
-        "tags": ["search", "negative", "estado-vacio"],
+        "tags": ["search", "estado-vacio"],
+        # CP_EC_MA_SEARCH_002 — exclusivo de MA (MA-AISLAMIENTO-001).
+        "muebles_america": {
+            "titulo": "Validar búsqueda sin resultados",
+            "objetivo": (
+                "Comprobar que el ecommerce maneja correctamente una búsqueda "
+                "para la cual no existen productos."
+            ),
+            "tipo": "Funcional negativo",
+            "precondiciones": (
+                "Home operativo; existe un término controlado que no devuelve "
+                "productos."
+            ),
+            "datos": "Dataset `search`/`without_results` (término controlado, 0 esperados).",
+            "pasos": (
+                "1. Abrir Home. 2. Capturar término sin resultados. 3. Ejecutar "
+                "búsqueda. 4. Revisar listado. 5. Revisar estado vacío."
+            ),
+            "resultado_esperado": (
+                "Home utilizable; el buscador acepta el término; la ruta de "
+                "resultados corresponde al término; ninguna card visible; "
+                "contador '0 resultados de búsqueda'."
+            ),
+            "postcondicion": "No se selecciona ningún producto.",
+            "implementacion": "test_cases/muebles_america/search/search.feature",
+            "tags": ["search", "negative", "estado-vacio"],
+        },
     },
     {
         "suffix": "PDP_001",
         "modulo": "PDP",
-        "titulo": "Validar información de un producto disponible en PDP",
+        "titulo": "La PDP expone el modelo Product con datos comerciales válidos",
         "objetivo": (
-            "Comprobar que un producto seleccionado desde resultados abre "
-            "su página de detalle y contiene la información necesaria para "
-            "ser comprado."
+            "Verificar que la PDP produce un Product (nombre, SKU, "
+            "precio, disponibilidad) consistente con la URL."
         ),
         "prioridad": "Alta",
         "tipo": "Funcional",
-        "precondiciones": "Search operativo; existe producto disponible.",
-        "datos": (
-            "Producto elegible obtenido dinámicamente desde Search "
-            "(dataset `search`/`with_results`)."
-        ),
-        "pasos": (
-            "1. Ejecutar búsqueda válida. 2. Seleccionar un producto "
-            "elegible. 3. Obtener nombre. 4. Obtener SKU o identificador. "
-            "5. Obtener precio. 6. Revisar disponibilidad. 7. Localizar "
-            "acción de agregar al carrito."
-        ),
+        "precondiciones": "Ambiente stage; búsqueda con resultados.",
+        "datos": "Producto elegible desde búsqueda.",
+        "pasos": "1. Buscar. 2. Abrir card elegible. 3. Leer modelo Product.",
         "resultado_esperado": (
-            "Resultados visibles; la PDP corresponde a la card (slug y "
-            "nombre); nombre no vacío; sku en la URL y/o product_id "
-            "numérico (ausencia documentada); precio > 0 coherente con el "
-            "promocional; etiqueta 'Disponible' o 'Solo queda N' (no "
-            "'Agotado') y regla de venta cumplida; agregar al carrito "
-            "habilitado."
+            "SKU coherente con URL, nombre no vacío, precio > 0, "
+            "CTA habilitado."
         ),
-        "postcondicion": (
-            "Información del producto (product_name, sku/product_id, "
-            "unit_price, promotional_price, availability) disponible para "
-            "validaciones posteriores."
-        ),
+        "postcondicion": "Sin cambios de estado.",
         "automatizable": True,
         "estado_automatizacion": "Automated",
         "implementacion": "test_cases/common/product/pdp.feature",
         "tags": ["pdp", "product", "regression"],
+        # CP_EC_MA_PDP_001 — exclusivo de MA (MA-AISLAMIENTO-001).
+        "muebles_america": {
+            "titulo": "Validar información de un producto disponible en PDP",
+            "objetivo": (
+                "Comprobar que un producto seleccionado desde resultados abre "
+                "su página de detalle y contiene la información necesaria para "
+                "ser comprado."
+            ),
+            "precondiciones": "Search operativo; existe producto disponible.",
+            "datos": (
+                "Producto elegible obtenido dinámicamente desde Search "
+                "(dataset `search`/`with_results`)."
+            ),
+            "pasos": (
+                "1. Ejecutar búsqueda válida. 2. Seleccionar un producto "
+                "elegible. 3. Obtener nombre. 4. Obtener SKU o identificador. "
+                "5. Obtener precio. 6. Revisar disponibilidad. 7. Localizar "
+                "acción de agregar al carrito."
+            ),
+            "resultado_esperado": (
+                "Resultados visibles; la PDP corresponde a la card (slug y "
+                "nombre); nombre no vacío; sku en la URL y/o product_id "
+                "numérico (ausencia documentada); precio > 0 coherente con el "
+                "promocional; etiqueta 'Disponible' o 'Solo queda N' (no "
+                "'Agotado') y regla de venta cumplida; agregar al carrito "
+                "habilitado."
+            ),
+            "postcondicion": (
+                "Información del producto (product_name, sku/product_id, "
+                "unit_price, promotional_price, availability) disponible para "
+                "validaciones posteriores."
+            ),
+            "implementacion": "test_cases/muebles_america/product/pdp.feature",
+        },
     },
     {
         "suffix": "PDP_002",
@@ -548,18 +611,27 @@ CASES = [
 ]
 
 
+def _for_site(case: dict, site_key: str) -> dict:
+    """Definición del caso para una marca.
+
+    Un bloque `<sitio>: {campo: valor}` sobrescribe los campos de la
+    definición común solo para esa marca (MA-AISLAMIENTO-001: los casos
+    exclusivos de MA no cambian la ficha de VIU). Se conserva el formato
+    plano `<campo>_<sitio>` para estado e implementación.
+    """
+    resolved = {**case, **case.get(site_key, {})}
+    for field in ("estado_automatizacion", "implementacion"):
+        flat = case.get(f"{field}_{site_key}")
+        if flat:
+            resolved[field] = flat
+    return resolved
+
+
 def build_catalog() -> dict:
     cases = []
     for site_key, site_id, site_name in ECOMMERCES:
-        for case in CASES:
-            state = (
-                case.get(f"estado_automatizacion_{site_key}")
-                or case["estado_automatizacion"]
-            )
-            impl = (
-                case.get(f"implementacion_{site_key}")
-                or case["implementacion"]
-            )
+        for base in CASES:
+            case = _for_site(base, site_key)
             cases.append(
                 {
                     "id": f"CP_EC_{site_id}_{case['suffix']}",
@@ -576,8 +648,8 @@ def build_catalog() -> dict:
                     "resultado_esperado": case["resultado_esperado"],
                     "postcondicion": case["postcondicion"],
                     "automatizable": case["automatizable"],
-                    "estado_automatizacion": state,
-                    "implementacion": impl,
+                    "estado_automatizacion": case["estado_automatizacion"],
+                    "implementacion": case["implementacion"],
                     "tags": case["tags"],
                 }
             )

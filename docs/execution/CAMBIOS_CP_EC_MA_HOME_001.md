@@ -1,5 +1,15 @@
 # CAMBIOS CP_EC_MA_HOME_001 — Validar carga correcta del Home de Muebles América
 
+> **Ajuste posterior ([MA-AISLAMIENTO-001](CAMBIOS_MA-AISLAMIENTO-001.md)):**
+> este caso aplica **solo a Muebles América**. El escenario y sus steps
+> viven ahora en `test_cases/muebles_america/home/` y
+> `tests/bdd/steps/muebles_america/home_steps.py`. Los locators y métodos
+> de header viven en `pages/muebles_america/components/header/`. Lo común
+> y `data/viu/home.yaml` volvieron a su versión anterior, así que
+> `CP_EC_VIU_HOME_001` **no** quedó alineado (lo trabaja la rama
+> `origin/viu`). El paso 5 se llama `el acceso al carrito está visible y
+> habilitado`.
+
 ## Alcance
 
 Alinear el escenario BDD `@HOME_001` con los 6 pasos del contrato

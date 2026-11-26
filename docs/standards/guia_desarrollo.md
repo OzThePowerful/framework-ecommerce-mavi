@@ -104,6 +104,23 @@ Feature: <Título>
 4. **Catálogo**: `python scripts/build_plane_catalog.py` regenera
    `test_cases/plane_catalog.yaml`.
 
+### Caso exclusivo de una marca (MA-AISLAMIENTO-001)
+
+Cuando un contrato aplica solo a una marca (p.ej. `Context_Contratos/MA/`),
+no se modifica el `.feature` común:
+
+1. Feature en `test_cases/<sitio>/<modulo>/<tema>.feature` con el tag de
+   marca a nivel de Feature (`@muebles_america`) y el mismo tag de caso
+   (`@HOME_001`). En esa marca **reemplaza** al escenario común y en las
+   demás se descarta (`fixtures/execution_fixtures.py::keep_for_site`).
+2. Steps en `tests/bdd/steps/<sitio>/<modulo>_steps.py`, importados en
+   `tests/bdd/test_features.py`. Los steps son globales: usa textos que
+   no existan en otra marca ni en otra rama.
+3. Locators y métodos nuevos en `pages/<sitio>/` (subclase o componente
+   de la marca), no en `common/`.
+4. Catálogo: bloque `<sitio>: {campo: valor}` en la definición del caso
+   de `scripts/build_plane_catalog.py`.
+
 ## Cómo agregar un nuevo ecommerce
 
 Sin copiar el framework — la marca hereda todo lo común:

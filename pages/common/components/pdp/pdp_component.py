@@ -85,16 +85,6 @@ class PdpComponent:
             return False
         return cta.first.is_enabled()
 
-    def availability_label(self) -> str | None:
-        """Etiqueta de disponibilidad visible: 'Disponible', 'Agotado' o
-        'Solo queda N'. Es un sondeo: None si la PDP no la muestra."""
-        label = self.page.locator(PdpLocators.AVAILABILITY_LABEL)
-        try:
-            label.first.wait_for(state="visible", timeout=5000)
-        except PlaywrightTimeoutError:
-            return None
-        return " ".join(label.first.inner_text().split())
-
     def type_id(self) -> str:
         """`simple` o `configurable` según el producto cargado."""
         return str(self._current().get("type_id") or "")

@@ -25,7 +25,7 @@ casos:
   postcondicion: Sin cambios de estado en el sitio.
   automatizable: true
   estado_automatizacion: Automated
-  implementacion: test_cases/common/home/home.feature
+  implementacion: test_cases/muebles_america/home/home.feature
   tags: &id001
   - smoke
   - regression
@@ -47,7 +47,7 @@ casos:
   postcondicion: Sin cambios de estado.
   automatizable: true
   estado_automatizacion: Automated
-  implementacion: test_cases/common/search/search.feature
+  implementacion: test_cases/muebles_america/search/search.feature
   tags: &id002
   - search
   - regression
@@ -68,8 +68,8 @@ casos:
   postcondicion: No se selecciona ningún producto.
   automatizable: true
   estado_automatizacion: Automated
-  implementacion: test_cases/common/search/search.feature
-  tags: &id003
+  implementacion: test_cases/muebles_america/search/search.feature
+  tags:
   - search
   - negative
   - estado-vacio
@@ -92,8 +92,8 @@ casos:
     posteriores.
   automatizable: true
   estado_automatizacion: Automated
-  implementacion: test_cases/common/product/pdp.feature
-  tags: &id004
+  implementacion: test_cases/muebles_america/product/pdp.feature
+  tags: &id003
   - pdp
   - product
   - regression
@@ -113,7 +113,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/product/pdp.feature
-  tags: &id005
+  tags: &id004
   - pdp
   - configurable
 - id: CP_EC_MA_CART_001
@@ -132,7 +132,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/cart/cart.feature
-  tags: &id006
+  tags: &id005
   - cart
   - integridad
   - regression
@@ -152,7 +152,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/cart/cart.feature
-  tags: &id007
+  tags: &id006
   - cart
   - checkout
   - gate
@@ -172,7 +172,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/checkout/checkout.feature
-  tags: &id008
+  tags: &id007
   - checkout
   - guest
 - id: CP_EC_MA_CHECKOUT_002
@@ -191,7 +191,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/checkout/checkout.feature
-  tags: &id009
+  tags: &id008
   - checkout
   - customer
   - address
@@ -211,7 +211,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/checkout/checkout.feature
-  tags: &id010
+  tags: &id009
   - checkout
   - shipping
 - id: CP_EC_MA_CUSTOMER_001
@@ -230,7 +230,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/customer/customer.feature
-  tags: &id011
+  tags: &id010
   - customer
 - id: CP_EC_MA_ADDRESS_001
   titulo: La dirección autocompleta colonia, ciudad y estado desde el CP
@@ -248,7 +248,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/address/address.feature
-  tags: &id012
+  tags: &id011
   - address
   - cp-autocomplete
 - id: CP_EC_MA_SHIPPING_001
@@ -267,7 +267,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/shipping/shipping.feature
-  tags: &id013
+  tags: &id012
   - shipping
   - costo-envio
 - id: CP_EC_MA_SHIPPING_002
@@ -286,7 +286,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/shipping/shipping.feature
-  tags: &id014
+  tags: &id013
   - shipping
   - pickup
   - store-selector
@@ -306,7 +306,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/payment/payment.feature
-  tags: &id015
+  tags: &id014
   - payment
   - contado
   - openpay
@@ -326,7 +326,7 @@ casos:
   automatizable: true
   estado_automatizacion: Not Automated
   implementacion: Escenario @pending en test_cases/common/payment/payment.feature; falta dataset de alto monto
-  tags: &id016
+  tags: &id015
   - payment
   - regla-negocio
   - openpay-stores
@@ -346,7 +346,7 @@ casos:
   automatizable: true
   estado_automatizacion: Not Automated
   implementacion: Escenario @pending en test_cases/common/payment/payment.feature; falta wiring MSI
-  tags: &id017
+  tags: &id016
   - payment
   - msi
   - contado
@@ -366,7 +366,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/order/order.feature
-  tags: &id018
+  tags: &id017
   - order
   - e2e
   - irreversible
@@ -386,7 +386,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/order/order.feature
-  tags: &id019
+  tags: &id018
   - order
   - consistencia
   - irreversible
@@ -406,7 +406,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/smoke/sale_cash.feature (GuestCheckoutWorkflow)
-  tags: &id020
+  tags: &id019
   - smoke
   - regression
 - id: CP_EC_MA_E2E_001
@@ -425,87 +425,80 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/e2e/e2e.feature (SaleCashWorkflow, confirm_order=True)
-  tags: &id021
+  tags: &id020
   - e2e
   - contado
   - irreversible
 - id: CP_EC_VIU_HOME_001
   titulo: La home carga en estado utilizable e identifica la marca
-  objetivo: Comprobar que la página principal carga correctamente y proporciona los controles mínimos para iniciar un flujo de compra.
+  objetivo: Verificar que la home abre con header, buscador y elementos de marca operativos.
   prioridad: Alta
   tipo: Smoke
   ecommerce: VIU
   ecommerce_key: viu
   modulo: Home
-  precondiciones: Ambiente stage disponible; URL del sitio configurada; navegador soportado; conexión con el sitio.
-  datos: Dataset `home`/`home_001` (título de marca y elementos de navegación esperados).
-  pasos: 1. Navegar a la URL configurada. 2. Esperar la carga inicial. 3. Validar la identidad visual. 4. Localizar el buscador. 5. Localizar
-    el acceso al carrito. 6. Revisar la navegación principal.
-  resultado_esperado: Sitio responde 2xx/3xx; home utilizable sin bloqueos; logo y título de la marca; buscador visible y habilitado; carrito
-    disponible; navegación principal con 'Departamentos'.
+  precondiciones: Ambiente stage accesible; sitio resuelto por ExecutionContext.
+  datos: Dataset `home`/`home_001` (expectativas de marca).
+  pasos: 1. Abrir la home. 2. Aceptar cookies si aparecen. 3. Esperar estado listo.
+  resultado_esperado: Header visible, buscador accesible único, marca identificada.
   postcondicion: Sin cambios de estado en el sitio.
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/home/home.feature
   tags: *id001
 - id: CP_EC_VIU_SEARCH_001
-  titulo: Buscar producto utilizando un término válido
-  objetivo: Validar que el sitio permite buscar productos mediante un término válido y muestra resultados utilizables para continuar una compra.
+  titulo: Búsqueda con resultados devuelve cards elegibles y contador consistente
+  objetivo: Verificar que el buscador devuelve resultados y que el scroll infinito carga todas las cards del contador.
   prioridad: Alta
   tipo: Funcional
   ecommerce: VIU
   ecommerce_key: viu
   modulo: Search
-  precondiciones: Home operativo; dataset de búsqueda disponible; existe al menos un producto relacionado con el término configurado.
+  precondiciones: Ambiente stage; catálogo con productos indexados.
   datos: Dataset `search`/`with_results` (término, mínimo).
-  pasos: 1. Abrir el Home. 2. Ubicar el buscador. 3. Capturar un término válido. 4. Ejecutar la búsqueda. 5. Esperar resultados. 6. Revisar productos
-    encontrados. 7. Revisar que los resultados puedan seleccionarse.
-  resultado_esperado: Home utilizable; buscador habilitado acepta el término; la ruta de resultados corresponde al término; contador >= mínimo
-    y al menos una card visible; cards cargadas == contador; existe card elegible que abre su PDP.
+  pasos: 1. Abrir home. 2. Buscar el término. 3. Leer contador. 4. Cargar todas las cards por scroll.
+  resultado_esperado: Contador >= mínimo; cards cargadas == contador; existe card elegible.
   postcondicion: Sin cambios de estado.
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/search/search.feature
   tags: *id002
 - id: CP_EC_VIU_SEARCH_002
-  titulo: Validar búsqueda sin resultados
-  objetivo: Comprobar que el ecommerce maneja correctamente una búsqueda para la cual no existen productos.
+  titulo: Búsqueda sin resultados muestra el estado vacío
+  objetivo: Verificar el estado vacío correcto ante un término inexistente.
   prioridad: Media
-  tipo: Funcional negativo
+  tipo: Funcional
   ecommerce: VIU
   ecommerce_key: viu
   modulo: Search
-  precondiciones: Home operativo; existe un término controlado que no devuelve productos.
-  datos: Dataset `search`/`without_results` (término controlado, 0 esperados).
-  pasos: 1. Abrir Home. 2. Capturar término sin resultados. 3. Ejecutar búsqueda. 4. Revisar listado. 5. Revisar estado vacío.
-  resultado_esperado: Home utilizable; el buscador acepta el término; la ruta de resultados corresponde al término; ninguna card visible; contador
-    '0 resultados de búsqueda'.
-  postcondicion: No se selecciona ningún producto.
+  precondiciones: Ambiente stage.
+  datos: Dataset `search`/`without_results`.
+  pasos: 1. Abrir home. 2. Buscar término inexistente.
+  resultado_esperado: Contador/estado de 0 resultados visible.
+  postcondicion: Sin cambios de estado.
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/search/search.feature
-  tags: *id003
+  tags:
+  - search
+  - estado-vacio
 - id: CP_EC_VIU_PDP_001
-  titulo: Validar información de un producto disponible en PDP
-  objetivo: Comprobar que un producto seleccionado desde resultados abre su página de detalle y contiene la información necesaria para ser comprado.
+  titulo: La PDP expone el modelo Product con datos comerciales válidos
+  objetivo: Verificar que la PDP produce un Product (nombre, SKU, precio, disponibilidad) consistente con la URL.
   prioridad: Alta
   tipo: Funcional
   ecommerce: VIU
   ecommerce_key: viu
   modulo: PDP
-  precondiciones: Search operativo; existe producto disponible.
-  datos: Producto elegible obtenido dinámicamente desde Search (dataset `search`/`with_results`).
-  pasos: 1. Ejecutar búsqueda válida. 2. Seleccionar un producto elegible. 3. Obtener nombre. 4. Obtener SKU o identificador. 5. Obtener precio.
-    6. Revisar disponibilidad. 7. Localizar acción de agregar al carrito.
-  resultado_esperado: Resultados visibles; la PDP corresponde a la card (slug y nombre); nombre no vacío; sku en la URL y/o product_id numérico
-    (ausencia documentada); precio > 0 coherente con el promocional; etiqueta 'Disponible' o 'Solo queda N' (no 'Agotado') y regla de venta cumplida;
-    agregar al carrito habilitado.
-  postcondicion: Información del producto (product_name, sku/product_id, unit_price, promotional_price, availability) disponible para validaciones
-    posteriores.
+  precondiciones: Ambiente stage; búsqueda con resultados.
+  datos: Producto elegible desde búsqueda.
+  pasos: 1. Buscar. 2. Abrir card elegible. 3. Leer modelo Product.
+  resultado_esperado: SKU coherente con URL, nombre no vacío, precio > 0, CTA habilitado.
+  postcondicion: Sin cambios de estado.
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/product/pdp.feature
-  tags: *id004
+  tags: *id003
 - id: CP_EC_VIU_PDP_002
   titulo: Un configurable expone padre y variantes como Product
   objetivo: Verificar el modelo de artículos configurables (padre MA/VIU distinto, hijos compartidos).
@@ -522,7 +515,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/product/pdp.feature
-  tags: *id005
+  tags: *id004
 - id: CP_EC_VIU_CART_001
   titulo: La integridad comercial Product→Cart se conserva
   objetivo: Verificar que el item del carrito coincide con el Product (SKU, nombre, qty, precio) y los importes del resumen.
@@ -539,7 +532,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/cart/cart.feature
-  tags: *id006
+  tags: *id005
 - id: CP_EC_VIU_CART_002
   titulo: Continuar al checkout desde el carrito muestra el gate de invitado
   objetivo: Verificar la transición carrito → gate 'Continuar como invitado'.
@@ -556,7 +549,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/cart/cart.feature
-  tags: *id007
+  tags: *id006
 - id: CP_EC_VIU_CHECKOUT_001
   titulo: Acceder al checkout como invitado expone los campos requeridos
   objetivo: Verificar el gate de invitado y la etapa Entrega con campos obligatorios.
@@ -573,7 +566,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/checkout/checkout.feature
-  tags: *id008
+  tags: *id007
 - id: CP_EC_VIU_CHECKOUT_002
   titulo: Registrar los datos del comprador habilita la etapa de pago
   objetivo: Verificar que el formulario acepta comprador+dirección y habilita Forma de pago.
@@ -590,7 +583,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/checkout/checkout.feature
-  tags: *id009
+  tags: *id008
 - id: CP_EC_VIU_CHECKOUT_003
   titulo: Seleccionar el método de entrega expone el costo de envío
   objetivo: Verificar toggle domicilio/sucursal y costo de envío calculado.
@@ -607,7 +600,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/checkout/checkout.feature
-  tags: *id010
+  tags: *id009
 - id: CP_EC_VIU_CUSTOMER_001
   titulo: La captura del comprador persiste nombre, correo y teléfono
   objetivo: Verificar que read_customer() recupera el Customer ingresado.
@@ -624,7 +617,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/customer/customer.feature
-  tags: *id011
+  tags: *id010
 - id: CP_EC_VIU_ADDRESS_001
   titulo: La dirección autocompleta colonia, ciudad y estado desde el CP
   objetivo: Verificar el lookup por código postal y la lectura del modelo Address.
@@ -641,7 +634,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/address/address.feature
-  tags: *id012
+  tags: *id011
 - id: CP_EC_VIU_SHIPPING_001
   titulo: La entrega a domicilio expone costo y estimación
   objetivo: Verificar el costo de envío a domicilio como Money y la estimación de entrega.
@@ -658,7 +651,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/shipping/shipping.feature
-  tags: *id013
+  tags: *id012
 - id: CP_EC_VIU_SHIPPING_002
   titulo: El retiro en sucursal abre el store picker y selecciona tienda
   objetivo: Verificar el picker de sucursal (modal, estados, tiendas, 'Entregar aquí') y el contacto de pickup.
@@ -675,7 +668,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/shipping/shipping.feature
-  tags: *id014
+  tags: *id013
 - id: CP_EC_VIU_PAY_001
   titulo: Seleccionar contado y preparar la orden sin confirmarla
   objetivo: Verificar la selección de openpay_cards con tarjeta sandbox hasta 'Finalizar compra' habilitado.
@@ -692,7 +685,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/payment/payment.feature
-  tags: *id015
+  tags: *id014
 - id: CP_EC_VIU_PAY_002
   titulo: El pago en efectivo no es seleccionable por encima de $30,000
   objetivo: 'Verificar la regla de negocio: openpay_stores deshabilitado con total > $30,000 MXN.'
@@ -709,7 +702,7 @@ casos:
   automatizable: true
   estado_automatizacion: Not Automated
   implementacion: Escenario @pending en test_cases/common/payment/payment.feature; falta dataset de alto monto
-  tags: *id016
+  tags: *id015
 - id: CP_EC_VIU_PAY_003
   titulo: El contado a MSI se prepara con la tarjeta 4242
   objetivo: Verificar el flujo de meses sin intereses (contado diferido bancario) con 4242…4242.
@@ -726,7 +719,7 @@ casos:
   automatizable: true
   estado_automatizacion: Not Automated
   implementacion: Escenario @pending en test_cases/common/payment/payment.feature; falta wiring MSI
-  tags: *id017
+  tags: *id016
 - id: CP_EC_VIU_ORDER_001
   titulo: Confirmar la compra genera una orden con folio verificable
   objetivo: Ejecutar 'Finalizar compra' y capturar folio + mensaje de éxito inequívoco.
@@ -743,7 +736,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/order/order.feature
-  tags: *id018
+  tags: *id017
 - id: CP_EC_VIU_ORDER_002
   titulo: La orden es consistente con los datos comerciales del flujo
   objetivo: Comparar la orden contra Product, Cart, Shipping, total y método de pago.
@@ -760,7 +753,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/order/order.feature
-  tags: *id019
+  tags: *id018
 - id: CP_EC_VIU_SMOKE_001
   titulo: 'Smoke: guest checkout muestra un precio de pedido mayor a cero'
   objetivo: Verificación rápida del flujo navegación → checkout invitado con precio > 0.
@@ -777,7 +770,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/smoke/sale_cash.feature (GuestCheckoutWorkflow)
-  tags: *id020
+  tags: *id019
 - id: CP_EC_VIU_E2E_001
   titulo: Flujo completo de venta de contado Home→Order
   objetivo: 'Ejecutar el recorrido E2E consolidado: búsqueda, PDP, carrito, checkout, pago y orden.'
@@ -794,4 +787,4 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/e2e/e2e.feature (SaleCashWorkflow, confirm_order=True)
-  tags: *id021
+  tags: *id020

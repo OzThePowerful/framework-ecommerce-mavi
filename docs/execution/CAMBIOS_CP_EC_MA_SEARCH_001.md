@@ -1,5 +1,14 @@
 # CAMBIOS CP_EC_MA_SEARCH_001 — Buscar producto utilizando un término válido
 
+> **Ajuste posterior ([MA-AISLAMIENTO-001](CAMBIOS_MA-AISLAMIENTO-001.md)):**
+> este caso aplica **solo a Muebles América**. El escenario vive en
+> `test_cases/muebles_america/search/` y sus steps nuevos en
+> `tests/bdd/steps/muebles_america/search_steps.py`.
+> `test_cases/common/search/search.feature` y `search_steps.py` volvieron
+> a su versión anterior, así que `CP_EC_VIU_SEARCH_001` **no** quedó con
+> estos pasos (lo trabaja la rama `origin/viu`). Las primitivas de
+> `search_component` / `search_page` siguen en común como aditivas.
+
 ## Alcance
 
 Alinear el escenario BDD `@SEARCH_001` con los 7 pasos del contrato

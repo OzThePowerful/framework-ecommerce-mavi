@@ -1,5 +1,16 @@
 # CAMBIOS CP_EC_MA_PDP_001 — Validar información de un producto disponible en PDP
 
+> **Ajuste posterior ([MA-AISLAMIENTO-001](CAMBIOS_MA-AISLAMIENTO-001.md)):**
+> este caso aplica **solo a Muebles América**. El escenario vive en
+> `test_cases/muebles_america/product/` y sus steps en
+> `tests/bdd/steps/muebles_america/pdp_steps.py`. Usa el step propio
+> `selecciona una card elegible y abre su PDP`, y el step compartido
+> `abre la PDP de una card elegible` volvió a su versión anterior.
+> `AVAILABILITY_LABEL` / `availability_label()` pasaron a la PDP de MA.
+> `CP_EC_VIU_PDP_001` quedó en su versión anterior (lo trabaja la rama
+> `origin/viu`). Por decisión del usuario, `data/viu/search.yaml`
+> **conserva** `MABE00888`.
+
 ## Alcance
 
 Alinear el escenario BDD `@PDP_001` con los 7 pasos del contrato

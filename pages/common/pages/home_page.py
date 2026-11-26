@@ -2,6 +2,7 @@
 
 Cada marca inyecta su componente de mega-menú (`MEGA_MENU`) porque el DOM
 del menú es estructuralmente distinto; el resto de la pantalla es común.
+`HEADER` permite que una marca extienda el header común (MA-AISLAMIENTO-001).
 """
 
 from typing import ClassVar
@@ -20,10 +21,11 @@ from pages.common.components.notifications.notification_component import (
 
 class CommonHomePage(BasePage):
     MEGA_MENU: ClassVar[type | None] = None
+    HEADER: ClassVar[type] = HeaderComponent
 
     def __init__(self, page: Page, context: ExecutionContext) -> None:
         super().__init__(page, context)
-        self.header = HeaderComponent(page)
+        self.header = self.HEADER(page)
         self.blockers = BlockerComponent(page)
         self.loader = LoaderComponent(page)
         self.notifications = NotificationComponent(page)
