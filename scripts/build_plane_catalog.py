@@ -127,21 +127,38 @@ CASES = [
     {
         "suffix": "PDP_001",
         "modulo": "PDP",
-        "titulo": "La PDP expone el modelo Product con datos comerciales válidos",
+        "titulo": "Validar información de un producto disponible en PDP",
         "objetivo": (
-            "Verificar que la PDP produce un Product (nombre, SKU, "
-            "precio, disponibilidad) consistente con la URL."
+            "Comprobar que un producto seleccionado desde resultados abre "
+            "su página de detalle y contiene la información necesaria para "
+            "ser comprado."
         ),
         "prioridad": "Alta",
         "tipo": "Funcional",
-        "precondiciones": "Ambiente stage; búsqueda con resultados.",
-        "datos": "Producto elegible desde búsqueda.",
-        "pasos": "1. Buscar. 2. Abrir card elegible. 3. Leer modelo Product.",
-        "resultado_esperado": (
-            "SKU coherente con URL, nombre no vacío, precio > 0, "
-            "CTA habilitado."
+        "precondiciones": "Search operativo; existe producto disponible.",
+        "datos": (
+            "Producto elegible obtenido dinámicamente desde Search "
+            "(dataset `search`/`with_results`)."
         ),
-        "postcondicion": "Sin cambios de estado.",
+        "pasos": (
+            "1. Ejecutar búsqueda válida. 2. Seleccionar un producto "
+            "elegible. 3. Obtener nombre. 4. Obtener SKU o identificador. "
+            "5. Obtener precio. 6. Revisar disponibilidad. 7. Localizar "
+            "acción de agregar al carrito."
+        ),
+        "resultado_esperado": (
+            "Resultados visibles; la PDP corresponde a la card (slug y "
+            "nombre); nombre no vacío; sku en la URL y/o product_id "
+            "numérico (ausencia documentada); precio > 0 coherente con el "
+            "promocional; etiqueta 'Disponible' o 'Solo queda N' (no "
+            "'Agotado') y regla de venta cumplida; agregar al carrito "
+            "habilitado."
+        ),
+        "postcondicion": (
+            "Información del producto (product_name, sku/product_id, "
+            "unit_price, promotional_price, availability) disponible para "
+            "validaciones posteriores."
+        ),
         "automatizable": True,
         "estado_automatizacion": "Automated",
         "implementacion": "test_cases/common/product/pdp.feature",

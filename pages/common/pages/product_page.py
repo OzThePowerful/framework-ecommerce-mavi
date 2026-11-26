@@ -42,6 +42,9 @@ class CommonProductPage(BasePage):
     def is_add_to_cart_enabled(self) -> bool:
         return self.pdp.is_add_to_cart_enabled()
 
+    def availability_label(self) -> str | None:
+        return self.pdp.availability_label()
+
     def is_configurable(self) -> bool:
         return self.pdp.is_configurable()
 
