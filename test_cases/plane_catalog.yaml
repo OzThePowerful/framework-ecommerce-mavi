@@ -562,18 +562,18 @@ casos:
   implementacion: test_cases/common/checkout/checkout.feature
   tags: *id008
 - id: CP_EC_VIU_CHECKOUT_002
-  titulo: Registrar los datos del comprador habilita la etapa de pago
-  objetivo: Verificar que el formulario acepta comprador+dirección y habilita Forma de pago.
+  titulo: Registrar datos válidos del comprador
+  objetivo: Validar que los datos requeridos del comprador son aceptados durante el Checkout de VIU.
   prioridad: Alta
   tipo: Funcional
   ecommerce: VIU
   ecommerce_key: viu
-  modulo: Checkout
-  precondiciones: Checkout invitado en etapa Entrega; identidad MAVI_GUEST_* en .env.
-  datos: Identidad `.env` + dataset `addresses`/`guadalajara` + `checkout`/`guest`.
-  pasos: 1. Llenar formulario. 2. Autocompletar por CP. 3. Leer datos guardados.
-  resultado_esperado: Datos aceptados sin errores; paymentExpansionButton habilitado.
-  postcondicion: Dirección registrada en la sesión.
+  modulo: Checkout / Customer
+  precondiciones: Checkout iniciado; dataset de cliente disponible.
+  datos: Vía DataProvider — nombre, apellidos, correo, teléfono + campos obligatorios restantes.
+  pasos: 1. Obtener datos de cliente. 2-5. Capturar nombre, apellidos, correo, teléfono. 6. Completar campos obligatorios. 7. Continuar sin validaciones pendientes.
+  resultado_esperado: Los datos del comprador son aceptados y Checkout puede continuar.
+  postcondicion: Los datos del comprador quedan registrados dentro del flujo actual.
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/checkout/checkout.feature
