@@ -8,14 +8,16 @@ Feature: Checkout y datos del comprador
   Fuera de alcance: selección de pago y confirmación de compra.
 
   @CHECKOUT_001
-  Scenario: Acceder al checkout como invitado y exponer los campos requeridos
+  Scenario: Iniciar el checkout desde un carrito válido
     Given el usuario abre la home del sitio activo
     When busca el término con resultados del dataset
     And abre la PDP de una card elegible
     And agrega el producto al carrito
     And abre el carrito de compras
-    And continúa al checkout desde el carrito
-    And continúa como invitado
+    Then el producto agregado es visible en el carrito con cantidad 1
+    When continúa al checkout desde el carrito
+    Then el acceso como invitado está disponible
+    When continúa como invitado
     Then la etapa de entrega está activa y los campos del comprador son obligatorios
 
   @CHECKOUT_002

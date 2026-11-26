@@ -22,6 +22,15 @@ def continue_as_guest(pages) -> dict:
     return {"checkout": checkout}
 
 
+@then("el acceso como invitado está disponible")
+def guest_gate_available(pages) -> None:
+    checkout = pages.checkout()
+    checkout.wait_for_guest_gate()
+    assert checkout.is_guest_gate_visible(), (
+        "El gate 'Continuar como invitado' no se mostró tras continuar"
+    )
+
+
 @when("registra los datos del comprador del dataset")
 def fill_customer_form(checkout_ctx, data_provider, guest_customer) -> None:
     params = data_provider.get_record("checkout", "guest")

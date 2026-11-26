@@ -545,18 +545,18 @@ casos:
   - commercial_validation
   - regression
 - id: CP_EC_VIU_CHECKOUT_001
-  titulo: Acceder al checkout como invitado expone los campos requeridos
-  objetivo: Verificar el gate de invitado y la etapa Entrega con campos obligatorios.
+  titulo: Iniciar Checkout desde un carrito válido
+  objetivo: Comprobar que el usuario puede pasar correctamente desde un carrito válido al proceso de Checkout.
   prioridad: Alta
   tipo: Funcional
   ecommerce: VIU
   ecommerce_key: viu
   modulo: Checkout
-  precondiciones: Producto en carrito; gate de invitado.
-  datos: —
-  pasos: 1. Continuar como invitado. 2. Esperar checkout listo. 3. Revisar etapa y campos.
-  resultado_esperado: Etapa 'entrega' activa; campos obligatorios presentes.
-  postcondicion: Checkout en etapa Entrega.
+  precondiciones: Carrito con un producto válido y disponible; sin errores pendientes.
+  datos: Carrito construido durante el flujo.
+  pasos: 1. Abrir carrito. 2. Revisar producto. 3. Continuar/finalizar compra (VIU inicia Checkout). 4. Esperar primera etapa. 5. Revisar controles requeridos.
+  resultado_esperado: El usuario ingresa correctamente al proceso de Checkout.
+  postcondicion: Checkout queda iniciado.
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/checkout/checkout.feature
