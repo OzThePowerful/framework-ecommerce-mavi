@@ -33,6 +33,26 @@ class PdpComponent:
             )
         return data
 
+    def wait_until_ready(self) -> None:
+        """PDP lista para sondear: estado del SPA cargado y veredicto de
+        stock renderizado.
+
+        Sin este wait, `is_available`/`is_add_to_cart_enabled` sondean una
+        PDP a medio renderizar (badge aún no pintado) y devuelven falsos
+        negativos. El badge agota su espera sin tronar: si la PDP no pinta
+        etiqueta, `is_available` decide el veredicto.
+        """
+        self.page.wait_for_function(
+            "() => window.__INITIAL_STATE__ && window.__INITIAL_STATE__.product"
+            " && !!window.__INITIAL_STATE__.product.current"
+        )
+        try:
+            self.page.locator(PdpLocators.STOCK_BADGE).first.wait_for(
+                state="visible", timeout=5000
+            )
+        except PlaywrightTimeoutError:
+            pass
+
     def read_product(self) -> Product:
         """Convierte el estado observado en el modelo de dominio Product."""
         cur = self._current()

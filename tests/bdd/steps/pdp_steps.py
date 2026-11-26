@@ -26,6 +26,7 @@ def open_eligible_pdp(pages, search_ctx) -> dict:
     card = None
     for candidate in candidates:
         candidate.open()
+        product_page.wait_until_ready()
         if product_page.is_add_to_cart_enabled():
             card = candidate
             break
@@ -113,6 +114,7 @@ def open_configurable_pdp(pages, configurable_ctx) -> None:
         configurable_ctx["record"]["name_fragment"]
     )
     configurable_ctx["product_page"] = pages.product()
+    configurable_ctx["product_page"].wait_until_ready()
 
 
 @then("el producto es configurable y su sku padre coincide con el dataset")

@@ -766,17 +766,17 @@ casos:
   implementacion: test_cases/common/smoke/sale_cash.feature
   tags: *id020
 - id: CP_EC_VIU_E2E_001
-  titulo: Flujo completo de venta de contado Home→Order
-  objetivo: 'Ejecutar el recorrido E2E consolidado: búsqueda, PDP, carrito, checkout, pago y orden.'
+  titulo: Validar flujo completo de venta de contado
+  objetivo: Validar de extremo a extremo el proceso de compra de contado en VIU.
   prioridad: Alta
   tipo: E2E
   ecommerce: VIU
   ecommerce_key: viu
   modulo: E2E
-  precondiciones: Stage autorizado para órdenes; identidad y tarjeta de prueba.
-  datos: Datasets search/products/checkout/payment + .env.
-  pasos: Home → Search → PDP → Cart → Guest → Customer → Address → Shipping → Payment → Order.
-  resultado_esperado: Orden creada con folio y datos consistentes de extremo a extremo.
+  precondiciones: Módulos P0 operativos; producto elegible; datasets cliente/domicilio; contado definido; stage habilitado.
+  datos: Datasets search/products/customers/addresses/checkout/payment.
+  pasos: Home → Search → PDP (registrar datos) → Add → Cart consistente → Checkout → Customer → Address → Shipping + costo → Payment contado → Resumen → Confirmar → Folio → Integridad final.
+  resultado_esperado: Venta de contado concluye con orden válida e información comercial consistente.
   postcondicion: Orden REAL creada en stage.
   automatizable: true
   estado_automatizacion: Automated

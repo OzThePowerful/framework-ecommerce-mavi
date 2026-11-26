@@ -153,20 +153,27 @@ class SaleCashWorkflow:
         search = self._pages.search()
         search.search(request.search_term)
         search.load_all_cards()
-        card = search.eligible_card()
-        if card is None:
+        cards = search.eligible_cards(max_cards=4)
+        if not cards:
             raise PreconditionError(
                 f"Búsqueda '{request.search_term}' sin cards elegibles "
                 "(nombre, precio e identificador visibles)."
             )
-        card.open()
 
         product_page = self._pages.product()
-        if not product_page.is_available() or not product_page.is_add_to_cart_enabled():
+        product = None
+        for card in cards:
+            card.open()
+            product_page.wait_until_ready()
+            if product_page.is_available() and product_page.is_add_to_cart_enabled():
+                product = product_page.read_product()
+                break
+            search.back_to_results()
+        if product is None:
             raise PreconditionError(
-                "La PDP abierta no está disponible para agregar al carrito."
+                "Ninguna de las primeras cards elegibles abrió una PDP "
+                "comprable (productos agotados)."
             )
-        product = product_page.read_product()
         product_page.add_to_cart()
         product_page.dismiss_post_add_overlays()
         return product

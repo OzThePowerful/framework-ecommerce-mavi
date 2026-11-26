@@ -26,6 +26,10 @@ class CommonProductPage(BasePage):
         self.pdp = PdpComponent(page)
         self.notifications = NotificationComponent(page)
 
+    def wait_until_ready(self) -> None:
+        """PDP lista para sondear: SPA cargado y veredicto de stock pintado."""
+        self.pdp.wait_until_ready()
+
     def read_product(self) -> Product:
         """Modelo de dominio del producto observado en la PDP."""
         return self.pdp.read_product()

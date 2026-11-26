@@ -17,6 +17,12 @@ class PdpLocators:
     OUT_OF_STOCK_BADGE = (
         "span.fw-700.cl-accent:has-text('Agotado'):visible"
     )
+    # Veredicto de stock ya renderizado: verde (hay piezas) o "Agotado" —
+    # marca de fin de render; su presencia habilita el sondeo is_available.
+    STOCK_BADGE = (
+        "span.fw-700.cl-green-label:visible, "
+        "span.fw-700.cl-accent:has-text('Agotado'):visible"
+    )
     CURRENT_PRODUCT_EXPR = (
         "window.__INITIAL_STATE__ && window.__INITIAL_STATE__.product"
         " ? window.__INITIAL_STATE__.product.current : null"
