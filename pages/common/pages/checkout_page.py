@@ -75,6 +75,9 @@ class CommonCheckoutPage(BasePage):
     def select_delivery_method(self, method: str) -> None:
         self.delivery.select_delivery_method(method)
 
+    def has_delivery_options(self) -> bool:
+        return self.delivery.has_delivery_options()
+
     def current_delivery_mode(self) -> str | None:
         return self.delivery.current_delivery_mode()
 

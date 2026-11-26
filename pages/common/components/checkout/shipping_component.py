@@ -43,6 +43,12 @@ class ShippingComponent:
     def select_store_pickup(self) -> None:
         self.page.locator(ShippingLocators.DELIVERY_PICKUP).click()
 
+    def has_delivery_options(self) -> bool:
+        """Al menos un modo de entrega presentado (domicilio o sucursal)."""
+        home = self.page.locator(ShippingLocators.DELIVERY_HOME).first
+        pickup = self.page.locator(ShippingLocators.DELIVERY_PICKUP).first
+        return home.is_visible() or pickup.is_visible()
+
     def current_delivery_mode(self) -> str | None:
         home = self.page.locator(ShippingLocators.DELIVERY_HOME)
         pickup = self.page.locator(ShippingLocators.DELIVERY_PICKUP)

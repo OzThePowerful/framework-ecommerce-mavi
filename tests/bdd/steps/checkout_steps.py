@@ -126,6 +126,21 @@ def customer_data_accepted(checkout_ctx) -> None:
     )
 
 
+@then("se presenta al menos un método de entrega")
+def delivery_options_presented(checkout_ctx) -> None:
+    assert checkout_ctx["checkout"].has_delivery_options(), (
+        "No se presentó ningún método de entrega (domicilio/sucursal)"
+    )
+
+
+@then("se accede a la etapa de forma de pago")
+def payment_stage_accessed(checkout_ctx) -> None:
+    stage = checkout_ctx["checkout"].current_stage()
+    assert stage == "forma_de_pago", (
+        f"Etapa activa esperada 'forma_de_pago'; actual {stage!r}"
+    )
+
+
 @then("el método de entrega queda activo y el costo de envío está disponible")
 def delivery_method_and_cost(checkout_ctx) -> None:
     checkout = checkout_ctx["checkout"]

@@ -568,7 +568,7 @@ casos:
   tipo: Funcional
   ecommerce: VIU
   ecommerce_key: viu
-  modulo: Checkout / Customer
+  modulo: Checkout
   precondiciones: Checkout iniciado; dataset de cliente disponible.
   datos: Vía DataProvider — nombre, apellidos, correo, teléfono + campos obligatorios restantes.
   pasos: 1. Obtener datos de cliente. 2-5. Capturar nombre, apellidos, correo, teléfono. 6. Completar campos obligatorios. 7. Continuar sin validaciones pendientes.
@@ -579,18 +579,18 @@ casos:
   implementacion: test_cases/common/checkout/checkout.feature
   tags: *id009
 - id: CP_EC_VIU_CHECKOUT_003
-  titulo: Seleccionar el método de entrega expone el costo de envío
-  objetivo: Verificar toggle domicilio/sucursal y costo de envío calculado.
+  titulo: Registrar domicilio y seleccionar método de entrega
+  objetivo: Validar que un domicilio válido y un método de entrega pueden configurarse correctamente en VIU.
   prioridad: Alta
   tipo: Funcional
   ecommerce: VIU
   ecommerce_key: viu
   modulo: Checkout
-  precondiciones: Comprador y dirección registrados.
-  datos: Dataset `checkout`/`guest`.shipping_method.
-  pasos: 1. Seleccionar método de entrega. 2. Esperar cálculo de envío.
-  resultado_esperado: Modo activo correcto; Shipping con costo Money disponible; pago habilitado.
-  postcondicion: Método de entrega seleccionado.
+  precondiciones: Datos del comprador aceptados; dataset de domicilio disponible.
+  datos: Vía DataProvider — calle, número, código postal, colonia, municipio/ciudad, estado, referencias.
+  pasos: 1. Obtener domicilio del dataset. 2-5. Capturar CP, colonia, calle/número y obligatorios sin validaciones. 6. Consultar métodos de entrega (>=1 opción). 7. Seleccionar método. 8. Obtener costo de envío. 9. Continuar a la siguiente etapa.
+  resultado_esperado: La dirección y el método de entrega quedan registrados correctamente.
+  postcondicion: Checkout queda preparado para continuar a la etapa de pago.
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/checkout/checkout.feature
