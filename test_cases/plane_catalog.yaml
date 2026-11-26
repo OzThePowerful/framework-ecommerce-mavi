@@ -664,18 +664,18 @@ casos:
   implementacion: test_cases/common/shipping/shipping.feature
   tags: *id014
 - id: CP_EC_VIU_PAY_001
-  titulo: Seleccionar contado y preparar la orden sin confirmarla
-  objetivo: Verificar la selección de openpay_cards con tarjeta sandbox hasta 'Finalizar compra' habilitado.
+  titulo: Seleccionar forma de pago correspondiente a venta de contado
+  objetivo: Validar que el método definido como pago de contado para VIU está disponible y puede seleccionarse.
   prioridad: Alta
   tipo: Funcional
   ecommerce: VIU
   ecommerce_key: viu
   modulo: Payment
-  precondiciones: Checkout completo (comprador, dirección, entrega).
+  precondiciones: Checkout completo (comprador, dirección, método de entrega); método de contado habilitado en stage.
   datos: Dataset `payment`/`card` (sandbox OpenPay).
-  pasos: 1. Abrir etapa de pago. 2. Seleccionar tarjeta. 3. Completar campos. 4. Verificar botón habilitado.
-  resultado_esperado: Método seleccionado sin errores; _btnCheckout habilitado (nunca clickeado).
-  postcondicion: Orden lista para confirmar; NO se crea orden.
+  pasos: 1. Llegar a la etapa de pago. 2. Consultar métodos habilitados. 3. Identificar contado. 4. Seleccionarlo. 5. Completar datos. 6. Revisar resumen previo a confirmación.
+  resultado_esperado: La forma de pago de contado queda correctamente seleccionada; 'Finalizar compra' habilitado (nunca clickeado).
+  postcondicion: La compra queda preparada para la confirmación final.
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/payment/payment.feature
