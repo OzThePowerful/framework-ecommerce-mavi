@@ -209,22 +209,25 @@ casos:
   - customer
   - address
 - id: CP_EC_MA_CHECKOUT_003
-  titulo: Seleccionar el método de entrega expone el costo de envío
-  objetivo: Verificar toggle domicilio/sucursal y costo de envío calculado.
+  titulo: Registrar domicilio y seleccionar método de entrega
+  objetivo: Validar que un domicilio válido y un método de entrega pueden configurarse correctamente.
   prioridad: Alta
-  tipo: Funcional
+  tipo: Funcional positivo
   ecommerce: Muebles América
   ecommerce_key: muebles_america
   modulo: Checkout
-  precondiciones: Comprador y dirección registrados.
-  datos: Dataset `checkout`/`guest`.shipping_method.
-  pasos: 1. Seleccionar método de entrega. 2. Esperar cálculo de envío.
-  resultado_esperado: Modo activo correcto; Shipping con costo Money disponible; pago habilitado.
-  postcondicion: Método de entrega seleccionado.
+  precondiciones: Datos de comprador aceptados; dataset de domicilio disponible.
+  datos: Domicilio `addresses`/`guadalajara` (calle, número, CP, colonia, ciudad, estado, referencias) y método `checkout`/`guest.shipping_method`.
+  pasos: 1. Obtener domicilio. 2. Capturar código postal. 3. Seleccionar/capturar colonia. 4. Completar calle y número. 5. Completar información
+    adicional requerida. 6. Consultar métodos de entrega. 7. Seleccionar método de entrega. 8. Obtener costo de envío. 9. Continuar Checkout.
+  resultado_esperado: CP aceptado con autocompletado; colonia del dataset entre las del CP y seleccionada; calle y número válidos; ciudad/estado
+    = dataset, sin errores y 'Forma de pago' habilitada; al menos un método de entrega y el del dataset activo; costo 'Gratis' (0) o importe >
+    0; tras continuar, etapa 'forma_de_pago' con domicilio y método registrados.
+  postcondicion: Checkout en 'Forma de pago' con domicilio y método de entrega registrados (sin orden creada).
   automatizable: true
   estado_automatizacion: Automated
-  implementacion: test_cases/common/checkout/checkout.feature
-  tags: &id005
+  implementacion: test_cases/muebles_america/checkout/checkout.feature
+  tags:
   - checkout
   - shipping
 - id: CP_EC_MA_CUSTOMER_001
@@ -243,7 +246,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/customer/customer.feature
-  tags: &id006
+  tags: &id005
   - customer
 - id: CP_EC_MA_ADDRESS_001
   titulo: La dirección autocompleta colonia, ciudad y estado desde el CP
@@ -261,7 +264,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/address/address.feature
-  tags: &id007
+  tags: &id006
   - address
   - cp-autocomplete
 - id: CP_EC_MA_SHIPPING_001
@@ -280,7 +283,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/shipping/shipping.feature
-  tags: &id008
+  tags: &id007
   - shipping
   - costo-envio
 - id: CP_EC_MA_SHIPPING_002
@@ -299,7 +302,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/shipping/shipping.feature
-  tags: &id009
+  tags: &id008
   - shipping
   - pickup
   - store-selector
@@ -319,7 +322,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/payment/payment.feature
-  tags: &id010
+  tags: &id009
   - payment
   - contado
   - openpay
@@ -339,7 +342,7 @@ casos:
   automatizable: true
   estado_automatizacion: Not Automated
   implementacion: Escenario @pending en test_cases/common/payment/payment.feature; falta dataset de alto monto
-  tags: &id011
+  tags: &id010
   - payment
   - regla-negocio
   - openpay-stores
@@ -359,7 +362,7 @@ casos:
   automatizable: true
   estado_automatizacion: Not Automated
   implementacion: Escenario @pending en test_cases/common/payment/payment.feature; falta wiring MSI
-  tags: &id012
+  tags: &id011
   - payment
   - msi
   - contado
@@ -379,7 +382,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/order/order.feature
-  tags: &id013
+  tags: &id012
   - order
   - e2e
   - irreversible
@@ -399,7 +402,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/order/order.feature
-  tags: &id014
+  tags: &id013
   - order
   - consistencia
   - irreversible
@@ -419,7 +422,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/smoke/sale_cash.feature (GuestCheckoutWorkflow)
-  tags: &id015
+  tags: &id014
   - smoke
   - regression
 - id: CP_EC_MA_E2E_001
@@ -438,7 +441,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/e2e/e2e.feature (SaleCashWorkflow, confirm_order=True)
-  tags: &id016
+  tags: &id015
   - e2e
   - contado
   - irreversible
@@ -624,7 +627,9 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/checkout/checkout.feature
-  tags: *id005
+  tags:
+  - checkout
+  - shipping
 - id: CP_EC_VIU_CUSTOMER_001
   titulo: La captura del comprador persiste nombre, correo y teléfono
   objetivo: Verificar que read_customer() recupera el Customer ingresado.
@@ -641,7 +646,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/customer/customer.feature
-  tags: *id006
+  tags: *id005
 - id: CP_EC_VIU_ADDRESS_001
   titulo: La dirección autocompleta colonia, ciudad y estado desde el CP
   objetivo: Verificar el lookup por código postal y la lectura del modelo Address.
@@ -658,7 +663,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/address/address.feature
-  tags: *id007
+  tags: *id006
 - id: CP_EC_VIU_SHIPPING_001
   titulo: La entrega a domicilio expone costo y estimación
   objetivo: Verificar el costo de envío a domicilio como Money y la estimación de entrega.
@@ -675,7 +680,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/shipping/shipping.feature
-  tags: *id008
+  tags: *id007
 - id: CP_EC_VIU_SHIPPING_002
   titulo: El retiro en sucursal abre el store picker y selecciona tienda
   objetivo: Verificar el picker de sucursal (modal, estados, tiendas, 'Entregar aquí') y el contacto de pickup.
@@ -692,7 +697,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/shipping/shipping.feature
-  tags: *id009
+  tags: *id008
 - id: CP_EC_VIU_PAY_001
   titulo: Seleccionar contado y preparar la orden sin confirmarla
   objetivo: Verificar la selección de openpay_cards con tarjeta sandbox hasta 'Finalizar compra' habilitado.
@@ -709,7 +714,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/payment/payment.feature
-  tags: *id010
+  tags: *id009
 - id: CP_EC_VIU_PAY_002
   titulo: El pago en efectivo no es seleccionable por encima de $30,000
   objetivo: 'Verificar la regla de negocio: openpay_stores deshabilitado con total > $30,000 MXN.'
@@ -726,7 +731,7 @@ casos:
   automatizable: true
   estado_automatizacion: Not Automated
   implementacion: Escenario @pending en test_cases/common/payment/payment.feature; falta dataset de alto monto
-  tags: *id011
+  tags: *id010
 - id: CP_EC_VIU_PAY_003
   titulo: El contado a MSI se prepara con la tarjeta 4242
   objetivo: Verificar el flujo de meses sin intereses (contado diferido bancario) con 4242…4242.
@@ -743,7 +748,7 @@ casos:
   automatizable: true
   estado_automatizacion: Not Automated
   implementacion: Escenario @pending en test_cases/common/payment/payment.feature; falta wiring MSI
-  tags: *id012
+  tags: *id011
 - id: CP_EC_VIU_ORDER_001
   titulo: Confirmar la compra genera una orden con folio verificable
   objetivo: Ejecutar 'Finalizar compra' y capturar folio + mensaje de éxito inequívoco.
@@ -760,7 +765,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/order/order.feature
-  tags: *id013
+  tags: *id012
 - id: CP_EC_VIU_ORDER_002
   titulo: La orden es consistente con los datos comerciales del flujo
   objetivo: Comparar la orden contra Product, Cart, Shipping, total y método de pago.
@@ -777,7 +782,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/order/order.feature
-  tags: *id014
+  tags: *id013
 - id: CP_EC_VIU_SMOKE_001
   titulo: 'Smoke: guest checkout muestra un precio de pedido mayor a cero'
   objetivo: Verificación rápida del flujo navegación → checkout invitado con precio > 0.
@@ -794,7 +799,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/smoke/sale_cash.feature (GuestCheckoutWorkflow)
-  tags: *id015
+  tags: *id014
 - id: CP_EC_VIU_E2E_001
   titulo: Flujo completo de venta de contado Home→Order
   objetivo: 'Ejecutar el recorrido E2E consolidado: búsqueda, PDP, carrito, checkout, pago y orden.'
@@ -811,4 +816,4 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/e2e/e2e.feature (SaleCashWorkflow, confirm_order=True)
-  tags: *id016
+  tags: *id015

@@ -10,6 +10,14 @@ Validación por campo (CP_EC_MA_CHECKOUT_002, verificada en stage MA):
 - al corregir, ambos desaparecen.
 "Continuar" en el OSC es abrir el acordeón "Forma de pago"
 (`PAYMENT_STEP`); "Finalizar compra" crea la orden y no se usa aquí.
+
+Domicilio y entrega (CP_EC_MA_CHECKOUT_003, verificado en stage MA):
+- el CP llena `COLONIA_SELECT` (p.ej. 44100 → AMERICANA, GUADALAJARA
+  CENTRO) y autoselecciona la primera; ciudad (solo lectura) y estado;
+- `#domicilio` / `#sucursal` son los métodos; el activo lleva
+  `StorePickupSelected` ("A tu domicilio" viene preseleccionado);
+- el resumen muestra "Envío: Aún no calculado" hasta completar el
+  domicilio y luego "Costo de envío: Gratis" o un importe.
 """
 
 
@@ -19,6 +27,9 @@ class CheckoutLocators:
     TOTAL_PRICE = "strong span.price"
     FIELD_BY_NAME = "input[name='{name}']:visible"
     PAYMENT_STEP = "#paymentExpansionButton"
+    COLONIA_SELECT = "select[name='colonia_select_shipping']:visible"
+    DELIVERY_OPTIONS = {"a_domicilio": "#domicilio", "sucursal": "#sucursal"}
+    SHIPPING_SUMMARY = ".omni-summary-totals"
     # (name) → texto del error del input visible con ese name, o null.
     FIELD_ERROR_EXPR = """(name) => {
         const input = [...document.querySelectorAll(`input[name="${name}"]`)]

@@ -28,6 +28,7 @@ _FIELD = {
     "street": "street[0]",
     "exterior_number": "custom_attributes[address_number]",
     "zip_code": "postcode",
+    "references": "custom_attributes[address_reference]",
 }
 
 
@@ -307,3 +308,248 @@ def no_pending_customer_validations(checkout_ctx) -> None:
         assert getattr(saved, field) == getattr(expected, field), (
             f"El dato {field!r} del comprador cambió al continuar"
         )
+
+
+# --- CP_EC_MA_CHECKOUT_003 --------------------------------------------------
+_ADDRESS_REQUIRED = (
+    ("calle", "street"),
+    ("número", "exterior_number"),
+    ("código postal", "zip_code"),
+    ("colonia", "neighborhood"),
+    ("ciudad", "city"),
+    ("estado", "state"),
+)
+
+
+def _field_ok(checkout, name: str, value: str) -> None:
+    observed = checkout.field_value(name)
+    error = checkout.field_error(name)
+    assert observed == value, f"El campo {name!r} no conservó el valor capturado"
+    assert error is None, f"El campo {name!r} muestra un error: {error!r}"
+
+
+# Paso 1 — domicilio del dataset.
+@when("obtiene el domicilio del dataset")
+def get_address(checkout_ctx, data_provider) -> None:
+    params = data_provider.get_record("checkout", "guest")
+    data = data_provider.get_record("addresses", params["address"])
+    checkout_ctx["address"] = Address(
+        street=data["street"],
+        exterior_number=data.get("exterior_number"),
+        interior_number=data.get("interior_number"),
+        neighborhood=data.get("neighborhood"),
+        zip_code=data["zip_code"],
+        city=data["city"],
+        state=data["state"],
+        references=data.get("references"),
+    )
+
+
+@then("el domicilio del dataset está disponible")
+def address_data_available(checkout_ctx) -> None:
+    address = checkout_ctx["address"]
+    attach_text(
+        "Domicilio del dataset",
+        json.dumps(
+            {
+                **{label: getattr(address, attr) for label, attr in _ADDRESS_REQUIRED},
+                "referencias": address.references or _ABSENT,
+            },
+            ensure_ascii=False,
+        ),
+    )
+    for label, attr in _ADDRESS_REQUIRED:
+        assert getattr(address, attr), f"El dataset de domicilio no trae {label}"
+
+
+# Paso 2 — código postal.
+@when("captura el código postal del domicilio")
+def capture_postcode(checkout_ctx) -> None:
+    checkout_ctx["checkout"].capture_postcode(checkout_ctx["address"].zip_code)
+
+
+@then("el código postal queda aceptado")
+def postcode_accepted(checkout_ctx) -> None:
+    _field_ok(checkout_ctx["checkout"], _FIELD["zip_code"], checkout_ctx["address"].zip_code)
+
+
+# Paso 3 — colonia.
+@when("selecciona la colonia del domicilio")
+def select_colonia(checkout_ctx) -> None:
+    checkout = checkout_ctx["checkout"]
+    checkout_ctx["colonia_options"] = checkout.colonia_options()
+    checkout_ctx["colonia_selected"] = checkout.select_colonia(
+        checkout_ctx["address"].neighborhood
+    )
+
+
+@then("la colonia queda aceptada")
+def colonia_accepted(checkout_ctx) -> None:
+    expected = checkout_ctx["address"].neighborhood
+    options = checkout_ctx["colonia_options"]
+    selected = checkout_ctx["checkout"].selected_colonia()
+    attach_text(
+        "Colonia",
+        json.dumps(
+            {"dataset": expected, "opciones_del_cp": options, "seleccionada": selected},
+            ensure_ascii=False,
+        ),
+    )
+    assert checkout_ctx["colonia_selected"], (
+        f"La colonia {expected!r} no está entre las que ofrece el CP: {options}"
+    )
+    assert _casefold(selected) == _casefold(expected), (
+        f"Colonia seleccionada {selected!r} != dataset {expected!r}"
+    )
+
+
+# Paso 4 — calle y número.
+@when("completa la calle y el número del domicilio")
+def capture_street_and_number(checkout_ctx) -> None:
+    checkout = checkout_ctx["checkout"]
+    address = checkout_ctx["address"]
+    checkout.capture_field(_FIELD["street"], address.street)
+    checkout.capture_field(_FIELD["exterior_number"], address.exterior_number)
+
+
+@then("la calle y el número quedan válidos")
+def street_and_number_valid(checkout_ctx) -> None:
+    checkout = checkout_ctx["checkout"]
+    address = checkout_ctx["address"]
+    _field_ok(checkout, _FIELD["street"], address.street)
+    _field_ok(checkout, _FIELD["exterior_number"], address.exterior_number)
+
+
+# Paso 5 — información adicional y domicilio aceptado.
+@when("completa la información adicional del domicilio")
+def capture_additional_info(checkout_ctx) -> None:
+    references = checkout_ctx["address"].references
+    if references:
+        checkout_ctx["checkout"].capture_field(_FIELD["references"], references)
+
+
+@then("el domicilio no tiene validaciones pendientes")
+def address_without_pending_validations(checkout_ctx) -> None:
+    checkout = checkout_ctx["checkout"]
+    expected = checkout_ctx["address"]
+    saved = checkout.read_address()
+    errors = checkout.validation_errors()
+    invalid = checkout.invalid_fields()
+    attach_text(
+        "Domicilio capturado",
+        json.dumps(
+            {
+                "calle": saved.street,
+                "numero": saved.exterior_number,
+                "cp": saved.zip_code,
+                "colonia": saved.neighborhood,
+                "ciudad": saved.city,
+                "estado": saved.state,
+                "referencias": saved.references or _ABSENT,
+                "errores": errors,
+                "campos_invalidos": invalid,
+            },
+            ensure_ascii=False,
+        ),
+    )
+    if expected.references:
+        _field_ok(checkout, _FIELD["references"], expected.references)
+    assert _casefold(saved.city) == _casefold(expected.city), (
+        f"Ciudad autocompletada {saved.city!r} != dataset {expected.city!r}"
+    )
+    assert _casefold(saved.state) == _casefold(expected.state), (
+        f"Estado {saved.state!r} != dataset {expected.state!r}"
+    )
+    assert not errors, f"Errores de validación visibles: {errors}"
+    assert not invalid, f"Campos marcados como inválidos: {invalid}"
+    checkout.wait_payment_stage_enabled()
+    assert checkout.is_payment_stage_enabled(), (
+        "El domicilio no quedó aceptado: 'Forma de pago' sigue deshabilitada"
+    )
+
+
+# Paso 6 — métodos de entrega.
+@when("consulta los métodos de entrega")
+def query_delivery_methods(checkout_ctx) -> None:
+    checkout_ctx["delivery_options"] = checkout_ctx["checkout"].delivery_options()
+
+
+@then("se ofrece al menos un método de entrega válido")
+def at_least_one_delivery_method(checkout_ctx, data_provider) -> None:
+    options = checkout_ctx["delivery_options"]
+    expected = data_provider.get_record("checkout", "guest")["shipping_method"]
+    attach_text(
+        "Métodos de entrega",
+        json.dumps({"ofrecidos": options, "dataset": expected}, ensure_ascii=False),
+    )
+    assert options, "El checkout no presenta ningún método de entrega"
+    assert expected in options, (
+        f"El método del dataset {expected!r} no está entre los ofrecidos: {options}"
+    )
+
+
+# Paso 7 — método seleccionado (el When es el común
+# `selecciona el método de entrega del dataset`).
+@then("el método de entrega del dataset queda seleccionado")
+def delivery_method_selected(checkout_ctx) -> None:
+    expected = checkout_ctx["expected_method"]
+    mode = checkout_ctx["checkout"].current_delivery_mode()
+    assert mode == expected, f"Método de entrega activo {mode!r} != dataset {expected!r}"
+
+
+# Paso 8 — costo de envío.
+@when("obtiene el costo de envío")
+def get_shipping_cost(checkout_ctx) -> None:
+    checkout = checkout_ctx["checkout"]
+    checkout_ctx["shipping_cost"] = checkout.shipping_cost()
+    checkout_ctx["shipping_label"] = checkout.shipping_cost_label()
+    checkout_ctx["delivery_estimate"] = checkout.delivery_estimate()
+
+
+@then("el costo de envío es un importe observable o envío gratuito")
+def shipping_cost_observable(checkout_ctx) -> None:
+    cost = checkout_ctx["shipping_cost"]
+    label = checkout_ctx["shipping_label"]
+    attach_text(
+        "Costo de envío",
+        json.dumps(
+            {
+                "etiqueta": label,
+                "importe": str(cost.amount),
+                "regla": "envío gratuito" if label and label.casefold() == "gratis" else "importe",
+                "estimado": checkout_ctx["delivery_estimate"],
+            },
+            ensure_ascii=False,
+        ),
+    )
+    assert label is not None, "El resumen no muestra el costo de envío calculado"
+    if label.casefold() == "gratis":
+        assert cost.amount == 0, f"Envío 'Gratis' con importe {cost.amount}"
+    else:
+        assert cost.amount > 0, f"El costo de envío {label!r} debería ser mayor a cero"
+
+
+# Paso 9 — continuar a la siguiente etapa con todo registrado (el When es
+# `continúa a la forma de pago`, de CHECKOUT_002).
+@then(
+    "el checkout avanza a la siguiente etapa con el domicilio y la entrega registrados"
+)
+def next_stage_with_address_and_delivery(checkout_ctx) -> None:
+    checkout = checkout_ctx["checkout"]
+    expected = checkout_ctx["address"]
+    stage = checkout.current_stage()
+    errors = checkout.validation_errors()
+    saved = checkout.read_address()
+    mode = checkout.current_delivery_mode()
+    assert stage == "forma_de_pago", (
+        f"El checkout no avanzó a 'forma_de_pago'; etapa activa {stage!r}"
+    )
+    assert not errors, f"Errores de validación visibles: {errors}"
+    for label, attr in _ADDRESS_REQUIRED:
+        assert _casefold(getattr(saved, attr)) == _casefold(getattr(expected, attr)), (
+            f"El {label} registrado {getattr(saved, attr)!r} != dataset "
+            f"{getattr(expected, attr)!r}"
+        )
+    assert mode == checkout_ctx["expected_method"], (
+        f"El método de entrega cambió al continuar: {mode!r}"
+    )

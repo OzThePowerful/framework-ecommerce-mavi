@@ -491,6 +491,44 @@ CASES = [
         "estado_automatizacion": "Automated",
         "implementacion": "test_cases/common/checkout/checkout.feature",
         "tags": ["checkout", "shipping"],
+        # CP_EC_MA_CHECKOUT_003 — exclusivo de MA (MA-AISLAMIENTO-001).
+        "muebles_america": {
+            "titulo": "Registrar domicilio y seleccionar método de entrega",
+            "objetivo": (
+                "Validar que un domicilio válido y un método de entrega "
+                "pueden configurarse correctamente."
+            ),
+            "tipo": "Funcional positivo",
+            "precondiciones": (
+                "Datos de comprador aceptados; dataset de domicilio disponible."
+            ),
+            "datos": (
+                "Domicilio `addresses`/`guadalajara` (calle, número, CP, "
+                "colonia, ciudad, estado, referencias) y método "
+                "`checkout`/`guest.shipping_method`."
+            ),
+            "pasos": (
+                "1. Obtener domicilio. 2. Capturar código postal. "
+                "3. Seleccionar/capturar colonia. 4. Completar calle y número. "
+                "5. Completar información adicional requerida. 6. Consultar "
+                "métodos de entrega. 7. Seleccionar método de entrega. "
+                "8. Obtener costo de envío. 9. Continuar Checkout."
+            ),
+            "resultado_esperado": (
+                "CP aceptado con autocompletado; colonia del dataset entre las "
+                "del CP y seleccionada; calle y número válidos; ciudad/estado "
+                "= dataset, sin errores y 'Forma de pago' habilitada; al menos "
+                "un método de entrega y el del dataset activo; costo 'Gratis' "
+                "(0) o importe > 0; tras continuar, etapa 'forma_de_pago' con "
+                "domicilio y método registrados."
+            ),
+            "postcondicion": (
+                "Checkout en 'Forma de pago' con domicilio y método de entrega "
+                "registrados (sin orden creada)."
+            ),
+            "implementacion": "test_cases/muebles_america/checkout/checkout.feature",
+            "tags": ["checkout", "shipping"],
+        },
     },
     {
         "suffix": "CUSTOMER_001",

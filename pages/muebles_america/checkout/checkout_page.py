@@ -78,6 +78,62 @@ class CheckoutPage(CommonCheckoutPage):
         referencias) con el AddressComponent común."""
         self.customer_form.address.fill(address)
 
+    # --- Domicilio y entrega (CP_EC_MA_CHECKOUT_003) ---------------------
+    def capture_postcode(self, zip_code: str) -> None:
+        """Captura el CP y espera el autocompletado de colonia/ciudad."""
+        self.capture_field("postcode", zip_code)
+        self.customer_form.address.wait_postcode_autocomplete()
+
+    def colonia_options(self) -> list[str]:
+        """Colonias que ofrece el CP (sin el placeholder 'Colonia')."""
+        select = self.page.locator(CheckoutLocators.COLONIA_SELECT)
+        if not select.count():
+            return []
+        options = select.first.locator("option")
+        labels = [options.nth(i).inner_text().strip() for i in range(options.count())]
+        return [label for label in labels if label and label.casefold() != "colonia"]
+
+    def select_colonia(self, name: str) -> str | None:
+        """Selecciona la colonia que coincide con `name` (sin distinguir
+        mayúsculas). Devuelve la opción elegida, o None si no existe."""
+        match = next(
+            (o for o in self.colonia_options() if o.casefold() == name.casefold()),
+            None,
+        )
+        if match:
+            self.page.locator(CheckoutLocators.COLONIA_SELECT).first.select_option(
+                label=match
+            )
+        return match
+
+    def selected_colonia(self) -> str | None:
+        select = self.page.locator(CheckoutLocators.COLONIA_SELECT)
+        if not select.count():
+            return None
+        checked = select.first.locator("option:checked")
+        return checked.first.inner_text().strip() if checked.count() else None
+
+    def delivery_options(self) -> list[str]:
+        """Métodos de entrega presentados (visibles) por el checkout."""
+        return [
+            method
+            for method, selector in CheckoutLocators.DELIVERY_OPTIONS.items()
+            if self.page.locator(selector).first.is_visible()
+        ]
+
+    def shipping_cost_label(self) -> str | None:
+        """Etiqueta del costo de envío en el resumen: 'Gratis', '$X' o None
+        si aún no se calcula."""
+        summary = self.page.locator(CheckoutLocators.SHIPPING_SUMMARY)
+        if not summary.count():
+            return None
+        match = re.search(
+            r"env\S*\s*:?\s*(Gratis|\$[\d,]+\.\d+)",
+            summary.first.inner_text() or "",
+            re.IGNORECASE,
+        )
+        return match.group(1) if match else None
+
     def continue_to_payment(self, timeout_ms: int = 20000) -> None:
         """'Continuar' del OSC: espera que 'Forma de pago' se habilite, la
         abre y espera a que quede como etapa activa (no crea la orden)."""
