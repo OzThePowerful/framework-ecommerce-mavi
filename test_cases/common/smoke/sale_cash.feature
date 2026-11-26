@@ -8,7 +8,12 @@ Feature: Smoke de venta de contado
 
   @smoke
   @SMOKE_001
-  Scenario: Navegar al checkout como invitado muestra el precio del pedido
+  Scenario: Smoke del flujo de compra previo al pago
     Given el usuario abre la home del sitio activo
-    When realiza el recorrido de venta de contado hasta el checkout como invitado
-    Then el checkout muestra el precio del pedido
+    When busca el término con resultados del dataset
+    And abre la PDP de una card elegible
+    And agrega el producto al carrito
+    And abre el carrito de compras
+    Then el producto agregado es visible en el carrito con cantidad 1
+    When continúa al checkout desde el carrito
+    Then el acceso como invitado está disponible

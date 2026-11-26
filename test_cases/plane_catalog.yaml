@@ -749,21 +749,21 @@ casos:
   implementacion: test_cases/common/order/order.feature
   tags: *id019
 - id: CP_EC_VIU_SMOKE_001
-  titulo: 'Smoke: guest checkout muestra un precio de pedido mayor a cero'
-  objetivo: Verificación rápida del flujo navegación → checkout invitado con precio > 0.
+  titulo: Validar Smoke del flujo de compra previo al pago
+  objetivo: Comprobar rápidamente que las funciones críticas necesarias para iniciar una venta en VIU están operativas.
   prioridad: Alta
   tipo: Smoke
   ecommerce: VIU
   ecommerce_key: viu
   modulo: Smoke
-  precondiciones: Ambiente stage.
-  datos: Dataset `guest_checkout`.
-  pasos: 1. Home → departamento → PDP → carrito → invitado. 2. Leer precio mostrado.
-  resultado_esperado: Precio del pedido > 0 como Money.
-  postcondicion: Sin cambios.
+  precondiciones: Stage operativo; producto de prueba disponible; datos mínimos para iniciar checkout.
+  datos: Datasets search/product.
+  pasos: 1. Abrir Home. 2. Buscar producto. 3. Abrir PDP. 4. Agregar al carrito. 5. Abrir carrito (producto presente). 6. Iniciar checkout disponible.
+  resultado_esperado: El flujo comercial básico funciona hasta el inicio del checkout.
+  postcondicion: No se genera ninguna orden (no pago ni confirmación).
   automatizable: true
   estado_automatizacion: Automated
-  implementacion: test_cases/common/smoke/sale_cash.feature (GuestCheckoutWorkflow)
+  implementacion: test_cases/common/smoke/sale_cash.feature
   tags: *id020
 - id: CP_EC_VIU_E2E_001
   titulo: Flujo completo de venta de contado Home→Order

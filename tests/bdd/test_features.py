@@ -19,7 +19,6 @@ from tests.bdd.steps.home_steps import *  # noqa: F401,F403  (registra steps)
 from tests.bdd.steps.order_steps import *  # noqa: F401,F403  (registra steps)
 from tests.bdd.steps.payment_steps import *  # noqa: F401,F403  (registra steps)
 from tests.bdd.steps.pdp_steps import *  # noqa: F401,F403  (registra steps)
-from tests.bdd.steps.sale_cash_steps import *  # noqa: F401,F403  (registra steps)
 from tests.bdd.steps.search_steps import *  # noqa: F401,F403  (registra steps)
 from tests.bdd.steps.shipping_steps import *  # noqa: F401,F403  (registra steps)
 
