@@ -732,18 +732,18 @@ casos:
   implementacion: test_cases/common/order/order.feature
   tags: *id018
 - id: CP_EC_VIU_ORDER_002
-  titulo: La orden es consistente con los datos comerciales del flujo
-  objetivo: Comparar la orden contra Product, Cart, Shipping, total y método de pago.
+  titulo: Validar integridad comercial de la orden generada
+  objetivo: Comprobar que los datos de la orden final son consistentes con la información observada en las etapas anteriores.
   prioridad: Alta
-  tipo: E2E
+  tipo: Funcional
   ecommerce: VIU
   ecommerce_key: viu
   modulo: Order
-  precondiciones: Stage autorizado para órdenes de prueba.
-  datos: Tarjeta sandbox + identidad real.
-  pasos: 1. Flujo completo + resumen previo. 2. Confirmar. 3. Comparar folio/importes/método.
-  resultado_esperado: Subtotal/Envío/Total del resumen == Cart+Shipping; método == openpay_cards.
-  postcondicion: Orden REAL creada en stage.
+  precondiciones: Orden generada; información de Product, Cart y Checkout disponible.
+  datos: producto, SKU, cantidad, precio unitario, subtotal, descuentos, shipping, total, forma de pago, folio.
+  pasos: 1. Obtener datos de la orden. 2-7. Comparar producto, cantidad, precio/subtotal, descuento, shipping, total. 8. Revisar forma de pago. 9. Revisar folio.
+  resultado_esperado: La orden representa correctamente la operación comercial realizada.
+  postcondicion: Orden REAL creada en stage y validada.
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/order/order.feature

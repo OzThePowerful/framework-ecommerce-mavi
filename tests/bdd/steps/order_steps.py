@@ -98,6 +98,13 @@ def order_is_consistent(order_ctx, checkout_ctx, cart_ctx) -> None:
     assert item.product.sku == expected_product.sku, (
         f"SKU carrito {item.product.sku!r} != PDP {expected_product.sku!r}"
     )
+    assert item.quantity == cart_ctx["expected_qty"], (
+        f"Cantidad carrito {item.quantity} != esperada {cart_ctx['expected_qty']}"
+    )
+    assert item.effective_unit_price.amount == expected_product.effective_price.amount, (
+        f"Precio unitario carrito {item.effective_unit_price.amount} != "
+        f"PDP {expected_product.effective_price.amount}"
+    )
     assert summary["subtotal"] == cart.subtotal, (
         f"Subtotal resumen {summary['subtotal']} != carrito {cart.subtotal}"
     )
@@ -119,6 +126,8 @@ def order_is_consistent(order_ctx, checkout_ctx, cart_ctx) -> None:
             {
                 "folio": order.folio,
                 "sku": item.product.sku,
+                "quantity": item.quantity,
+                "unit_price": str(item.effective_unit_price.amount),
                 "subtotal": str(summary["subtotal"].amount),
                 "shipping": str(summary["shipping"].amount),
                 "total": str(summary["total"].amount),
