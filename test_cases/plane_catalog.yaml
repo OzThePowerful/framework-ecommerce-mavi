@@ -107,24 +107,24 @@ casos:
   - pdp
   - configurable
 - id: CP_EC_MA_CART_001
-  titulo: Agregar un producto disponible al carrito desde su PDP
-  objetivo: Verificar que un producto disponible puede agregarse al carrito y queda visible con cantidad 1.
+  titulo: La integridad comercial Product→Cart se conserva
+  objetivo: Verificar que el item del carrito coincide con el Product (SKU, nombre, qty, precio) y los importes del resumen.
   prioridad: Alta
   tipo: Funcional
   ecommerce: Muebles América
   ecommerce_key: muebles_america
   modulo: Cart
-  precondiciones: Ambiente stage; producto disponible con CTA habilitado.
-  datos: Producto elegible; cantidad inicial 1.
-  pasos: 1. Abrir PDP. 2. Registrar nombre, identificador y precio. 3. Cantidad 1. 4. Agregar al carrito. 5. Esperar confirmación observable. 6. Abrir carrito. 7. Verificar producto visible.
-  resultado_esperado: El carrito contiene el producto seleccionado con cantidad 1.
-  postcondicion: Existe un producto dentro del carrito.
+  precondiciones: Ambiente stage; producto con stock.
+  datos: Producto elegible.
+  pasos: 1. Agregar a carrito. 2. Abrir /checkout/cart. 3. Comparar item y resumen.
+  resultado_esperado: CartItem == Product esperado; subtotal/descuento/total consistentes.
+  postcondicion: Producto queda en el carrito de la sesión.
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/cart/cart.feature
   tags: &id006
   - cart
-  - positive
+  - integridad
   - regression
 - id: CP_EC_MA_CART_002
   titulo: Continuar al checkout desde el carrito muestra el gate de invitado
@@ -520,24 +520,30 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/cart/cart.feature
-  tags: *id006
+  tags:
+  - cart
+  - positive
+  - regression
 - id: CP_EC_VIU_CART_002
-  titulo: Continuar al checkout desde el carrito muestra el gate de invitado
-  objetivo: Verificar la transición carrito → gate 'Continuar como invitado'.
+  titulo: Validar producto, cantidad, precio y subtotal del carrito
+  objetivo: Verificar que la información transferida desde PDP al carrito mantiene consistencia comercial.
   prioridad: Alta
   tipo: Funcional
   ecommerce: VIU
   ecommerce_key: viu
   modulo: Cart
-  precondiciones: Producto en carrito.
-  datos: Producto elegible.
-  pasos: 1. Agregar. 2. Abrir carrito. 3. Continuar a checkout.
-  resultado_esperado: Botón 'Continuar como invitado' visible.
-  postcondicion: En la puerta del checkout.
+  precondiciones: Producto agregado al carrito; datos de PDP conservados.
+  datos: Producto elegible (nombre, sku, precio unitario, cantidad).
+  pasos: 1. Abrir carrito. 2. Verificar nombre, SKU, cantidad y precio vs PDP. 3. Obtener subtotal. 4. Calcular subtotal esperado (Decimal). 5. Comparar observado vs esperado.
+  resultado_esperado: No existen diferencias no justificadas entre PDP y Cart.
+  postcondicion: El carrito permanece disponible para continuar a Checkout.
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/cart/cart.feature
-  tags: *id007
+  tags:
+  - cart
+  - commercial_validation
+  - regression
 - id: CP_EC_VIU_CHECKOUT_001
   titulo: Acceder al checkout como invitado expone los campos requeridos
   objetivo: Verificar el gate de invitado y la etapa Entrega con campos obligatorios.

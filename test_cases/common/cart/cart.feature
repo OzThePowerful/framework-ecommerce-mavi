@@ -16,11 +16,12 @@ Feature: Carrito de compras
     Then el producto agregado es visible en el carrito con cantidad 1
 
   @CART_002
-  Scenario: Continuar al checkout desde el carrito muestra la opción de invitado
+  Scenario: El ítem del carrito conserva producto, cantidad, precio y subtotal de la PDP
     Given el usuario abre la home del sitio activo
     When busca el término con resultados del dataset
     And abre la PDP de una card elegible
     And agrega el producto al carrito
     And abre el carrito de compras
-    And continúa al checkout desde el carrito
-    Then se muestra la opción de continuar como invitado
+    Then el carrito contiene el producto con datos coherentes con la PDP
+    And el subtotal del ítem coincide con la cantidad por el precio unitario
+    And los importes del carrito son consistentes con el subtotal y el total

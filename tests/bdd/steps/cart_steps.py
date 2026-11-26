@@ -115,6 +115,30 @@ def cart_item_matches_pdp_product(cart_ctx) -> None:
     )
 
 
+@then("el subtotal del ítem coincide con la cantidad por el precio unitario")
+def item_subtotal_matches_qty_times_price(cart_ctx) -> None:
+    expected_product = cart_ctx["expected"]
+    expected = expected_product.effective_price.amount * cart_ctx["expected_qty"]
+    observed = cart_ctx["cart_page"].page_subtotal().amount
+    assert observed == expected, (
+        f"Subtotal observado {observed} != "
+        f"qty {cart_ctx['expected_qty']} x precio PDP "
+        f"{expected_product.effective_price.amount} = {expected}"
+    )
+    attach_text(
+        "Subtotal esperado",
+        json.dumps(
+            {
+                "quantity": cart_ctx["expected_qty"],
+                "unit_price_pdp": str(expected_product.effective_price.amount),
+                "expected_subtotal": str(expected),
+                "observed_subtotal": str(observed),
+            },
+            ensure_ascii=False,
+        ),
+    )
+
+
 @then("los importes del carrito son consistentes con el subtotal y el total")
 def cart_amounts_are_consistent(cart_ctx) -> None:
     cart_page = cart_ctx["cart_page"]
@@ -144,10 +168,3 @@ def cart_amounts_are_consistent(cart_ctx) -> None:
     )
 
 
-@then("se muestra la opción de continuar como invitado")
-def guest_gate_visible(pages) -> None:
-    checkout = pages.checkout()
-    checkout.wait_for_guest_gate()
-    assert checkout.is_guest_gate_visible(), (
-        "El gate 'Continuar como invitado' no se mostró tras continuar"
-    )
