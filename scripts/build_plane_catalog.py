@@ -379,6 +379,39 @@ CASES = [
         "estado_automatizacion": "Automated",
         "implementacion": "test_cases/common/checkout/checkout.feature",
         "tags": ["checkout", "guest"],
+        # CP_EC_MA_CHECKOUT_001 — exclusivo de MA (MA-AISLAMIENTO-001).
+        "muebles_america": {
+            "titulo": "Iniciar Checkout desde un carrito válido",
+            "objetivo": (
+                "Comprobar que el usuario puede pasar correctamente desde un "
+                "carrito válido al proceso de Checkout."
+            ),
+            "tipo": "Funcional positivo",
+            "precondiciones": (
+                "Carrito con producto válido; producto disponible; sin "
+                "errores pendientes en carrito."
+            ),
+            "datos": (
+                "Producto elegible desde Search (`search`/`with_results`); "
+                "campos requeridos en `checkout`/`entry`."
+            ),
+            "pasos": (
+                "1. Abrir carrito. 2. Revisar producto. 3. Seleccionar "
+                "continuar/finalizar compra. 4. Esperar primera etapa de "
+                "Checkout. 5. Revisar controles requeridos."
+            ),
+            "resultado_esperado": (
+                "Carrito disponible con el producto registrado y cantidad 1; "
+                "el ecommerce muestra el gate 'Continuar como invitado'; tras "
+                "continuar, URL del checkout de la marca con la etapa "
+                "'entrega' abierta y 'Forma de pago' deshabilitada; los campos "
+                "requeridos del dataset están marcados como obligatorios, "
+                "visibles, habilitados y editables."
+            ),
+            "postcondicion": "En la etapa de entrega del checkout invitado.",
+            "implementacion": "test_cases/muebles_america/checkout/checkout.feature",
+            "tags": ["checkout", "guest"],
+        },
     },
     {
         "suffix": "CHECKOUT_002",

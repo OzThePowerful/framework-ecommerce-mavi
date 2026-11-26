@@ -2,6 +2,7 @@
 
 import re
 from decimal import Decimal, InvalidOperation
+from fnmatch import fnmatch
 
 from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
 
@@ -29,6 +30,24 @@ class CheckoutPage(CommonCheckoutPage):
                 f"'{self.context.checkout_url_pattern}' tras continuar como "
                 "invitado"
             ) from exc
+
+    # --- Primera etapa (CP_EC_MA_CHECKOUT_001) -------------------------
+    def is_on_checkout(self) -> bool:
+        """La URL actual es la del checkout de la marca (patrón glob de
+        sites.yaml vía ExecutionContext)."""
+        return fnmatch(self.page.url, self.context.checkout_url_pattern)
+
+    def unavailable_fields(self, names: list[str]) -> list[str]:
+        """De `names`, los campos que no se pueden capturar: no visibles,
+        deshabilitados o de solo lectura. Lista vacía = todos disponibles."""
+        unavailable = []
+        for name in names:
+            field = self.page.locator(
+                CheckoutLocators.FIELD_BY_NAME.format(name=name)
+            )
+            if not field.count() or not field.first.is_editable():
+                unavailable.append(name)
+        return unavailable
 
     # --- Resumen ----------------------------------------------------------
     def get_displayed_price(self) -> Money:
