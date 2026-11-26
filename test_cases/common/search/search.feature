@@ -25,8 +25,16 @@ Feature: Búsqueda de productos
     And existe al menos una card elegible con nombre, precio e identificador
     And la card elegible abre la PDP del producto
 
-  @SEARCH_002
+  # Intercalado 1:1 con los pasos de Context_Contratos/MA/CP_EC_MA_SEARCH_002.md.
+  # El estado vacío del sitio es el contador "0 resultados de búsqueda".
+  @SEARCH_002 @search @negative
   Scenario: Buscar un término sin resultados muestra el estado vacío
     Given el usuario abre la home del sitio activo
-    When busca el término sin resultados del dataset
-    Then se muestran cero resultados
+    Then la home queda en estado utilizable
+    When captura en el buscador el término sin resultados del dataset
+    Then el buscador acepta el término capturado
+    When ejecuta la búsqueda
+    Then la búsqueda se procesa para el término capturado
+    And la pantalla de resultados queda disponible
+    And no aparece ningún producto en el listado
+    And se muestran cero resultados

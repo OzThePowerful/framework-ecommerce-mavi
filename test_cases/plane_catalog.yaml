@@ -53,23 +53,25 @@ casos:
   - regression
   - scroll-infinito
 - id: CP_EC_MA_SEARCH_002
-  titulo: Búsqueda sin resultados muestra el estado vacío
-  objetivo: Verificar el estado vacío correcto ante un término inexistente.
+  titulo: Validar búsqueda sin resultados
+  objetivo: Comprobar que el ecommerce maneja correctamente una búsqueda para la cual no existen productos.
   prioridad: Media
-  tipo: Funcional
+  tipo: Funcional negativo
   ecommerce: Muebles América
   ecommerce_key: muebles_america
   modulo: Search
-  precondiciones: Ambiente stage.
-  datos: Dataset `search`/`without_results`.
-  pasos: 1. Abrir home. 2. Buscar término inexistente.
-  resultado_esperado: Contador/estado de 0 resultados visible.
-  postcondicion: Sin cambios de estado.
+  precondiciones: Home operativo; existe un término controlado que no devuelve productos.
+  datos: Dataset `search`/`without_results` (término controlado, 0 esperados).
+  pasos: 1. Abrir Home. 2. Capturar término sin resultados. 3. Ejecutar búsqueda. 4. Revisar listado. 5. Revisar estado vacío.
+  resultado_esperado: Home utilizable; el buscador acepta el término; la ruta de resultados corresponde al término; ninguna card visible; contador
+    '0 resultados de búsqueda'.
+  postcondicion: No se selecciona ningún producto.
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/search/search.feature
   tags: &id003
   - search
+  - negative
   - estado-vacio
 - id: CP_EC_MA_PDP_001
   titulo: La PDP expone el modelo Product con datos comerciales válidos
@@ -462,18 +464,19 @@ casos:
   implementacion: test_cases/common/search/search.feature
   tags: *id002
 - id: CP_EC_VIU_SEARCH_002
-  titulo: Búsqueda sin resultados muestra el estado vacío
-  objetivo: Verificar el estado vacío correcto ante un término inexistente.
+  titulo: Validar búsqueda sin resultados
+  objetivo: Comprobar que el ecommerce maneja correctamente una búsqueda para la cual no existen productos.
   prioridad: Media
-  tipo: Funcional
+  tipo: Funcional negativo
   ecommerce: VIU
   ecommerce_key: viu
   modulo: Search
-  precondiciones: Ambiente stage.
-  datos: Dataset `search`/`without_results`.
-  pasos: 1. Abrir home. 2. Buscar término inexistente.
-  resultado_esperado: Contador/estado de 0 resultados visible.
-  postcondicion: Sin cambios de estado.
+  precondiciones: Home operativo; existe un término controlado que no devuelve productos.
+  datos: Dataset `search`/`without_results` (término controlado, 0 esperados).
+  pasos: 1. Abrir Home. 2. Capturar término sin resultados. 3. Ejecutar búsqueda. 4. Revisar listado. 5. Revisar estado vacío.
+  resultado_esperado: Home utilizable; el buscador acepta el término; la ruta de resultados corresponde al término; ninguna card visible; contador
+    '0 resultados de búsqueda'.
+  postcondicion: No se selecciona ningún producto.
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/search/search.feature

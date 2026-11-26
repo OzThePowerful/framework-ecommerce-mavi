@@ -74,12 +74,24 @@ def at_least_one_product_visible(search_ctx) -> None:
     assert visible >= 1, "El listado no muestra ninguna card de producto"
 
 
-@when("busca el término sin resultados del dataset", target_fixture="search_ctx")
-def search_without_results(pages, data_provider) -> dict:
+@when(
+    "captura en el buscador el término sin resultados del dataset",
+    target_fixture="search_ctx",
+)
+def type_term_without_results(pages, data_provider) -> dict:
     record = data_provider.get_record("search", "without_results")
     results = pages.search()
-    results.search(record["term"])
+    results.type_term(record["term"])
     return {"record": record, "results": results}
+
+
+@then("no aparece ningún producto en el listado")
+def no_product_visible(search_ctx) -> None:
+    visible = search_ctx["results"].visible_card_count()
+    assert visible == 0, (
+        f"Una búsqueda sin coincidencias no debería mostrar productos; "
+        f"el listado muestra {visible}"
+    )
 
 
 @then("se muestran al menos los resultados mínimos esperados")

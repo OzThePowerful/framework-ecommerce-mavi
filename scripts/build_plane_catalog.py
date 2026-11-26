@@ -97,19 +97,32 @@ CASES = [
     {
         "suffix": "SEARCH_002",
         "modulo": "Search",
-        "titulo": "Búsqueda sin resultados muestra el estado vacío",
-        "objetivo": "Verificar el estado vacío correcto ante un término inexistente.",
+        "titulo": "Validar búsqueda sin resultados",
+        "objetivo": (
+            "Comprobar que el ecommerce maneja correctamente una búsqueda "
+            "para la cual no existen productos."
+        ),
         "prioridad": "Media",
-        "tipo": "Funcional",
-        "precondiciones": "Ambiente stage.",
-        "datos": "Dataset `search`/`without_results`.",
-        "pasos": "1. Abrir home. 2. Buscar término inexistente.",
-        "resultado_esperado": "Contador/estado de 0 resultados visible.",
-        "postcondicion": "Sin cambios de estado.",
+        "tipo": "Funcional negativo",
+        "precondiciones": (
+            "Home operativo; existe un término controlado que no devuelve "
+            "productos."
+        ),
+        "datos": "Dataset `search`/`without_results` (término controlado, 0 esperados).",
+        "pasos": (
+            "1. Abrir Home. 2. Capturar término sin resultados. 3. Ejecutar "
+            "búsqueda. 4. Revisar listado. 5. Revisar estado vacío."
+        ),
+        "resultado_esperado": (
+            "Home utilizable; el buscador acepta el término; la ruta de "
+            "resultados corresponde al término; ninguna card visible; "
+            "contador '0 resultados de búsqueda'."
+        ),
+        "postcondicion": "No se selecciona ningún producto.",
         "automatizable": True,
         "estado_automatizacion": "Automated",
         "implementacion": "test_cases/common/search/search.feature",
-        "tags": ["search", "estado-vacio"],
+        "tags": ["search", "negative", "estado-vacio"],
     },
     {
         "suffix": "PDP_001",
