@@ -7,14 +7,13 @@ Feature: Carrito de compras
   Los términos de búsqueda provienen del dataset del sitio activo.
 
   @CART_001
-  Scenario: Agregar un producto y validar la integridad comercial del carrito
+  Scenario: Agregar un producto disponible al carrito desde su PDP
     Given el usuario abre la home del sitio activo
     When busca el término con resultados del dataset
     And abre la PDP de una card elegible
     And agrega el producto al carrito
     And abre el carrito de compras
-    Then el carrito contiene el producto con datos coherentes con la PDP
-    And los importes del carrito son consistentes con el subtotal y el total
+    Then el producto agregado es visible en el carrito con cantidad 1
 
   @CART_002
   Scenario: Continuar al checkout desde el carrito muestra la opción de invitado

@@ -18,6 +18,18 @@ def add_product_to_cart(pdp_ctx) -> dict:
     product_page = pdp_ctx["product_page"]
     expected = product_page.read_product()
     expected_qty = product_page.quantity()
+    attach_text(
+        "Product PDP",
+        json.dumps(
+            {
+                "sku": expected.sku,
+                "name": expected.name,
+                "unit_price": str(expected.effective_price.amount),
+                "quantity": expected_qty,
+            },
+            ensure_ascii=False,
+        ),
+    )
     product_page.add_to_cart()
     product_page.dismiss_post_add_overlays()
     return {"expected": expected, "expected_qty": expected_qty}
@@ -34,6 +46,36 @@ def open_cart(pages, cart_ctx) -> None:
 @when("continúa al checkout desde el carrito")
 def continue_to_checkout(cart_ctx) -> None:
     cart_ctx["cart_page"].continue_to_checkout()
+
+
+@then("el producto agregado es visible en el carrito con cantidad 1")
+def added_product_visible_in_cart(cart_ctx) -> None:
+    model = cart_ctx["cart"]
+    expected = cart_ctx["expected"]
+    assert len(model.items) == 1, (
+        f"El carrito debería tener 1 ítem; tiene {len(model.items)}"
+    )
+    item = model.items[0]
+    assert item.product.sku == expected.sku, (
+        f"SKU carrito {item.product.sku!r} != PDP {expected.sku!r}"
+    )
+    assert item.product.name == expected.name, (
+        f"Nombre carrito {item.product.name!r} != PDP {expected.name!r}"
+    )
+    assert item.quantity == cart_ctx["expected_qty"], (
+        f"Cantidad {item.quantity} != esperada {cart_ctx['expected_qty']}"
+    )
+    attach_text(
+        "Cart item",
+        json.dumps(
+            {
+                "sku": item.product.sku,
+                "name": item.product.name,
+                "quantity": item.quantity,
+            },
+            ensure_ascii=False,
+        ),
+    )
 
 
 @then("el carrito contiene el producto con datos coherentes con la PDP")
