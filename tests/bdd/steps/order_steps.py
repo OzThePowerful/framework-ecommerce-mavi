@@ -62,6 +62,25 @@ def capture_summary(checkout_ctx) -> None:
     checkout_ctx["shipping_obj"] = checkout.shipping()
 
 
+@then("el total del resumen está disponible")
+def summary_total_available(checkout_ctx) -> None:
+    summary = checkout_ctx["summary"]
+    assert summary["total"].amount > 0, (
+        f"Total del resumen no disponible: {summary['total'].amount}"
+    )
+    attach_text(
+        "Resumen pre-confirmación",
+        json.dumps(
+            {
+                "subtotal": str(summary["subtotal"].amount),
+                "shipping": str(summary["shipping"].amount),
+                "total": str(summary["total"].amount),
+            },
+            ensure_ascii=False,
+        ),
+    )
+
+
 @then("la orden es consistente con producto, carrito, envío, total y pago")
 def order_is_consistent(order_ctx, checkout_ctx, cart_ctx) -> None:
     order = order_ctx["order"]

@@ -715,17 +715,17 @@ casos:
   implementacion: Escenario @pending en test_cases/common/payment/payment.feature; falta wiring MSI
   tags: *id017
 - id: CP_EC_VIU_ORDER_001
-  titulo: Confirmar la compra genera una orden con folio verificable
-  objetivo: Ejecutar 'Finalizar compra' y capturar folio + mensaje de éxito inequívoco.
+  titulo: Generar orden mediante venta de contado
+  objetivo: Validar que el usuario puede confirmar una compra de contado en VIU y obtener una orden válida.
   prioridad: Alta
-  tipo: E2E
+  tipo: Funcional
   ecommerce: VIU
   ecommerce_key: viu
   modulo: Order
-  precondiciones: Stage autorizado para órdenes de prueba; identidad real MAVI_GUEST_*.
-  datos: Tarjeta sandbox + identidad real.
-  pasos: 1. Flujo completo hasta pago. 2. confirm_order(). 3. Verificar página de éxito y folio.
-  resultado_esperado: 'URL onepage/success; .checkout-success con ''Tu N° de pedido es: #NNNNNNNNNN''.'
+  precondiciones: Carrito válido; checkout completo; contado seleccionado; stage habilitado para órdenes de prueba.
+  datos: Datos acumulados del flujo (Product, Cart, Customer, Address, Shipping, Payment).
+  pasos: 1. Revisar resumen final. 2. Validar total antes de confirmar. 3. Ejecutar confirmación. 4. Esperar respuesta. 5. Revisar página final. 6. Obtener folio.
+  resultado_esperado: Se genera una orden de compra y se obtiene un identificador verificable.
   postcondicion: Orden REAL creada en stage (folio en Allure).
   automatizable: true
   estado_automatizacion: Automated
