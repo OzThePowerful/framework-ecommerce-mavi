@@ -117,22 +117,25 @@ casos:
   - pdp
   - configurable
 - id: CP_EC_MA_CART_001
-  titulo: La integridad comercial Product→Cart se conserva
-  objetivo: Verificar que el item del carrito coincide con el Product (SKU, nombre, qty, precio) y los importes del resumen.
+  titulo: Agregar producto disponible al carrito
+  objetivo: Validar que un producto disponible puede agregarse correctamente al carrito desde su PDP.
   prioridad: Alta
-  tipo: Funcional
+  tipo: Funcional positivo
   ecommerce: Muebles América
   ecommerce_key: muebles_america
   modulo: Cart
-  precondiciones: Ambiente stage; producto con stock.
-  datos: Producto elegible.
-  pasos: 1. Agregar a carrito. 2. Abrir /checkout/cart. 3. Comparar item y resumen.
-  resultado_esperado: CartItem == Product esperado; subtotal/descuento/total consistentes.
-  postcondicion: Producto queda en el carrito de la sesión.
+  precondiciones: Existe producto disponible; PDP operativo; producto con acción de agregar al carrito habilitada.
+  datos: Producto elegible obtenido desde Search (dataset `search`/`with_results`); cantidad inicial 1.
+  pasos: 1. Abrir PDP del producto. 2. Registrar nombre, identificador y precio. 3. Mantener cantidad 1. 4. Agregar producto al carrito. 5. Esperar
+    confirmación observable. 6. Abrir carrito. 7. Buscar producto agregado.
+  resultado_esperado: PDP de la card seleccionada; nombre, sku y precio > 0 registrados; cantidad 1; el estado del carrito registra el sku con
+    qty 1 aceptado por el ecommerce; toast 'agregado a tu carrito' con el producto y minicart en 1; /checkout/cart disponible con 1 ítem del sku
+    registrado y cantidad 1; integridad PDP→Cart e importes consistentes.
+  postcondicion: Existe un producto en el carrito.
   automatizable: true
   estado_automatizacion: Automated
-  implementacion: test_cases/common/cart/cart.feature
-  tags: &id005
+  implementacion: test_cases/muebles_america/cart/cart.feature
+  tags:
   - cart
   - integridad
   - regression
@@ -152,7 +155,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/cart/cart.feature
-  tags: &id006
+  tags: &id005
   - cart
   - checkout
   - gate
@@ -172,7 +175,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/checkout/checkout.feature
-  tags: &id007
+  tags: &id006
   - checkout
   - guest
 - id: CP_EC_MA_CHECKOUT_002
@@ -191,7 +194,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/checkout/checkout.feature
-  tags: &id008
+  tags: &id007
   - checkout
   - customer
   - address
@@ -211,7 +214,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/checkout/checkout.feature
-  tags: &id009
+  tags: &id008
   - checkout
   - shipping
 - id: CP_EC_MA_CUSTOMER_001
@@ -230,7 +233,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/customer/customer.feature
-  tags: &id010
+  tags: &id009
   - customer
 - id: CP_EC_MA_ADDRESS_001
   titulo: La dirección autocompleta colonia, ciudad y estado desde el CP
@@ -248,7 +251,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/address/address.feature
-  tags: &id011
+  tags: &id010
   - address
   - cp-autocomplete
 - id: CP_EC_MA_SHIPPING_001
@@ -267,7 +270,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/shipping/shipping.feature
-  tags: &id012
+  tags: &id011
   - shipping
   - costo-envio
 - id: CP_EC_MA_SHIPPING_002
@@ -286,7 +289,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/shipping/shipping.feature
-  tags: &id013
+  tags: &id012
   - shipping
   - pickup
   - store-selector
@@ -306,7 +309,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/payment/payment.feature
-  tags: &id014
+  tags: &id013
   - payment
   - contado
   - openpay
@@ -326,7 +329,7 @@ casos:
   automatizable: true
   estado_automatizacion: Not Automated
   implementacion: Escenario @pending en test_cases/common/payment/payment.feature; falta dataset de alto monto
-  tags: &id015
+  tags: &id014
   - payment
   - regla-negocio
   - openpay-stores
@@ -346,7 +349,7 @@ casos:
   automatizable: true
   estado_automatizacion: Not Automated
   implementacion: Escenario @pending en test_cases/common/payment/payment.feature; falta wiring MSI
-  tags: &id016
+  tags: &id015
   - payment
   - msi
   - contado
@@ -366,7 +369,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/order/order.feature
-  tags: &id017
+  tags: &id016
   - order
   - e2e
   - irreversible
@@ -386,7 +389,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/order/order.feature
-  tags: &id018
+  tags: &id017
   - order
   - consistencia
   - irreversible
@@ -406,7 +409,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/smoke/sale_cash.feature (GuestCheckoutWorkflow)
-  tags: &id019
+  tags: &id018
   - smoke
   - regression
 - id: CP_EC_MA_E2E_001
@@ -425,7 +428,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/e2e/e2e.feature (SaleCashWorkflow, confirm_order=True)
-  tags: &id020
+  tags: &id019
   - e2e
   - contado
   - irreversible
@@ -532,7 +535,10 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/cart/cart.feature
-  tags: *id005
+  tags:
+  - cart
+  - integridad
+  - regression
 - id: CP_EC_VIU_CART_002
   titulo: Continuar al checkout desde el carrito muestra el gate de invitado
   objetivo: Verificar la transición carrito → gate 'Continuar como invitado'.
@@ -549,7 +555,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/cart/cart.feature
-  tags: *id006
+  tags: *id005
 - id: CP_EC_VIU_CHECKOUT_001
   titulo: Acceder al checkout como invitado expone los campos requeridos
   objetivo: Verificar el gate de invitado y la etapa Entrega con campos obligatorios.
@@ -566,7 +572,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/checkout/checkout.feature
-  tags: *id007
+  tags: *id006
 - id: CP_EC_VIU_CHECKOUT_002
   titulo: Registrar los datos del comprador habilita la etapa de pago
   objetivo: Verificar que el formulario acepta comprador+dirección y habilita Forma de pago.
@@ -583,7 +589,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/checkout/checkout.feature
-  tags: *id008
+  tags: *id007
 - id: CP_EC_VIU_CHECKOUT_003
   titulo: Seleccionar el método de entrega expone el costo de envío
   objetivo: Verificar toggle domicilio/sucursal y costo de envío calculado.
@@ -600,7 +606,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/checkout/checkout.feature
-  tags: *id009
+  tags: *id008
 - id: CP_EC_VIU_CUSTOMER_001
   titulo: La captura del comprador persiste nombre, correo y teléfono
   objetivo: Verificar que read_customer() recupera el Customer ingresado.
@@ -617,7 +623,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/customer/customer.feature
-  tags: *id010
+  tags: *id009
 - id: CP_EC_VIU_ADDRESS_001
   titulo: La dirección autocompleta colonia, ciudad y estado desde el CP
   objetivo: Verificar el lookup por código postal y la lectura del modelo Address.
@@ -634,7 +640,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/address/address.feature
-  tags: *id011
+  tags: *id010
 - id: CP_EC_VIU_SHIPPING_001
   titulo: La entrega a domicilio expone costo y estimación
   objetivo: Verificar el costo de envío a domicilio como Money y la estimación de entrega.
@@ -651,7 +657,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/shipping/shipping.feature
-  tags: *id012
+  tags: *id011
 - id: CP_EC_VIU_SHIPPING_002
   titulo: El retiro en sucursal abre el store picker y selecciona tienda
   objetivo: Verificar el picker de sucursal (modal, estados, tiendas, 'Entregar aquí') y el contacto de pickup.
@@ -668,7 +674,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/shipping/shipping.feature
-  tags: *id013
+  tags: *id012
 - id: CP_EC_VIU_PAY_001
   titulo: Seleccionar contado y preparar la orden sin confirmarla
   objetivo: Verificar la selección de openpay_cards con tarjeta sandbox hasta 'Finalizar compra' habilitado.
@@ -685,7 +691,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/payment/payment.feature
-  tags: *id014
+  tags: *id013
 - id: CP_EC_VIU_PAY_002
   titulo: El pago en efectivo no es seleccionable por encima de $30,000
   objetivo: 'Verificar la regla de negocio: openpay_stores deshabilitado con total > $30,000 MXN.'
@@ -702,7 +708,7 @@ casos:
   automatizable: true
   estado_automatizacion: Not Automated
   implementacion: Escenario @pending en test_cases/common/payment/payment.feature; falta dataset de alto monto
-  tags: *id015
+  tags: *id014
 - id: CP_EC_VIU_PAY_003
   titulo: El contado a MSI se prepara con la tarjeta 4242
   objetivo: Verificar el flujo de meses sin intereses (contado diferido bancario) con 4242…4242.
@@ -719,7 +725,7 @@ casos:
   automatizable: true
   estado_automatizacion: Not Automated
   implementacion: Escenario @pending en test_cases/common/payment/payment.feature; falta wiring MSI
-  tags: *id016
+  tags: *id015
 - id: CP_EC_VIU_ORDER_001
   titulo: Confirmar la compra genera una orden con folio verificable
   objetivo: Ejecutar 'Finalizar compra' y capturar folio + mensaje de éxito inequívoco.
@@ -736,7 +742,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/order/order.feature
-  tags: *id017
+  tags: *id016
 - id: CP_EC_VIU_ORDER_002
   titulo: La orden es consistente con los datos comerciales del flujo
   objetivo: Comparar la orden contra Product, Cart, Shipping, total y método de pago.
@@ -753,7 +759,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/order/order.feature
-  tags: *id018
+  tags: *id017
 - id: CP_EC_VIU_SMOKE_001
   titulo: 'Smoke: guest checkout muestra un precio de pedido mayor a cero'
   objetivo: Verificación rápida del flujo navegación → checkout invitado con precio > 0.
@@ -770,7 +776,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/smoke/sale_cash.feature (GuestCheckoutWorkflow)
-  tags: *id019
+  tags: *id018
 - id: CP_EC_VIU_E2E_001
   titulo: Flujo completo de venta de contado Home→Order
   objetivo: 'Ejecutar el recorrido E2E consolidado: búsqueda, PDP, carrito, checkout, pago y orden.'
@@ -787,4 +793,4 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/e2e/e2e.feature (SaleCashWorkflow, confirm_order=True)
-  tags: *id020
+  tags: *id019

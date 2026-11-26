@@ -274,6 +274,40 @@ CASES = [
         "estado_automatizacion": "Automated",
         "implementacion": "test_cases/common/cart/cart.feature",
         "tags": ["cart", "integridad", "regression"],
+        # CP_EC_MA_CART_001 — exclusivo de MA (MA-AISLAMIENTO-001).
+        "muebles_america": {
+            "titulo": "Agregar producto disponible al carrito",
+            "objetivo": (
+                "Validar que un producto disponible puede agregarse "
+                "correctamente al carrito desde su PDP."
+            ),
+            "tipo": "Funcional positivo",
+            "precondiciones": (
+                "Existe producto disponible; PDP operativo; producto con "
+                "acción de agregar al carrito habilitada."
+            ),
+            "datos": (
+                "Producto elegible obtenido desde Search (dataset "
+                "`search`/`with_results`); cantidad inicial 1."
+            ),
+            "pasos": (
+                "1. Abrir PDP del producto. 2. Registrar nombre, "
+                "identificador y precio. 3. Mantener cantidad 1. 4. Agregar "
+                "producto al carrito. 5. Esperar confirmación observable. "
+                "6. Abrir carrito. 7. Buscar producto agregado."
+            ),
+            "resultado_esperado": (
+                "PDP de la card seleccionada; nombre, sku y precio > 0 "
+                "registrados; cantidad 1; el estado del carrito registra el "
+                "sku con qty 1 aceptado por el ecommerce; toast 'agregado a "
+                "tu carrito' con el producto y minicart en 1; /checkout/cart "
+                "disponible con 1 ítem del sku registrado y cantidad 1; "
+                "integridad PDP→Cart e importes consistentes."
+            ),
+            "postcondicion": "Existe un producto en el carrito.",
+            "implementacion": "test_cases/muebles_america/cart/cart.feature",
+            "tags": ["cart", "integridad", "regression"],
+        },
     },
     {
         "suffix": "CART_002",

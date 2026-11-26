@@ -12,6 +12,8 @@ porque PDP_001 aplica solo a MA (MA-AISLAMIENTO-001).
 
 
 class ProductLocators:
+    # Cantidad seleccionada (texto "1") — CP_EC_MA_CART_001 paso 3.
+    QUANTITY = "div.product-quantity:visible"
     AVAILABILITY_LABEL = (
         "span:text-matches('^(Disponible|Agotado|Solo queda [0-9]+)$', 'i')"
         ":visible"
