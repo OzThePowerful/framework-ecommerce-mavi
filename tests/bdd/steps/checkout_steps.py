@@ -153,15 +153,23 @@ def delivery_method_and_cost(checkout_ctx) -> None:
     assert shipping.method == expected, (
         f"Método de Shipping {shipping.method!r} != esperado {expected!r}"
     )
-    assert shipping.cost.amount >= 0, (
-        f"El costo de envío debería ser un importe >= 0: {shipping.cost.amount}"
-    )
+    label = checkout.shipping_cost_label()
+    assert label is not None, "El resumen no muestra el costo de envío calculado"
+    if label.casefold() == "gratis":
+        assert shipping.cost.amount == 0, (
+            f"Envío 'Gratis' con importe {shipping.cost.amount}"
+        )
+    else:
+        assert shipping.cost.amount > 0, (
+            f"El costo de envío {label!r} debería ser mayor a cero"
+        )
     checkout.wait_payment_stage_enabled()
     attach_text(
         "Shipping",
         json.dumps(
             {
                 "method": shipping.method,
+                "cost_label": label,
                 "cost": str(shipping.cost.amount),
                 "estimate": checkout.delivery_estimate(),
                 "payment_stage_enabled": checkout.is_payment_stage_enabled(),

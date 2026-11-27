@@ -153,6 +153,15 @@ class ShippingComponent:
         digits = re.sub(r"[^\d.]", "", raw)
         return Money(Decimal(digits))
 
+    def shipping_cost_label(self, timeout: int = 20000) -> str | None:
+        """Etiqueta del costo de envío en el resumen: 'Gratis', '$X.XX' o
+        None si el resumen no expone un valor calculado."""
+        text = self._wait_shipping_ready(timeout)
+        match = re.search(
+            r"env\S*\s*:?\s*(Gratis|\$?[\d,]+\.\d+)", text, re.IGNORECASE
+        )
+        return match.group(1) if match else None
+
     def _wait_shipping_ready(self, timeout: int) -> str:
         """Devuelve el texto del resumen cuando el envío ya tiene valor."""
         summary = self.page.locator(ShippingLocators.SUMMARY_PANEL).first

@@ -102,6 +102,9 @@ class CommonCheckoutPage(BasePage):
     def shipping_cost(self) -> Money:
         return self.delivery.shipping_cost()
 
+    def shipping_cost_label(self) -> str | None:
+        return self.delivery.shipping_cost_label()
+
     def summary_totals(self) -> dict[str, Money]:
         return self.delivery.summary_totals()
 
