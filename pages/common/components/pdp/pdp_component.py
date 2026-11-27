@@ -62,7 +62,9 @@ class PdpComponent:
         final = Decimal(str(cur.get("final_price") or cur["price"]))
         stock = cur.get("stock") or {}
         return Product(
-            sku=str(cur["sku"]),
+            # "" = sku no expuesto: el llamador decide/documenta la ausencia
+            # (CP_EC_MA_PDP_001 paso 4) en vez de tronar con KeyError.
+            sku=str(cur.get("sku") or ""),
             name=str(cur["name"]),
             product_id=str(stock.get("product_id") or cur.get("id") or ""),
             unit_price=Money(regular),

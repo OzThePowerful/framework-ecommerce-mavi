@@ -16,9 +16,14 @@ class BasePage:
         self.page = page
         self.context = context
 
-    def open(self, path: str = "/") -> None:
-        """Navega a una ruta resuelta contra la base_url del contexto."""
-        self.page.goto(self._resolve_url(path))
+    def open(self, path: str = "/") -> int | None:
+        """Navega a una ruta resuelta contra la base_url del contexto.
+
+        Devuelve el status HTTP de la respuesta principal (None si la
+        navegación no produjo respuesta, p.ej. mismo documento con ancla).
+        """
+        response = self.page.goto(self._resolve_url(path))
+        return response.status if response is not None else None
 
     def _resolve_url(self, path: str) -> str:
         if path.startswith(("http://", "https://")):

@@ -24,7 +24,8 @@ ECOMMERCES = (
 
 VALID_STATES = ("Not Automated", "In Development", "Automated", "Blocked")
 
-# Definición única por módulo: `suffix` completa el Case ID.
+# Definición única por módulo: `suffix` completa el Case ID. Un bloque
+# `muebles_america: {...}` / `viu: {...}` sobrescribe campos para esa marca.
 CASES = [
     {
         "suffix": "HOME_001",
@@ -47,6 +48,32 @@ CASES = [
         "estado_automatizacion": "Automated",
         "implementacion": "test_cases/common/home/home.feature",
         "tags": ["smoke", "regression", "home"],
+        # CP_EC_MA_HOME_001 — exclusivo de MA (MA-AISLAMIENTO-001).
+        "muebles_america": {
+            "objetivo": (
+                "Comprobar que la página principal carga correctamente y "
+                "proporciona los controles mínimos para iniciar un flujo de compra."
+            ),
+            "precondiciones": (
+                "Ambiente stage disponible; URL del sitio configurada; "
+                "navegador soportado; conexión con el sitio."
+            ),
+            "datos": (
+                "Dataset `home`/`home_001` (título de marca y elementos de "
+                "navegación esperados)."
+            ),
+            "pasos": (
+                "1. Navegar a la URL configurada. 2. Esperar la carga inicial. "
+                "3. Validar la identidad visual. 4. Localizar el buscador. "
+                "5. Localizar el acceso al carrito. 6. Revisar la navegación principal."
+            ),
+            "resultado_esperado": (
+                "Sitio responde 2xx/3xx; home utilizable sin bloqueos; logo y "
+                "título de la marca; buscador visible y habilitado; carrito "
+                "disponible; navegación principal con 'Departamentos'."
+            ),
+            "implementacion": "test_cases/muebles_america/home/home.feature",
+        },
     },
     {
         "suffix": "SEARCH_001",
@@ -73,6 +100,32 @@ CASES = [
         "estado_automatizacion": "Automated",
         "implementacion": "test_cases/common/search/search.feature",
         "tags": ["search", "regression", "scroll-infinito"],
+        # CP_EC_MA_SEARCH_001 — exclusivo de MA (MA-AISLAMIENTO-001).
+        "muebles_america": {
+            "titulo": "Buscar producto utilizando un término válido",
+            "objetivo": (
+                "Validar que el sitio permite buscar productos mediante un "
+                "término válido y muestra resultados utilizables para continuar "
+                "una compra."
+            ),
+            "precondiciones": (
+                "Home operativo; dataset de búsqueda disponible; existe al menos "
+                "un producto relacionado con el término configurado."
+            ),
+            "pasos": (
+                "1. Abrir el Home. 2. Ubicar el buscador. 3. Capturar un término "
+                "válido. 4. Ejecutar la búsqueda. 5. Esperar resultados. "
+                "6. Revisar productos encontrados. 7. Revisar que los resultados "
+                "puedan seleccionarse."
+            ),
+            "resultado_esperado": (
+                "Home utilizable; buscador habilitado acepta el término; la ruta "
+                "de resultados corresponde al término; contador >= mínimo y al "
+                "menos una card visible; cards cargadas == contador; existe card "
+                "elegible que abre su PDP."
+            ),
+            "implementacion": "test_cases/muebles_america/search/search.feature",
+        },
     },
     {
         "suffix": "SEARCH_002",
@@ -90,6 +143,32 @@ CASES = [
         "estado_automatizacion": "Automated",
         "implementacion": "test_cases/common/search/search.feature",
         "tags": ["search", "estado-vacio"],
+        # CP_EC_MA_SEARCH_002 — exclusivo de MA (MA-AISLAMIENTO-001).
+        "muebles_america": {
+            "titulo": "Validar búsqueda sin resultados",
+            "objetivo": (
+                "Comprobar que el ecommerce maneja correctamente una búsqueda "
+                "para la cual no existen productos."
+            ),
+            "tipo": "Funcional negativo",
+            "precondiciones": (
+                "Home operativo; existe un término controlado que no devuelve "
+                "productos."
+            ),
+            "datos": "Dataset `search`/`without_results` (término controlado, 0 esperados).",
+            "pasos": (
+                "1. Abrir Home. 2. Capturar término sin resultados. 3. Ejecutar "
+                "búsqueda. 4. Revisar listado. 5. Revisar estado vacío."
+            ),
+            "resultado_esperado": (
+                "Home utilizable; el buscador acepta el término; la ruta de "
+                "resultados corresponde al término; ninguna card visible; "
+                "contador '0 resultados de búsqueda'."
+            ),
+            "postcondicion": "No se selecciona ningún producto.",
+            "implementacion": "test_cases/muebles_america/search/search.feature",
+            "tags": ["search", "negative", "estado-vacio"],
+        },
     },
     {
         "suffix": "PDP_001",
@@ -113,6 +192,40 @@ CASES = [
         "estado_automatizacion": "Automated",
         "implementacion": "test_cases/common/product/pdp.feature",
         "tags": ["pdp", "product", "regression"],
+        # CP_EC_MA_PDP_001 — exclusivo de MA (MA-AISLAMIENTO-001).
+        "muebles_america": {
+            "titulo": "Validar información de un producto disponible en PDP",
+            "objetivo": (
+                "Comprobar que un producto seleccionado desde resultados abre "
+                "su página de detalle y contiene la información necesaria para "
+                "ser comprado."
+            ),
+            "precondiciones": "Search operativo; existe producto disponible.",
+            "datos": (
+                "Producto elegible obtenido dinámicamente desde Search "
+                "(dataset `search`/`with_results`)."
+            ),
+            "pasos": (
+                "1. Ejecutar búsqueda válida. 2. Seleccionar un producto "
+                "elegible. 3. Obtener nombre. 4. Obtener SKU o identificador. "
+                "5. Obtener precio. 6. Revisar disponibilidad. 7. Localizar "
+                "acción de agregar al carrito."
+            ),
+            "resultado_esperado": (
+                "Resultados visibles; la PDP corresponde a la card (slug y "
+                "nombre); nombre no vacío; sku en la URL y/o product_id "
+                "numérico (ausencia documentada); precio > 0 coherente con el "
+                "promocional; etiqueta 'Disponible' o 'Solo queda N' (no "
+                "'Agotado') y regla de venta cumplida; agregar al carrito "
+                "habilitado."
+            ),
+            "postcondicion": (
+                "Información del producto (product_name, sku/product_id, "
+                "unit_price, promotional_price, availability) disponible para "
+                "validaciones posteriores."
+            ),
+            "implementacion": "test_cases/muebles_america/product/pdp.feature",
+        },
     },
     {
         "suffix": "PDP_002",
@@ -161,6 +274,40 @@ CASES = [
         "estado_automatizacion": "Automated",
         "implementacion": "test_cases/common/cart/cart.feature",
         "tags": ["cart", "integridad", "regression"],
+        # CP_EC_MA_CART_001 — exclusivo de MA (MA-AISLAMIENTO-001).
+        "muebles_america": {
+            "titulo": "Agregar producto disponible al carrito",
+            "objetivo": (
+                "Validar que un producto disponible puede agregarse "
+                "correctamente al carrito desde su PDP."
+            ),
+            "tipo": "Funcional positivo",
+            "precondiciones": (
+                "Existe producto disponible; PDP operativo; producto con "
+                "acción de agregar al carrito habilitada."
+            ),
+            "datos": (
+                "Producto elegible obtenido desde Search (dataset "
+                "`search`/`with_results`); cantidad inicial 1."
+            ),
+            "pasos": (
+                "1. Abrir PDP del producto. 2. Registrar nombre, "
+                "identificador y precio. 3. Mantener cantidad 1. 4. Agregar "
+                "producto al carrito. 5. Esperar confirmación observable. "
+                "6. Abrir carrito. 7. Buscar producto agregado."
+            ),
+            "resultado_esperado": (
+                "PDP de la card seleccionada; nombre, sku y precio > 0 "
+                "registrados; cantidad 1; el estado del carrito registra el "
+                "sku con qty 1 aceptado por el ecommerce; toast 'agregado a "
+                "tu carrito' con el producto y minicart en 1; /checkout/cart "
+                "disponible con 1 ítem del sku registrado y cantidad 1; "
+                "integridad PDP→Cart e importes consistentes."
+            ),
+            "postcondicion": "Existe un producto en el carrito.",
+            "implementacion": "test_cases/muebles_america/cart/cart.feature",
+            "tags": ["cart", "integridad", "regression"],
+        },
     },
     {
         "suffix": "CART_002",
@@ -178,6 +325,40 @@ CASES = [
         "estado_automatizacion": "Automated",
         "implementacion": "test_cases/common/cart/cart.feature",
         "tags": ["cart", "checkout", "gate"],
+        # CP_EC_MA_CART_002 — exclusivo de MA (MA-AISLAMIENTO-001).
+        "muebles_america": {
+            "titulo": "Validar producto, cantidad, precio y subtotal del carrito",
+            "objetivo": (
+                "Verificar que la información transferida desde PDP al "
+                "carrito mantiene consistencia comercial."
+            ),
+            "tipo": "Validación comercial",
+            "precondiciones": (
+                "Producto agregado al carrito; información de PDP "
+                "previamente capturada."
+            ),
+            "datos": (
+                "Producto elegible obtenido desde Search (dataset "
+                "`search`/`with_results`); cantidad seleccionada en la PDP."
+            ),
+            "pasos": (
+                "1. Abrir carrito. 2. Obtener nombre del producto. "
+                "3. Obtener identificador/SKU si está disponible. "
+                "4. Obtener cantidad. 5. Obtener precio unitario. "
+                "6. Obtener subtotal. 7. Calcular subtotal esperado. "
+                "8. Comparar subtotal observado contra esperado."
+            ),
+            "resultado_esperado": (
+                "Carrito disponible con 1 ítem; nombre y SKU iguales a la "
+                "PDP (SKU ausente documentado); cantidad = seleccionada; "
+                "precio unitario = precio aplicable de la PDP; subtotal del "
+                "resumen disponible e igual a cantidad × precio (Decimal, "
+                "antes de descuentos); gate 'Continuar como invitado' visible."
+            ),
+            "postcondicion": "En la puerta del checkout con el producto en el carrito.",
+            "implementacion": "test_cases/muebles_america/cart/cart.feature",
+            "tags": ["cart", "commercial_validation", "checkout", "gate"],
+        },
     },
     {
         "suffix": "CHECKOUT_001",
@@ -198,6 +379,39 @@ CASES = [
         "estado_automatizacion": "Automated",
         "implementacion": "test_cases/common/checkout/checkout.feature",
         "tags": ["checkout", "guest"],
+        # CP_EC_MA_CHECKOUT_001 — exclusivo de MA (MA-AISLAMIENTO-001).
+        "muebles_america": {
+            "titulo": "Iniciar Checkout desde un carrito válido",
+            "objetivo": (
+                "Comprobar que el usuario puede pasar correctamente desde un "
+                "carrito válido al proceso de Checkout."
+            ),
+            "tipo": "Funcional positivo",
+            "precondiciones": (
+                "Carrito con producto válido; producto disponible; sin "
+                "errores pendientes en carrito."
+            ),
+            "datos": (
+                "Producto elegible desde Search (`search`/`with_results`); "
+                "campos requeridos en `checkout`/`entry`."
+            ),
+            "pasos": (
+                "1. Abrir carrito. 2. Revisar producto. 3. Seleccionar "
+                "continuar/finalizar compra. 4. Esperar primera etapa de "
+                "Checkout. 5. Revisar controles requeridos."
+            ),
+            "resultado_esperado": (
+                "Carrito disponible con el producto registrado y cantidad 1; "
+                "el ecommerce muestra el gate 'Continuar como invitado'; tras "
+                "continuar, URL del checkout de la marca con la etapa "
+                "'entrega' abierta y 'Forma de pago' deshabilitada; los campos "
+                "requeridos del dataset están marcados como obligatorios, "
+                "visibles, habilitados y editables."
+            ),
+            "postcondicion": "En la etapa de entrega del checkout invitado.",
+            "implementacion": "test_cases/muebles_america/checkout/checkout.feature",
+            "tags": ["checkout", "guest"],
+        },
     },
     {
         "suffix": "CHECKOUT_002",
@@ -224,6 +438,39 @@ CASES = [
         "estado_automatizacion": "Automated",
         "implementacion": "test_cases/common/checkout/checkout.feature",
         "tags": ["checkout", "customer", "address"],
+        # CP_EC_MA_CHECKOUT_002 — exclusivo de MA (MA-AISLAMIENTO-001).
+        "muebles_america": {
+            "titulo": "Registrar datos válidos del comprador",
+            "objetivo": (
+                "Validar que los datos requeridos del comprador son "
+                "aceptados durante Checkout."
+            ),
+            "tipo": "Funcional positivo",
+            "precondiciones": "Checkout iniciado; dataset de cliente disponible.",
+            "datos": (
+                "Identidad `MAVI_GUEST_MA_*` (.env) vía DataProvider: nombre, "
+                "apellidos, correo y teléfono; dirección `addresses`/"
+                "`guadalajara` (`checkout`/`guest`)."
+            ),
+            "pasos": (
+                "1. Obtener datos de cliente. 2. Capturar nombre. 3. Capturar "
+                "apellidos. 4. Capturar correo. 5. Capturar teléfono. "
+                "6. Completar otros campos obligatorios. 7. Continuar."
+            ),
+            "resultado_esperado": (
+                "Dataset completo; cada campo conserva el valor y no muestra "
+                "error (aria-invalid, .field._error, mensaje de correo); "
+                "calle, número y CP aceptados con colonia/ciudad "
+                "autocompletadas; tras continuar, etapa 'forma_de_pago' sin "
+                "errores ni campos inválidos y datos del comprador intactos."
+            ),
+            "postcondicion": (
+                "Checkout en la etapa 'Forma de pago' con el comprador "
+                "registrado (sin orden creada)."
+            ),
+            "implementacion": "test_cases/muebles_america/checkout/checkout.feature",
+            "tags": ["checkout", "customer", "address"],
+        },
     },
     {
         "suffix": "CHECKOUT_003",
@@ -244,6 +491,44 @@ CASES = [
         "estado_automatizacion": "Automated",
         "implementacion": "test_cases/common/checkout/checkout.feature",
         "tags": ["checkout", "shipping"],
+        # CP_EC_MA_CHECKOUT_003 — exclusivo de MA (MA-AISLAMIENTO-001).
+        "muebles_america": {
+            "titulo": "Registrar domicilio y seleccionar método de entrega",
+            "objetivo": (
+                "Validar que un domicilio válido y un método de entrega "
+                "pueden configurarse correctamente."
+            ),
+            "tipo": "Funcional positivo",
+            "precondiciones": (
+                "Datos de comprador aceptados; dataset de domicilio disponible."
+            ),
+            "datos": (
+                "Domicilio `addresses`/`guadalajara` (calle, número, CP, "
+                "colonia, ciudad, estado, referencias) y método "
+                "`checkout`/`guest.shipping_method`."
+            ),
+            "pasos": (
+                "1. Obtener domicilio. 2. Capturar código postal. "
+                "3. Seleccionar/capturar colonia. 4. Completar calle y número. "
+                "5. Completar información adicional requerida. 6. Consultar "
+                "métodos de entrega. 7. Seleccionar método de entrega. "
+                "8. Obtener costo de envío. 9. Continuar Checkout."
+            ),
+            "resultado_esperado": (
+                "CP aceptado con autocompletado; colonia del dataset entre las "
+                "del CP y seleccionada; calle y número válidos; ciudad/estado "
+                "= dataset, sin errores y 'Forma de pago' habilitada; al menos "
+                "un método de entrega y el del dataset activo; costo 'Gratis' "
+                "(0) o importe > 0; tras continuar, etapa 'forma_de_pago' con "
+                "domicilio y método registrados."
+            ),
+            "postcondicion": (
+                "Checkout en 'Forma de pago' con domicilio y método de entrega "
+                "registrados (sin orden creada)."
+            ),
+            "implementacion": "test_cases/muebles_america/checkout/checkout.feature",
+            "tags": ["checkout", "shipping"],
+        },
     },
     {
         "suffix": "CUSTOMER_001",
@@ -498,18 +783,27 @@ CASES = [
 ]
 
 
+def _for_site(case: dict, site_key: str) -> dict:
+    """Definición del caso para una marca.
+
+    Un bloque `<sitio>: {campo: valor}` sobrescribe los campos de la
+    definición común solo para esa marca (MA-AISLAMIENTO-001: los casos
+    exclusivos de MA no cambian la ficha de VIU). Se conserva el formato
+    plano `<campo>_<sitio>` para estado e implementación.
+    """
+    resolved = {**case, **case.get(site_key, {})}
+    for field in ("estado_automatizacion", "implementacion"):
+        flat = case.get(f"{field}_{site_key}")
+        if flat:
+            resolved[field] = flat
+    return resolved
+
+
 def build_catalog() -> dict:
     cases = []
     for site_key, site_id, site_name in ECOMMERCES:
-        for case in CASES:
-            state = (
-                case.get(f"estado_automatizacion_{site_key}")
-                or case["estado_automatizacion"]
-            )
-            impl = (
-                case.get(f"implementacion_{site_key}")
-                or case["implementacion"]
-            )
+        for base in CASES:
+            case = _for_site(base, site_key)
             cases.append(
                 {
                     "id": f"CP_EC_{site_id}_{case['suffix']}",
@@ -526,8 +820,8 @@ def build_catalog() -> dict:
                     "resultado_esperado": case["resultado_esperado"],
                     "postcondicion": case["postcondicion"],
                     "automatizable": case["automatizable"],
-                    "estado_automatizacion": state,
-                    "implementacion": impl,
+                    "estado_automatizacion": case["estado_automatizacion"],
+                    "implementacion": case["implementacion"],
                     "tags": case["tags"],
                 }
             )

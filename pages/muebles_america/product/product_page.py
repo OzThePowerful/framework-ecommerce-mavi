@@ -20,6 +20,34 @@ class ProductPage(CommonProductPage):
         super().__init__(page, context)
         self.promotions_window = PromotionsWindowComponent(page)
 
+    def availability_label(self) -> str | None:
+        """Etiqueta de disponibilidad visible: 'Disponible', 'Agotado' o
+        'Solo queda N'. Es un sondeo: None si la PDP no la muestra."""
+        label = self.page.locator(ProductLocators.AVAILABILITY_LABEL)
+        try:
+            label.first.wait_for(state="visible", timeout=5000)
+        except PlaywrightTimeoutError:
+            return None
+        return " ".join(label.first.inner_text().split())
+
+    def displayed_quantity(self) -> int | None:
+        """Cantidad visible en la PDP; None si no se muestra o no es número."""
+        qty = self.page.locator(ProductLocators.QUANTITY)
+        if not qty.count():
+            return None
+        text = qty.first.inner_text().strip()
+        return int(text) if text.isdigit() else None
+
+    def add_confirmation_message(self, timeout_ms: int = 10000) -> str | None:
+        """Texto del toast post-add ('Tu producto … ha sido agregado a tu
+        carrito de compras.'). Sondeo: None si no aparece a tiempo."""
+        toast = self.page.locator(ProductLocators.NOTIFICATION).first
+        try:
+            toast.wait_for(state="visible", timeout=timeout_ms)
+        except PlaywrightTimeoutError:
+            return None
+        return " ".join(toast.inner_text().split())
+
     def dismiss_post_add_overlays(self) -> None:
         """Despeja promo y toast post-add para liberar el header.
 

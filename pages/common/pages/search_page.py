@@ -17,6 +17,24 @@ class CommonSearchPage(BasePage):
     def search(self, term: str) -> None:
         self.search_component.search(term)
 
+    def type_term(self, term: str) -> None:
+        self.search_component.type_term(term)
+
+    def typed_term(self) -> str:
+        return self.search_component.typed_term()
+
+    def submit_search(self) -> None:
+        self.search_component.submit_search()
+
+    def is_results_view_ready(self) -> bool:
+        return self.search_component.is_results_view_ready()
+
+    def results_query(self) -> str | None:
+        return self.search_component.results_query()
+
+    def visible_card_count(self) -> int:
+        return self.search_component.visible_card_count()
+
     def result_count(self) -> int:
         return self.search_component.result_count()
 

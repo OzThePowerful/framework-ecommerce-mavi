@@ -9,3 +9,17 @@ guest:
   shipping_method: "a_domicilio"  # toggle #domicilio; alternativa "sucursal" (Retiro/Click & Pick Up).
   store_state: "Jalisco"        # estado del store picker (SHIPPING_002; se elige la primera tienda).
   payment_method: "openpay_cards"  # contado por tarjeta; ver payment.yaml.
+
+# Primera etapa del checkout invitado (CP_EC_MA_CHECKOUT_001 paso 5):
+# `name` de los campos del comprador que deben estar disponibles para
+# capturarse (visibles, habilitados y editables). `city` queda fuera: es de
+# solo lectura y se llena con el CP. Verificado en stage MA.
+entry:
+  required_fields:
+    - "username"
+    - "firstname"
+    - "lastname"
+    - "telephone"
+    - "street[0]"
+    - "custom_attributes[address_number]"
+    - "postcode"

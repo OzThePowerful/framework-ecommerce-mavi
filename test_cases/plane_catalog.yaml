@@ -10,80 +10,90 @@ total_casos: 42
 casos:
 - id: CP_EC_MA_HOME_001
   titulo: La home carga en estado utilizable e identifica la marca
-  objetivo: Verificar que la home abre con header, buscador y elementos de marca operativos.
+  objetivo: Comprobar que la página principal carga correctamente y proporciona los controles mínimos para iniciar un flujo de compra.
   prioridad: Alta
   tipo: Smoke
   ecommerce: Muebles América
   ecommerce_key: muebles_america
   modulo: Home
-  precondiciones: Ambiente stage accesible; sitio resuelto por ExecutionContext.
-  datos: Dataset `home`/`home_001` (expectativas de marca).
-  pasos: 1. Abrir la home. 2. Aceptar cookies si aparecen. 3. Esperar estado listo.
-  resultado_esperado: Header visible, buscador accesible único, marca identificada.
+  precondiciones: Ambiente stage disponible; URL del sitio configurada; navegador soportado; conexión con el sitio.
+  datos: Dataset `home`/`home_001` (título de marca y elementos de navegación esperados).
+  pasos: 1. Navegar a la URL configurada. 2. Esperar la carga inicial. 3. Validar la identidad visual. 4. Localizar el buscador. 5. Localizar
+    el acceso al carrito. 6. Revisar la navegación principal.
+  resultado_esperado: Sitio responde 2xx/3xx; home utilizable sin bloqueos; logo y título de la marca; buscador visible y habilitado; carrito
+    disponible; navegación principal con 'Departamentos'.
   postcondicion: Sin cambios de estado en el sitio.
   automatizable: true
   estado_automatizacion: Automated
-  implementacion: test_cases/common/home/home.feature
+  implementacion: test_cases/muebles_america/home/home.feature
   tags: &id001
   - smoke
   - regression
   - home
 - id: CP_EC_MA_SEARCH_001
-  titulo: Búsqueda con resultados devuelve cards elegibles y contador consistente
-  objetivo: Verificar que el buscador devuelve resultados y que el scroll infinito carga todas las cards del contador.
+  titulo: Buscar producto utilizando un término válido
+  objetivo: Validar que el sitio permite buscar productos mediante un término válido y muestra resultados utilizables para continuar una compra.
   prioridad: Alta
   tipo: Funcional
   ecommerce: Muebles América
   ecommerce_key: muebles_america
   modulo: Search
-  precondiciones: Ambiente stage; catálogo con productos indexados.
+  precondiciones: Home operativo; dataset de búsqueda disponible; existe al menos un producto relacionado con el término configurado.
   datos: Dataset `search`/`with_results` (término, mínimo).
-  pasos: 1. Abrir home. 2. Buscar el término. 3. Leer contador. 4. Cargar todas las cards por scroll.
-  resultado_esperado: Contador >= mínimo; cards cargadas == contador; existe card elegible.
+  pasos: 1. Abrir el Home. 2. Ubicar el buscador. 3. Capturar un término válido. 4. Ejecutar la búsqueda. 5. Esperar resultados. 6. Revisar productos
+    encontrados. 7. Revisar que los resultados puedan seleccionarse.
+  resultado_esperado: Home utilizable; buscador habilitado acepta el término; la ruta de resultados corresponde al término; contador >= mínimo
+    y al menos una card visible; cards cargadas == contador; existe card elegible que abre su PDP.
   postcondicion: Sin cambios de estado.
   automatizable: true
   estado_automatizacion: Automated
-  implementacion: test_cases/common/search/search.feature
+  implementacion: test_cases/muebles_america/search/search.feature
   tags: &id002
   - search
   - regression
   - scroll-infinito
 - id: CP_EC_MA_SEARCH_002
-  titulo: Búsqueda sin resultados muestra el estado vacío
-  objetivo: Verificar el estado vacío correcto ante un término inexistente.
+  titulo: Validar búsqueda sin resultados
+  objetivo: Comprobar que el ecommerce maneja correctamente una búsqueda para la cual no existen productos.
   prioridad: Media
-  tipo: Funcional
+  tipo: Funcional negativo
   ecommerce: Muebles América
   ecommerce_key: muebles_america
   modulo: Search
-  precondiciones: Ambiente stage.
-  datos: Dataset `search`/`without_results`.
-  pasos: 1. Abrir home. 2. Buscar término inexistente.
-  resultado_esperado: Contador/estado de 0 resultados visible.
-  postcondicion: Sin cambios de estado.
+  precondiciones: Home operativo; existe un término controlado que no devuelve productos.
+  datos: Dataset `search`/`without_results` (término controlado, 0 esperados).
+  pasos: 1. Abrir Home. 2. Capturar término sin resultados. 3. Ejecutar búsqueda. 4. Revisar listado. 5. Revisar estado vacío.
+  resultado_esperado: Home utilizable; el buscador acepta el término; la ruta de resultados corresponde al término; ninguna card visible; contador
+    '0 resultados de búsqueda'.
+  postcondicion: No se selecciona ningún producto.
   automatizable: true
   estado_automatizacion: Automated
-  implementacion: test_cases/common/search/search.feature
-  tags: &id003
+  implementacion: test_cases/muebles_america/search/search.feature
+  tags:
   - search
+  - negative
   - estado-vacio
 - id: CP_EC_MA_PDP_001
-  titulo: La PDP expone el modelo Product con datos comerciales válidos
-  objetivo: Verificar que la PDP produce un Product (nombre, SKU, precio, disponibilidad) consistente con la URL.
+  titulo: Validar información de un producto disponible en PDP
+  objetivo: Comprobar que un producto seleccionado desde resultados abre su página de detalle y contiene la información necesaria para ser comprado.
   prioridad: Alta
   tipo: Funcional
   ecommerce: Muebles América
   ecommerce_key: muebles_america
   modulo: PDP
-  precondiciones: Ambiente stage; búsqueda con resultados.
-  datos: Producto elegible desde búsqueda.
-  pasos: 1. Buscar. 2. Abrir card elegible. 3. Leer modelo Product.
-  resultado_esperado: SKU coherente con URL, nombre no vacío, precio > 0, CTA habilitado.
-  postcondicion: Sin cambios de estado.
+  precondiciones: Search operativo; existe producto disponible.
+  datos: Producto elegible obtenido dinámicamente desde Search (dataset `search`/`with_results`).
+  pasos: 1. Ejecutar búsqueda válida. 2. Seleccionar un producto elegible. 3. Obtener nombre. 4. Obtener SKU o identificador. 5. Obtener precio.
+    6. Revisar disponibilidad. 7. Localizar acción de agregar al carrito.
+  resultado_esperado: Resultados visibles; la PDP corresponde a la card (slug y nombre); nombre no vacío; sku en la URL y/o product_id numérico
+    (ausencia documentada); precio > 0 coherente con el promocional; etiqueta 'Disponible' o 'Solo queda N' (no 'Agotado') y regla de venta cumplida;
+    agregar al carrito habilitado.
+  postcondicion: Información del producto (product_name, sku/product_id, unit_price, promotional_price, availability) disponible para validaciones
+    posteriores.
   automatizable: true
   estado_automatizacion: Automated
-  implementacion: test_cases/common/product/pdp.feature
-  tags: &id004
+  implementacion: test_cases/muebles_america/product/pdp.feature
+  tags: &id003
   - pdp
   - product
   - regression
@@ -103,105 +113,121 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/product/pdp.feature
-  tags: &id005
+  tags: &id004
   - pdp
   - configurable
 - id: CP_EC_MA_CART_001
-  titulo: La integridad comercial Product→Cart se conserva
-  objetivo: Verificar que el item del carrito coincide con el Product (SKU, nombre, qty, precio) y los importes del resumen.
+  titulo: Agregar producto disponible al carrito
+  objetivo: Validar que un producto disponible puede agregarse correctamente al carrito desde su PDP.
   prioridad: Alta
-  tipo: Funcional
+  tipo: Funcional positivo
   ecommerce: Muebles América
   ecommerce_key: muebles_america
   modulo: Cart
-  precondiciones: Ambiente stage; producto con stock.
-  datos: Producto elegible.
-  pasos: 1. Agregar a carrito. 2. Abrir /checkout/cart. 3. Comparar item y resumen.
-  resultado_esperado: CartItem == Product esperado; subtotal/descuento/total consistentes.
-  postcondicion: Producto queda en el carrito de la sesión.
+  precondiciones: Existe producto disponible; PDP operativo; producto con acción de agregar al carrito habilitada.
+  datos: Producto elegible obtenido desde Search (dataset `search`/`with_results`); cantidad inicial 1.
+  pasos: 1. Abrir PDP del producto. 2. Registrar nombre, identificador y precio. 3. Mantener cantidad 1. 4. Agregar producto al carrito. 5. Esperar
+    confirmación observable. 6. Abrir carrito. 7. Buscar producto agregado.
+  resultado_esperado: PDP de la card seleccionada; nombre, sku y precio > 0 registrados; cantidad 1; el estado del carrito registra el sku con
+    qty 1 aceptado por el ecommerce; toast 'agregado a tu carrito' con el producto y minicart en 1; /checkout/cart disponible con 1 ítem del sku
+    registrado y cantidad 1; integridad PDP→Cart e importes consistentes.
+  postcondicion: Existe un producto en el carrito.
   automatizable: true
   estado_automatizacion: Automated
-  implementacion: test_cases/common/cart/cart.feature
-  tags: &id006
+  implementacion: test_cases/muebles_america/cart/cart.feature
+  tags:
   - cart
   - integridad
   - regression
 - id: CP_EC_MA_CART_002
-  titulo: Continuar al checkout desde el carrito muestra el gate de invitado
-  objetivo: Verificar la transición carrito → gate 'Continuar como invitado'.
+  titulo: Validar producto, cantidad, precio y subtotal del carrito
+  objetivo: Verificar que la información transferida desde PDP al carrito mantiene consistencia comercial.
   prioridad: Alta
-  tipo: Funcional
+  tipo: Validación comercial
   ecommerce: Muebles América
   ecommerce_key: muebles_america
   modulo: Cart
-  precondiciones: Producto en carrito.
-  datos: Producto elegible.
-  pasos: 1. Agregar. 2. Abrir carrito. 3. Continuar a checkout.
-  resultado_esperado: Botón 'Continuar como invitado' visible.
-  postcondicion: En la puerta del checkout.
+  precondiciones: Producto agregado al carrito; información de PDP previamente capturada.
+  datos: Producto elegible obtenido desde Search (dataset `search`/`with_results`); cantidad seleccionada en la PDP.
+  pasos: 1. Abrir carrito. 2. Obtener nombre del producto. 3. Obtener identificador/SKU si está disponible. 4. Obtener cantidad. 5. Obtener precio
+    unitario. 6. Obtener subtotal. 7. Calcular subtotal esperado. 8. Comparar subtotal observado contra esperado.
+  resultado_esperado: Carrito disponible con 1 ítem; nombre y SKU iguales a la PDP (SKU ausente documentado); cantidad = seleccionada; precio
+    unitario = precio aplicable de la PDP; subtotal del resumen disponible e igual a cantidad × precio (Decimal, antes de descuentos); gate 'Continuar
+    como invitado' visible.
+  postcondicion: En la puerta del checkout con el producto en el carrito.
   automatizable: true
   estado_automatizacion: Automated
-  implementacion: test_cases/common/cart/cart.feature
-  tags: &id007
+  implementacion: test_cases/muebles_america/cart/cart.feature
+  tags:
   - cart
+  - commercial_validation
   - checkout
   - gate
 - id: CP_EC_MA_CHECKOUT_001
-  titulo: Acceder al checkout como invitado expone los campos requeridos
-  objetivo: Verificar el gate de invitado y la etapa Entrega con campos obligatorios.
+  titulo: Iniciar Checkout desde un carrito válido
+  objetivo: Comprobar que el usuario puede pasar correctamente desde un carrito válido al proceso de Checkout.
   prioridad: Alta
-  tipo: Funcional
+  tipo: Funcional positivo
   ecommerce: Muebles América
   ecommerce_key: muebles_america
   modulo: Checkout
-  precondiciones: Producto en carrito; gate de invitado.
-  datos: —
-  pasos: 1. Continuar como invitado. 2. Esperar checkout listo. 3. Revisar etapa y campos.
-  resultado_esperado: Etapa 'entrega' activa; campos obligatorios presentes.
-  postcondicion: Checkout en etapa Entrega.
+  precondiciones: Carrito con producto válido; producto disponible; sin errores pendientes en carrito.
+  datos: Producto elegible desde Search (`search`/`with_results`); campos requeridos en `checkout`/`entry`.
+  pasos: 1. Abrir carrito. 2. Revisar producto. 3. Seleccionar continuar/finalizar compra. 4. Esperar primera etapa de Checkout. 5. Revisar controles
+    requeridos.
+  resultado_esperado: Carrito disponible con el producto registrado y cantidad 1; el ecommerce muestra el gate 'Continuar como invitado'; tras
+    continuar, URL del checkout de la marca con la etapa 'entrega' abierta y 'Forma de pago' deshabilitada; los campos requeridos del dataset
+    están marcados como obligatorios, visibles, habilitados y editables.
+  postcondicion: En la etapa de entrega del checkout invitado.
   automatizable: true
   estado_automatizacion: Automated
-  implementacion: test_cases/common/checkout/checkout.feature
-  tags: &id008
+  implementacion: test_cases/muebles_america/checkout/checkout.feature
+  tags:
   - checkout
   - guest
 - id: CP_EC_MA_CHECKOUT_002
-  titulo: Registrar los datos del comprador habilita la etapa de pago
-  objetivo: Verificar que el formulario acepta comprador+dirección y habilita Forma de pago.
+  titulo: Registrar datos válidos del comprador
+  objetivo: Validar que los datos requeridos del comprador son aceptados durante Checkout.
   prioridad: Alta
-  tipo: Funcional
+  tipo: Funcional positivo
   ecommerce: Muebles América
   ecommerce_key: muebles_america
   modulo: Checkout
-  precondiciones: Checkout invitado en etapa Entrega; identidad MAVI_GUEST_* en .env.
-  datos: Identidad `.env` + dataset `addresses`/`guadalajara` + `checkout`/`guest`.
-  pasos: 1. Llenar formulario. 2. Autocompletar por CP. 3. Leer datos guardados.
-  resultado_esperado: Datos aceptados sin errores; paymentExpansionButton habilitado.
-  postcondicion: Dirección registrada en la sesión.
+  precondiciones: Checkout iniciado; dataset de cliente disponible.
+  datos: 'Identidad `MAVI_GUEST_MA_*` (.env) vía DataProvider: nombre, apellidos, correo y teléfono; dirección `addresses`/`guadalajara` (`checkout`/`guest`).'
+  pasos: 1. Obtener datos de cliente. 2. Capturar nombre. 3. Capturar apellidos. 4. Capturar correo. 5. Capturar teléfono. 6. Completar otros
+    campos obligatorios. 7. Continuar.
+  resultado_esperado: Dataset completo; cada campo conserva el valor y no muestra error (aria-invalid, .field._error, mensaje de correo); calle,
+    número y CP aceptados con colonia/ciudad autocompletadas; tras continuar, etapa 'forma_de_pago' sin errores ni campos inválidos y datos del
+    comprador intactos.
+  postcondicion: Checkout en la etapa 'Forma de pago' con el comprador registrado (sin orden creada).
   automatizable: true
   estado_automatizacion: Automated
-  implementacion: test_cases/common/checkout/checkout.feature
-  tags: &id009
+  implementacion: test_cases/muebles_america/checkout/checkout.feature
+  tags:
   - checkout
   - customer
   - address
 - id: CP_EC_MA_CHECKOUT_003
-  titulo: Seleccionar el método de entrega expone el costo de envío
-  objetivo: Verificar toggle domicilio/sucursal y costo de envío calculado.
+  titulo: Registrar domicilio y seleccionar método de entrega
+  objetivo: Validar que un domicilio válido y un método de entrega pueden configurarse correctamente.
   prioridad: Alta
-  tipo: Funcional
+  tipo: Funcional positivo
   ecommerce: Muebles América
   ecommerce_key: muebles_america
   modulo: Checkout
-  precondiciones: Comprador y dirección registrados.
-  datos: Dataset `checkout`/`guest`.shipping_method.
-  pasos: 1. Seleccionar método de entrega. 2. Esperar cálculo de envío.
-  resultado_esperado: Modo activo correcto; Shipping con costo Money disponible; pago habilitado.
-  postcondicion: Método de entrega seleccionado.
+  precondiciones: Datos de comprador aceptados; dataset de domicilio disponible.
+  datos: Domicilio `addresses`/`guadalajara` (calle, número, CP, colonia, ciudad, estado, referencias) y método `checkout`/`guest.shipping_method`.
+  pasos: 1. Obtener domicilio. 2. Capturar código postal. 3. Seleccionar/capturar colonia. 4. Completar calle y número. 5. Completar información
+    adicional requerida. 6. Consultar métodos de entrega. 7. Seleccionar método de entrega. 8. Obtener costo de envío. 9. Continuar Checkout.
+  resultado_esperado: CP aceptado con autocompletado; colonia del dataset entre las del CP y seleccionada; calle y número válidos; ciudad/estado
+    = dataset, sin errores y 'Forma de pago' habilitada; al menos un método de entrega y el del dataset activo; costo 'Gratis' (0) o importe >
+    0; tras continuar, etapa 'forma_de_pago' con domicilio y método registrados.
+  postcondicion: Checkout en 'Forma de pago' con domicilio y método de entrega registrados (sin orden creada).
   automatizable: true
   estado_automatizacion: Automated
-  implementacion: test_cases/common/checkout/checkout.feature
-  tags: &id010
+  implementacion: test_cases/muebles_america/checkout/checkout.feature
+  tags:
   - checkout
   - shipping
 - id: CP_EC_MA_CUSTOMER_001
@@ -220,7 +246,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/customer/customer.feature
-  tags: &id011
+  tags: &id005
   - customer
 - id: CP_EC_MA_ADDRESS_001
   titulo: La dirección autocompleta colonia, ciudad y estado desde el CP
@@ -238,7 +264,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/address/address.feature
-  tags: &id012
+  tags: &id006
   - address
   - cp-autocomplete
 - id: CP_EC_MA_SHIPPING_001
@@ -257,7 +283,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/shipping/shipping.feature
-  tags: &id013
+  tags: &id007
   - shipping
   - costo-envio
 - id: CP_EC_MA_SHIPPING_002
@@ -276,7 +302,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/shipping/shipping.feature
-  tags: &id014
+  tags: &id008
   - shipping
   - pickup
   - store-selector
@@ -296,7 +322,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/payment/payment.feature
-  tags: &id015
+  tags: &id009
   - payment
   - contado
   - openpay
@@ -316,7 +342,7 @@ casos:
   automatizable: true
   estado_automatizacion: Not Automated
   implementacion: Escenario @pending en test_cases/common/payment/payment.feature; falta dataset de alto monto
-  tags: &id016
+  tags: &id010
   - payment
   - regla-negocio
   - openpay-stores
@@ -336,7 +362,7 @@ casos:
   automatizable: true
   estado_automatizacion: Not Automated
   implementacion: Escenario @pending en test_cases/common/payment/payment.feature; falta wiring MSI
-  tags: &id017
+  tags: &id011
   - payment
   - msi
   - contado
@@ -356,7 +382,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/order/order.feature
-  tags: &id018
+  tags: &id012
   - order
   - e2e
   - irreversible
@@ -376,7 +402,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/order/order.feature
-  tags: &id019
+  tags: &id013
   - order
   - consistencia
   - irreversible
@@ -396,7 +422,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/smoke/sale_cash.feature (GuestCheckoutWorkflow)
-  tags: &id020
+  tags: &id014
   - smoke
   - regression
 - id: CP_EC_MA_E2E_001
@@ -415,7 +441,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/e2e/e2e.feature (SaleCashWorkflow, confirm_order=True)
-  tags: &id021
+  tags: &id015
   - e2e
   - contado
   - irreversible
@@ -469,7 +495,9 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/search/search.feature
-  tags: *id003
+  tags:
+  - search
+  - estado-vacio
 - id: CP_EC_VIU_PDP_001
   titulo: La PDP expone el modelo Product con datos comerciales válidos
   objetivo: Verificar que la PDP produce un Product (nombre, SKU, precio, disponibilidad) consistente con la URL.
@@ -486,7 +514,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/product/pdp.feature
-  tags: *id004
+  tags: *id003
 - id: CP_EC_VIU_PDP_002
   titulo: Un configurable expone padre y variantes como Product
   objetivo: Verificar el modelo de artículos configurables (padre MA/VIU distinto, hijos compartidos).
@@ -503,7 +531,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/product/pdp.feature
-  tags: *id005
+  tags: *id004
 - id: CP_EC_VIU_CART_001
   titulo: Agregar un producto disponible al carrito desde su PDP
   objetivo: Verificar que un producto disponible puede agregarse al carrito y queda visible con cantidad 1.
@@ -560,7 +588,9 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/checkout/checkout.feature
-  tags: *id008
+  tags:
+  - checkout
+  - guest
 - id: CP_EC_VIU_CHECKOUT_002
   titulo: Registrar datos válidos del comprador
   objetivo: Validar que los datos requeridos del comprador son aceptados durante el Checkout de VIU.
@@ -577,7 +607,10 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/checkout/checkout.feature
-  tags: *id009
+  tags:
+  - checkout
+  - customer
+  - address
 - id: CP_EC_VIU_CHECKOUT_003
   titulo: Registrar domicilio y seleccionar método de entrega
   objetivo: Validar que un domicilio válido y un método de entrega pueden configurarse correctamente en VIU.
@@ -594,7 +627,9 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/checkout/checkout.feature
-  tags: *id010
+  tags:
+  - checkout
+  - shipping
 - id: CP_EC_VIU_CUSTOMER_001
   titulo: La captura del comprador persiste nombre, correo y teléfono
   objetivo: Verificar que read_customer() recupera el Customer ingresado.
@@ -611,7 +646,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/customer/customer.feature
-  tags: *id011
+  tags: *id005
 - id: CP_EC_VIU_ADDRESS_001
   titulo: La dirección autocompleta colonia, ciudad y estado desde el CP
   objetivo: Verificar el lookup por código postal y la lectura del modelo Address.
@@ -628,7 +663,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/address/address.feature
-  tags: *id012
+  tags: *id006
 - id: CP_EC_VIU_SHIPPING_001
   titulo: La entrega a domicilio expone costo y estimación
   objetivo: Verificar el costo de envío a domicilio como Money y la estimación de entrega.
@@ -645,7 +680,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/shipping/shipping.feature
-  tags: *id013
+  tags: *id007
 - id: CP_EC_VIU_SHIPPING_002
   titulo: El retiro en sucursal abre el store picker y selecciona tienda
   objetivo: Verificar el picker de sucursal (modal, estados, tiendas, 'Entregar aquí') y el contacto de pickup.
@@ -662,7 +697,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/shipping/shipping.feature
-  tags: *id014
+  tags: *id008
 - id: CP_EC_VIU_PAY_001
   titulo: Seleccionar forma de pago correspondiente a venta de contado
   objetivo: Validar que el método definido como pago de contado para VIU está disponible y puede seleccionarse.
@@ -679,7 +714,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/payment/payment.feature
-  tags: *id015
+  tags: *id009
 - id: CP_EC_VIU_PAY_002
   titulo: El pago en efectivo no es seleccionable por encima de $30,000
   objetivo: 'Verificar la regla de negocio: openpay_stores deshabilitado con total > $30,000 MXN.'
@@ -696,7 +731,7 @@ casos:
   automatizable: true
   estado_automatizacion: Not Automated
   implementacion: Escenario @pending en test_cases/common/payment/payment.feature; falta dataset de alto monto
-  tags: *id016
+  tags: *id010
 - id: CP_EC_VIU_PAY_003
   titulo: El contado a MSI se prepara con la tarjeta 4242
   objetivo: Verificar el flujo de meses sin intereses (contado diferido bancario) con 4242…4242.
@@ -713,7 +748,7 @@ casos:
   automatizable: true
   estado_automatizacion: Not Automated
   implementacion: Escenario @pending en test_cases/common/payment/payment.feature; falta wiring MSI
-  tags: *id017
+  tags: *id011
 - id: CP_EC_VIU_ORDER_001
   titulo: Generar orden mediante venta de contado
   objetivo: Validar que el usuario puede confirmar una compra de contado en VIU y obtener una orden válida.
@@ -730,7 +765,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/order/order.feature
-  tags: *id018
+  tags: *id012
 - id: CP_EC_VIU_ORDER_002
   titulo: Validar integridad comercial de la orden generada
   objetivo: Comprobar que los datos de la orden final son consistentes con la información observada en las etapas anteriores.
@@ -747,7 +782,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/order/order.feature
-  tags: *id019
+  tags: *id013
 - id: CP_EC_VIU_SMOKE_001
   titulo: Validar Smoke del flujo de compra previo al pago
   objetivo: Comprobar rápidamente que las funciones críticas necesarias para iniciar una venta en VIU están operativas.
@@ -764,7 +799,9 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/smoke/sale_cash.feature
-  tags: *id020
+  tags:
+  - smoke
+  - regression
 - id: CP_EC_VIU_E2E_001
   titulo: Validar flujo completo de venta de contado
   objetivo: Validar de extremo a extremo el proceso de compra de contado en VIU.
@@ -781,4 +818,4 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/e2e/e2e.feature (SaleCashWorkflow, confirm_order=True)
-  tags: *id021
+  tags: *id015

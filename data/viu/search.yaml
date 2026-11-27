@@ -2,7 +2,11 @@
 # Casos relacionados: CP_EC_VIU_SEARCH_001 (con resultados),
 # CP_EC_VIU_SEARCH_002 (sin resultados).
 with_results:
-  term: "estufa"
+  # MABE00888 (Estufa de piso Mabe 30" EMH7602JS0): 1 resultado, "Disponible".
+  # Sustituye a "estufa", cuyo primer resultado (WHIR00686) está Agotado en
+  # stage y bloqueaba PDP/Cart/Checkout (CP_EC_MA_PDP_001). Compartido por
+  # los escenarios VIU que buscan "con resultados".
+  term: "MABE00888"
   min_results: 1
 
 without_results:
