@@ -800,6 +800,40 @@ CASES = [
         "estado_automatizacion": "Automated",
         "implementacion": "test_cases/common/order/order.feature",
         "tags": ["order", "consistencia", "irreversible"],
+        # CP_EC_MA_ORDER_002 — exclusivo de MA (MA-AISLAMIENTO-001).
+        "muebles_america": {
+            "titulo": "Validar integridad comercial de la orden generada",
+            "objetivo": (
+                "Comprobar que los datos de la orden final son consistentes con "
+                "las etapas previas del flujo."
+            ),
+            "tipo": "Validación comercial",
+            "precondiciones": (
+                "Orden generada; información de Product, Cart y Checkout disponible."
+            ),
+            "datos": (
+                "Orden final = eventos `purchase` del dataLayer de la página de "
+                "éxito; contado `payment`/`card` (openpay_cards, sale_type "
+                "'contado'); identidad real MAVI_GUEST_MA_*."
+            ),
+            "pasos": (
+                "1. Obtener información final de la orden. 2. Comparar producto. "
+                "3. Comparar cantidad. 4. Comparar subtotal. 5. Comparar descuento. "
+                "6. Comparar shipping. 7. Comparar total. 8. Revisar forma de pago. "
+                "9. Revisar folio."
+            ),
+            "resultado_esperado": (
+                "Orden del folio disponible y coherente entre eventos; SKU = "
+                "PDP/carrito/checkout y nombre = PDP; cantidad = PDP/carrito/"
+                "checkout; precio unitario y subtotal = PDP/carrito/checkout; cupón "
+                "⇔ descuento del carrito y descuento de producto = PDP; envío y "
+                "total = checkout (total = subtotal − descuento + envío); tipo_pago "
+                "'contado' y método openpay_cards; folio numérico = transaction_id."
+            ),
+            "postcondicion": "Orden REAL de prueba creada en stage y validada.",
+            "implementacion": "test_cases/muebles_america/order/order.feature",
+            "tags": ["order", "commercial_validation"],
+        },
     },
     {
         "suffix": "SMOKE_001",

@@ -16,6 +16,7 @@ card:
   method: "openpay_cards"   # Tarjeta Crédito / Débito — contado (OpenPay)
   label: "Tarjeta Crédito / Débito"  # nombre visible del método en el checkout
   provider: "OpenPay"
+  sale_type: "contado"      # tipo de venta que informa la orden (dataLayer `tipo_pago`, CP_EC_MA_ORDER_002)
   status: "verified"
   # Tarjeta pública de sandbox OpenPay (ficticia — no es un PAN real)
   number: "4111111111111111"

@@ -391,25 +391,28 @@ casos:
   - order
   - cash_sale
 - id: CP_EC_MA_ORDER_002
-  titulo: La orden es consistente con los datos comerciales del flujo
-  objetivo: Comparar la orden contra Product, Cart, Shipping, total y método de pago.
+  titulo: Validar integridad comercial de la orden generada
+  objetivo: Comprobar que los datos de la orden final son consistentes con las etapas previas del flujo.
   prioridad: Alta
-  tipo: E2E
+  tipo: Validación comercial
   ecommerce: Muebles América
   ecommerce_key: muebles_america
   modulo: Order
-  precondiciones: Stage autorizado para órdenes de prueba.
-  datos: Tarjeta sandbox + identidad real.
-  pasos: 1. Flujo completo + resumen previo. 2. Confirmar. 3. Comparar folio/importes/método.
-  resultado_esperado: Subtotal/Envío/Total del resumen == Cart+Shipping; método == openpay_cards.
-  postcondicion: Orden REAL creada en stage.
+  precondiciones: Orden generada; información de Product, Cart y Checkout disponible.
+  datos: Orden final = eventos `purchase` del dataLayer de la página de éxito; contado `payment`/`card` (openpay_cards, sale_type 'contado');
+    identidad real MAVI_GUEST_MA_*.
+  pasos: 1. Obtener información final de la orden. 2. Comparar producto. 3. Comparar cantidad. 4. Comparar subtotal. 5. Comparar descuento. 6.
+    Comparar shipping. 7. Comparar total. 8. Revisar forma de pago. 9. Revisar folio.
+  resultado_esperado: Orden del folio disponible y coherente entre eventos; SKU = PDP/carrito/checkout y nombre = PDP; cantidad = PDP/carrito/checkout;
+    precio unitario y subtotal = PDP/carrito/checkout; cupón ⇔ descuento del carrito y descuento de producto = PDP; envío y total = checkout (total
+    = subtotal − descuento + envío); tipo_pago 'contado' y método openpay_cards; folio numérico = transaction_id.
+  postcondicion: Orden REAL de prueba creada en stage y validada.
   automatizable: true
   estado_automatizacion: Automated
-  implementacion: test_cases/common/order/order.feature
-  tags: &id011
+  implementacion: test_cases/muebles_america/order/order.feature
+  tags:
   - order
-  - consistencia
-  - irreversible
+  - commercial_validation
 - id: CP_EC_MA_SMOKE_001
   titulo: 'Smoke: guest checkout muestra un precio de pedido mayor a cero'
   objetivo: Verificación rápida del flujo navegación → checkout invitado con precio > 0.
@@ -426,7 +429,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/smoke/sale_cash.feature (GuestCheckoutWorkflow)
-  tags: &id012
+  tags: &id011
   - smoke
   - regression
 - id: CP_EC_MA_E2E_001
@@ -445,7 +448,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/e2e/e2e.feature (SaleCashWorkflow, confirm_order=True)
-  tags: &id013
+  tags: &id012
   - e2e
   - contado
   - irreversible
@@ -792,7 +795,10 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/order/order.feature
-  tags: *id011
+  tags:
+  - order
+  - consistencia
+  - irreversible
 - id: CP_EC_VIU_SMOKE_001
   titulo: 'Smoke: guest checkout muestra un precio de pedido mayor a cero'
   objetivo: Verificación rápida del flujo navegación → checkout invitado con precio > 0.
@@ -809,7 +815,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/smoke/sale_cash.feature (GuestCheckoutWorkflow)
-  tags: *id012
+  tags: *id011
 - id: CP_EC_VIU_E2E_001
   titulo: Flujo completo de venta de contado Home→Order
   objetivo: 'Ejecutar el recorrido E2E consolidado: búsqueda, PDP, carrito, checkout, pago y orden.'
@@ -826,4 +832,4 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/e2e/e2e.feature (SaleCashWorkflow, confirm_order=True)
-  tags: *id013
+  tags: *id012
