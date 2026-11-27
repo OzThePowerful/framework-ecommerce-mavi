@@ -39,6 +39,22 @@ class CommonCartPage(BasePage):
     def continue_to_checkout(self) -> None:
         self.cart.continue_to_checkout()
 
+    # --- Estado del SPA y minicart (confirmación backend del add) --------
+    def state_item(self, sku: str, timeout_ms: int = 10000) -> dict | None:
+        return self.cart.state_item(sku, timeout_ms)
+
+    def minicart_count(self) -> int:
+        return self.cart.minicart_count()
+
+    def wait_for_minicart_count(self, expected: int, timeout_ms: int = 10000) -> int:
+        return self.cart.wait_for_minicart_count(expected, timeout_ms)
+
+    def is_open(self) -> bool:
+        return self.cart.is_open()
+
+    def summary_subtotal(self) -> Money | None:
+        return self.cart.summary_subtotal()
+
     def buy_now(self) -> None:
         """Avanza del minicart hacia la identificación/checkout."""
         self.page.locator(CartLocators.BUY_NOW_BUTTON).click()

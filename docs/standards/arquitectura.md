@@ -56,7 +56,12 @@ tests/bdd/test_features.py      → runner: materializa test_cases/common/ por -
 tests/bdd/steps/<modulo>_steps.py → steps delgados (delegan en pages/workflows)
 test_cases/common/<modulo>/     → .feature compartido por todas las marcas
 test_cases/<sitio>/             → .feature exclusivos de una marca (si aplica)
+tests/bdd/steps/<sitio>/        → steps de esos escenarios exclusivos
 ```
+
+Un escenario de `test_cases/<sitio>/` lleva el tag de marca en la Feature
+(`@muebles_america`): en esa marca reemplaza al común con el mismo tag de
+caso y en las demás se descarta (MA-AISLAMIENTO-001).
 
 Cada escenario lleva tag `@<MODULO>_<NNN>`; el hook de colección lo
 renombra a `CP_EC_<CODE>_<MODULO>_<NNN>` (MA/VIU según `sites.yaml`).

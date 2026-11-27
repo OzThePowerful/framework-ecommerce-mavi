@@ -23,6 +23,32 @@ def open_payment_stage(checkout_ctx, pages) -> None:
     checkout_ctx["payment"] = payment
 
 
+@then("se muestran métodos de pago habilitados")
+def payment_methods_enabled(checkout_ctx) -> None:
+    payment = checkout_ctx["payment"]
+    methods = payment.payment_methods()
+    enabled = [m for m in methods if payment.is_method_selectable(m)]
+    assert enabled, f"Sin métodos de pago habilitados; visibles: {methods}"
+    attach_text(
+        "Métodos de pago",
+        json.dumps(
+            {"visibles": methods, "habilitados": enabled},
+            ensure_ascii=False,
+        ),
+    )
+
+
+@then("el método de contado del dataset está disponible")
+def contado_method_available(checkout_ctx, data_provider) -> None:
+    method = data_provider.get_record("checkout", "guest")["payment_method"]
+    payment = checkout_ctx["payment"]
+    checkout_ctx["expected_payment_method"] = method
+    assert payment.is_method_selectable(method), (
+        f"Método de contado {method!r} no disponible; "
+        f"métodos: {payment.payment_methods()}"
+    )
+
+
 @when(
     "selecciona el método de contado del dataset y completa la tarjeta de prueba"
 )

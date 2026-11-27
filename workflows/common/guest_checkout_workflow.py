@@ -60,6 +60,7 @@ class GuestCheckoutWorkflow:
         self._pages.search().open_product(request.product_name)
 
         product = self._pages.product()
+        product.wait_until_ready()
         product.add_to_cart()
         product.open_cart_from_notification()
 

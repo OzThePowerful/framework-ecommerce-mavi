@@ -8,14 +8,16 @@ Feature: Checkout y datos del comprador
   Fuera de alcance: selección de pago y confirmación de compra.
 
   @CHECKOUT_001
-  Scenario: Acceder al checkout como invitado y exponer los campos requeridos
+  Scenario: Iniciar el checkout desde un carrito válido
     Given el usuario abre la home del sitio activo
     When busca el término con resultados del dataset
     And abre la PDP de una card elegible
     And agrega el producto al carrito
     And abre el carrito de compras
-    And continúa al checkout desde el carrito
-    And continúa como invitado
+    Then el producto agregado es visible en el carrito con cantidad 1
+    When continúa al checkout desde el carrito
+    Then el acceso como invitado está disponible
+    When continúa como invitado
     Then la etapa de entrega está activa y los campos del comprador son obligatorios
 
   @CHECKOUT_002
@@ -31,7 +33,7 @@ Feature: Checkout y datos del comprador
     Then los datos quedan aceptados y la etapa de pago queda habilitada
 
   @CHECKOUT_003
-  Scenario: Seleccionar el método de entrega expone el costo de envío
+  Scenario: Registrar domicilio y seleccionar el método de entrega
     Given el usuario abre la home del sitio activo
     When busca el término con resultados del dataset
     And abre la PDP de una card elegible
@@ -40,5 +42,9 @@ Feature: Checkout y datos del comprador
     And continúa al checkout desde el carrito
     And continúa como invitado
     And registra los datos del comprador del dataset
-    And selecciona el método de entrega del dataset
+    Then los datos quedan aceptados y la etapa de pago queda habilitada
+    And se presenta al menos un método de entrega
+    When selecciona el método de entrega del dataset
     Then el método de entrega queda activo y el costo de envío está disponible
+    When abre la etapa de forma de pago
+    Then se accede a la etapa de forma de pago

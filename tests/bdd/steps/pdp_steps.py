@@ -13,10 +13,29 @@ from core.reporting.allure_manager import attach_text
 
 @when("abre la PDP de una card elegible", target_fixture="pdp_ctx")
 def open_eligible_pdp(pages, search_ctx) -> dict:
-    card = search_ctx["results"].eligible_card()
-    assert card is not None, "La búsqueda no produjo una card elegible"
-    card.open()
-    return {"product_page": pages.product(), "card": card}
+    """Abre la primera PDP comprable de entre las cards elegibles.
+
+    El tile de la PLP no expone el estado de stock (el CTA aparece en
+    todas las cards, deshabilitado): se itera candidatos hasta hallar
+    una PDP cuyo CTA de compra exista y esté habilitado.
+    """
+    results = search_ctx["results"]
+    product_page = pages.product()
+    candidates = results.eligible_cards(max_cards=4)
+    assert candidates, "La búsqueda no produjo cards elegibles"
+    card = None
+    for candidate in candidates:
+        candidate.open()
+        product_page.wait_until_ready()
+        if product_page.is_add_to_cart_enabled():
+            card = candidate
+            break
+        results.back_to_results()
+    assert card is not None, (
+        "Ninguna de las primeras cards elegibles abrió una PDP comprable "
+        "(productos agotados)"
+    )
+    return {"product_page": product_page, "card": card}
 
 
 @then("el modelo Product tiene nombre, sku e identificador")
@@ -95,6 +114,7 @@ def open_configurable_pdp(pages, configurable_ctx) -> None:
         configurable_ctx["record"]["name_fragment"]
     )
     configurable_ctx["product_page"] = pages.product()
+    configurable_ctx["product_page"].wait_until_ready()
 
 
 @then("el producto es configurable y su sku padre coincide con el dataset")

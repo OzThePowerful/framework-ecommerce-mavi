@@ -26,8 +26,17 @@ class HeaderComponent:
     def is_account_accessible(self) -> bool:
         return self.page.locator(HeaderLocators.ACCOUNT_LINK).count() > 0
 
+    def is_search_box_visible(self) -> bool:
+        """El input de búsqueda está visible en el header activo."""
+        return self.search_box().is_visible()
+
     def is_search_submittable(self) -> bool:
         return self.page.locator(HeaderLocators.SEARCH_SUBMIT).count() > 0
+
+    def is_navigation_accessible(self) -> bool:
+        """La navegación principal (menú de departamentos y links) está
+        visible — es la vía para comenzar una compra."""
+        return self.page.locator(HeaderLocators.NAV).count() > 0
 
     def wait_until_ready(self) -> None:
         """Estado utilizable del header: barra visible y buscador disponible."""

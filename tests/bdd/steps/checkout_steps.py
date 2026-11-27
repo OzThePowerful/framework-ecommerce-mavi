@@ -22,6 +22,15 @@ def continue_as_guest(pages) -> dict:
     return {"checkout": checkout}
 
 
+@then("el acceso como invitado está disponible")
+def guest_gate_available(pages) -> None:
+    checkout = pages.checkout()
+    checkout.wait_for_guest_gate()
+    assert checkout.is_guest_gate_visible(), (
+        "El gate 'Continuar como invitado' no se mostró tras continuar"
+    )
+
+
 @when("registra los datos del comprador del dataset")
 def fill_customer_form(checkout_ctx, data_provider, guest_customer) -> None:
     params = data_provider.get_record("checkout", "guest")
@@ -117,6 +126,21 @@ def customer_data_accepted(checkout_ctx) -> None:
     )
 
 
+@then("se presenta al menos un método de entrega")
+def delivery_options_presented(checkout_ctx) -> None:
+    assert checkout_ctx["checkout"].has_delivery_options(), (
+        "No se presentó ningún método de entrega (domicilio/sucursal)"
+    )
+
+
+@then("se accede a la etapa de forma de pago")
+def payment_stage_accessed(checkout_ctx) -> None:
+    stage = checkout_ctx["checkout"].current_stage()
+    assert stage == "forma_de_pago", (
+        f"Etapa activa esperada 'forma_de_pago'; actual {stage!r}"
+    )
+
+
 @then("el método de entrega queda activo y el costo de envío está disponible")
 def delivery_method_and_cost(checkout_ctx) -> None:
     checkout = checkout_ctx["checkout"]
@@ -129,15 +153,23 @@ def delivery_method_and_cost(checkout_ctx) -> None:
     assert shipping.method == expected, (
         f"Método de Shipping {shipping.method!r} != esperado {expected!r}"
     )
-    assert shipping.cost.amount >= 0, (
-        f"El costo de envío debería ser un importe >= 0: {shipping.cost.amount}"
-    )
+    label = checkout.shipping_cost_label()
+    assert label is not None, "El resumen no muestra el costo de envío calculado"
+    if label.casefold() == "gratis":
+        assert shipping.cost.amount == 0, (
+            f"Envío 'Gratis' con importe {shipping.cost.amount}"
+        )
+    else:
+        assert shipping.cost.amount > 0, (
+            f"El costo de envío {label!r} debería ser mayor a cero"
+        )
     checkout.wait_payment_stage_enabled()
     attach_text(
         "Shipping",
         json.dumps(
             {
                 "method": shipping.method,
+                "cost_label": label,
                 "cost": str(shipping.cost.amount),
                 "estimate": checkout.delivery_estimate(),
                 "payment_stage_enabled": checkout.is_payment_stage_enabled(),

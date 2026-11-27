@@ -7,12 +7,24 @@ secuencias Playwright. El sitio lo decide el ExecutionContext (--site).
 from pytest_bdd import given, then, when
 
 
-@given("el usuario abre la home del sitio activo")
-def open_active_site_home(pages) -> None:
+@given("el usuario abre la home del sitio activo", target_fixture="home_ctx")
+def open_active_site_home(pages) -> dict:
     home = pages.home()
-    home.open_home()
+    status = home.open_home()
     home.accept_cookies_if_present()
     home.wait_until_ready()
+    return {"status": status}
+
+
+@given("el buscador está disponible")
+def searcher_available(pages) -> None:
+    header = pages.home().header
+    assert header.is_search_box_visible(), (
+        "El buscador del header no es visible"
+    )
+    assert header.is_search_submittable(), (
+        "El buscador del header no está habilitado"
+    )
 
 
 @when("busca el término con resultados del dataset", target_fixture="search_ctx")
@@ -78,4 +90,12 @@ def zero_results_shown(search_ctx) -> None:
     expected = int(search_ctx["record"].get("expected_results", 0))
     assert count == expected, (
         f"Se esperaban {expected} resultados; el contador reportó {count}"
+    )
+
+
+@then("no se muestran productos en el listado")
+def no_product_cards_shown(search_ctx) -> None:
+    cards = search_ctx["results"].cards()
+    assert not cards, (
+        f"El grid debería quedar vacío pero renderizó {len(cards)} cards"
     )

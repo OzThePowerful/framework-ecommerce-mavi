@@ -4,6 +4,7 @@ from typing import ClassVar
 
 from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
 
+from domain.errors.precondition_error import PreconditionError
 from pages.common.pages.product_page import CommonProductPage
 from pages.viu.product.product_locators import ProductLocators
 
@@ -12,21 +13,39 @@ class ProductPage(CommonProductPage):
     PRODUCT_LOCATORS: ClassVar[type] = ProductLocators
 
     def dismiss_post_add_overlays(self) -> None:
-        """Despeja el toast post-add; VIU no muestra promo al agregar.
+        """Resuelve el feedback post-add de VIU: toast + modal de promo.
 
-        El toast es la confirmación del add asíncrono: se espera primero
-        para no continuar antes de que el producto quede en el carrito.
+        El toast `div.notification` es la confirmación del add asíncrono
+        y llega en dos variantes: `.success` (agregado) y `.error`
+        ("La cantidad solicitada no está disponible"). En productos con
+        promo aparece además un `modal-container` con backdrop que
+        intercepta clics si queda abierto.
         """
         try:
             self.page.locator(ProductLocators.NOTIFICATION_TOAST).first.wait_for(
                 state="visible", timeout=10000
             )
         except PlaywrightTimeoutError:
-            pass
-        if self.notifications.is_visible(ProductLocators.NOTIFICATION):
-            close = self.page.locator(ProductLocators.NOTIFICATION_CLOSE)
-            if close.count():
-                close.first.click()
+            return
+        if self.page.locator(ProductLocators.NOTIFICATION_ERROR).count():
+            raise PreconditionError(
+                "add rechazado: la cantidad solicitada no está disponible"
+            )
+        accept = self.page.locator(ProductLocators.NOTIFICATION_ACCEPT)
+        if accept.count():
+            accept.first.click()
+        modal_close = self.page.locator(ProductLocators.CART_MODAL_CLOSE)
+        if modal_close.count():
+            modal_close.first.click()
+        backdrop = self.page.locator(ProductLocators.MODAL_BACKDROP)
+        if backdrop.count():
+            try:
+                # El backdrop se desvanece solo al cerrar el modal.
+                backdrop.first.wait_for(state="hidden", timeout=4000)
+            except PlaywrightTimeoutError:
+                # force: el backdrop animado nunca queda "stable"; solo se
+                # clica cuando persiste tras el cierre del modal.
+                backdrop.first.click(force=True, position={"x": 5, "y": 5})
 
     def open_cart_from_notification(self) -> None:
         """Acepta el toast de agregado, despeja el backdrop residual y abre el minicart.
@@ -41,5 +60,8 @@ class ProductPage(CommonProductPage):
         self.page.locator(ProductLocators.NOTIFICATION_ACCEPT).first.click()
         backdrop = self.page.locator(ProductLocators.MODAL_BACKDROP)
         if backdrop.count():
-            backdrop.first.click(position={"x": 5, "y": 5})
+            try:
+                backdrop.first.wait_for(state="hidden", timeout=4000)
+            except PlaywrightTimeoutError:
+                backdrop.first.click(force=True, position={"x": 5, "y": 5})
         self.page.locator(ProductLocators.MINICART_BUTTON).first.click()

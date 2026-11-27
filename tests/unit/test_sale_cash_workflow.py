@@ -74,15 +74,21 @@ class FakeSearch:
         self._c.append("search.load_all")
         return 5
 
-    def eligible_card(self):
+    def eligible_cards(self, max_cards=4):
         self._c.append("search.eligible")
-        return FakeCard(self._c) if self._eligible else None
+        return [FakeCard(self._c)] if self._eligible else []
+
+    def back_to_results(self):
+        self._c.append("search.back")
 
 
 class FakeProduct:
     def __init__(self, calls, available=True):
         self._c = calls
         self._available = available
+
+    def wait_until_ready(self):
+        self._c.append("pdp.ready")
 
     def is_available(self):
         return self._available
@@ -317,8 +323,9 @@ def test_pdp_no_disponible_falla_como_precondicion():
     calls = []
     pages = FakePages(calls, product=FakeProduct(calls, available=False))
     workflow = SaleCashWorkflow(pages, _context("muebles_america"))
-    with pytest.raises(PreconditionError, match="no está disponible"):
+    with pytest.raises(PreconditionError, match="PDP comprable"):
         workflow.run(_request())
+    assert "pdp.add_to_cart" not in calls
 
 
 def test_metodo_pago_no_seleccionable_falla_como_precondicion():

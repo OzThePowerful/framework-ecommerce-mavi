@@ -11,7 +11,7 @@ menuButton pertenecen al drawer móvil oculto.
 class HeaderLocators:
     ROOT = "header"
     VISIBLE_ROOT = "header:visible"
-    NAV = "header nav"
+    NAV = "header nav:visible"
     LOGO = "header [class*='logo']"
     SEARCH_INPUT = "input[type='search'][aria-label='Buscar']:visible"
     SEARCH_SUBMIT = "button[data-testid='subscribeSubmit']:visible"

@@ -21,7 +21,9 @@ Feature: Confirmación de orden en checkout
     And selecciona el método de entrega del dataset
     And abre la etapa de forma de pago
     And selecciona el método de contado del dataset y completa la tarjeta de prueba
-    And confirma la compra
+    And captura el resumen comercial previo a confirmar
+    Then el total del resumen está disponible
+    When confirma la compra
     Then se genera una orden con folio y mensaje de confirmación
 
   @ORDER_002
@@ -40,3 +42,4 @@ Feature: Confirmación de orden en checkout
     And captura el resumen comercial previo a confirmar
     And confirma la compra
     Then la orden es consistente con producto, carrito, envío, total y pago
+    And la orden del dataLayer coincide con el flujo

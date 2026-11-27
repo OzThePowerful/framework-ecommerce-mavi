@@ -9,6 +9,20 @@ JSON-LD declara `OutOfStock` aunque el artículo sí tenga stock (desfasado).
 
 class PdpLocators:
     ADD_TO_CART = "button.add-to-cart:visible"
+    # Etiqueta verde de stock: verdad observable — el JSON del SPA llega
+    # desfasado (p.ej. declara in-stock un agotado). Cubre todas las
+    # variantes positivas: "Disponible", "Solo queda 1", "Solo quedan N".
+    AVAILABILITY_BADGE = "span.fw-700.cl-green-label:visible"
+    # Marcador negativo: el agotado se etiqueta en cl-accent, no en verde.
+    OUT_OF_STOCK_BADGE = (
+        "span.fw-700.cl-accent:has-text('Agotado'):visible"
+    )
+    # Veredicto de stock ya renderizado: verde (hay piezas) o "Agotado" —
+    # marca de fin de render; su presencia habilita el sondeo is_available.
+    STOCK_BADGE = (
+        "span.fw-700.cl-green-label:visible, "
+        "span.fw-700.cl-accent:has-text('Agotado'):visible"
+    )
     CURRENT_PRODUCT_EXPR = (
         "window.__INITIAL_STATE__ && window.__INITIAL_STATE__.product"
         " ? window.__INITIAL_STATE__.product.current : null"

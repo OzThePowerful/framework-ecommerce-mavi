@@ -21,7 +21,10 @@ Feature: Pago de contado en checkout
     And registra los datos del comprador del dataset
     And selecciona el método de entrega del dataset
     And abre la etapa de forma de pago
-    And selecciona el método de contado del dataset y completa la tarjeta de prueba
+    Then se accede a la etapa de forma de pago
+    And se muestran métodos de pago habilitados
+    And el método de contado del dataset está disponible
+    When selecciona el método de contado del dataset y completa la tarjeta de prueba
     Then el método de contado queda seleccionado y la orden lista para confirmar
 
   @pending

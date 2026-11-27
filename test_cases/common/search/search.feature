@@ -10,6 +10,7 @@ Feature: Búsqueda de productos
   @SEARCH_001
   Scenario: Buscar un término con resultados devuelve cards elegibles
     Given el usuario abre la home del sitio activo
+    And el buscador está disponible
     When busca el término con resultados del dataset
     Then se muestran al menos los resultados mínimos esperados
     And las cards cargadas por scroll coinciden con el contador de resultados
@@ -21,3 +22,4 @@ Feature: Búsqueda de productos
     Given el usuario abre la home del sitio activo
     When busca el término sin resultados del dataset
     Then se muestran cero resultados
+    And no se muestran productos en el listado

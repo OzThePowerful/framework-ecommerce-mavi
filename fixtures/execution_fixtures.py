@@ -5,6 +5,7 @@ import re
 
 import pytest
 
+from core.config.config_loader import load_sites
 from core.config.site_config import resolve_site
 from core.evidence.artifact_paths import allure_results_dir
 from core.execution.case_selector import resolve_run_site
@@ -142,9 +143,38 @@ def case_id_from_tags(tag_names, site_code: str) -> str | None:
     return f"CP_EC_{site_code}_{tags[0]}"
 
 
+def _case_tags(tag_names) -> set[str]:
+    return {name for name in tag_names if _CASE_TAG.match(name)}
+
+
+def keep_for_site(tag_sets, site: str, known_sites) -> list[bool]:
+    """Qué escenarios corren en `site` (MA-AISLAMIENTO-001).
+
+    - Un escenario con tag de marca (`@muebles_america`, `@viu`, …; en
+      test_cases/<sitio>/ va a nivel de Feature) solo corre en esa marca.
+    - En la marca activa, ese escenario reemplaza al común (sin tag de
+      marca) que lleva el mismo tag de caso `@<MODULO>_<NNN>`.
+    - El resto (comunes sin override, tests no BDD) se conserva.
+    """
+    known = set(known_sites)
+    overridden = set()
+    for tags in tag_sets:
+        if site in tags & known:
+            overridden |= _case_tags(tags)
+    keep = []
+    for tags in tag_sets:
+        brands = tags & known
+        if brands:
+            keep.append(site in brands)
+        else:
+            keep.append(not (_case_tags(tags) & overridden))
+    return keep
+
+
 @pytest.hookimpl(tryfirst=True)
 def pytest_collection_modifyitems(config, items):
-    """Materializa Case IDs y trata @pending como skip explícito.
+    """Aplica el alcance por marca, materializa Case IDs y trata @pending
+    como skip explícito.
 
     Corre antes del deselect por -k: `pytest -k CP_EC_MA_…` filtra por
     el identificador oficial del caso.
@@ -152,6 +182,13 @@ def pytest_collection_modifyitems(config, items):
     env = os.environ.get(_ENV_ENV_VAR) or config.getoption("--target-env")
     site_code = resolve_site(_run_site(config), env).code
     selected = config.getoption("--case-id")
+
+    tag_sets = [{mark.name for mark in item.iter_markers()} for item in items]
+    keep = keep_for_site(tag_sets, _run_site(config), load_sites().get("sites", {}))
+    out_of_scope = [item for item, kept in zip(items, keep) if not kept]
+    if out_of_scope:
+        items[:] = [item for item, kept in zip(items, keep) if kept]
+        config.hook.pytest_deselected(items=out_of_scope)
 
     for item in items:
         tags = {mark.name for mark in item.iter_markers()}

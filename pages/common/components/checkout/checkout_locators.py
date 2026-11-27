@@ -20,6 +20,10 @@ class CheckoutLocators:
     SUMMARY_STEP = "#omniButtonSummary"
     PLACE_ORDER = "#_btnCheckout"  # crea la orden — fuera de alcance aquí
 
+    # Evidencia: campos capturados del checkout a tapar en screenshots
+    # (identidad real del comprador, domicilio y tarjeta).
+    EVIDENCE_MASK = "input:visible, select:visible"
+
     # Datos del comprador (por name + :visible; ids KO dinámicos)
     EMAIL = "input[name='username']:visible"
     FIRSTNAME = "input[name='firstname']:visible"

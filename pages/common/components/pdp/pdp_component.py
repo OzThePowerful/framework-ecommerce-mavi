@@ -33,8 +33,34 @@ class PdpComponent:
             )
         return data
 
+    def wait_until_ready(self) -> None:
+        """PDP lista para sondear: estado del SPA cargado y veredicto de
+        stock renderizado.
+
+        Sin este wait, `is_available`/`is_add_to_cart_enabled` sondean una
+        PDP a medio renderizar (badge aún no pintado) y devuelven falsos
+        negativos. El badge agota su espera sin tronar: si la PDP no pinta
+        etiqueta, `is_available` decide el veredicto.
+        """
+        self.page.wait_for_function(
+            "() => window.__INITIAL_STATE__ && window.__INITIAL_STATE__.product"
+            " && !!window.__INITIAL_STATE__.product.current"
+        )
+        try:
+            self.page.locator(PdpLocators.STOCK_BADGE).first.wait_for(
+                state="visible", timeout=5000
+            )
+        except PlaywrightTimeoutError:
+            pass
+
     def read_product(self) -> Product:
-        """Convierte el estado observado en el modelo de dominio Product."""
+        """Convierte el estado observado en el modelo de dominio Product.
+
+        Espera el estado renderizado: `__INITIAL_STATE__` es inline y el
+        badge tarda unos ms en pintarse — sin el wait, `availability`
+        queda False en una PDP comprable (falso negativo).
+        """
+        self.wait_until_ready()
         cur = self._current()
         regular = Decimal(
             str(cur.get("regular_price") or cur.get("original_price") or cur["price"])
@@ -42,7 +68,9 @@ class PdpComponent:
         final = Decimal(str(cur.get("final_price") or cur["price"]))
         stock = cur.get("stock") or {}
         return Product(
-            sku=str(cur["sku"]),
+            # "" = sku no expuesto: el llamador decide/documenta la ausencia
+            # (CP_EC_MA_PDP_001 paso 4) en vez de tronar con KeyError.
+            sku=str(cur.get("sku") or ""),
             name=str(cur["name"]),
             product_id=str(stock.get("product_id") or cur.get("id") or ""),
             unit_price=Money(regular),
@@ -59,14 +87,25 @@ class PdpComponent:
         return int(self._current().get("qty") or 1)
 
     def is_available(self) -> bool:
-        """Regla de venta: activo, visible y con stock positivo."""
+        """Regla de venta: activo, visible y con stock real.
+
+        El stock se decide por la etiqueta observable: `cl-green-label`
+        presente (cualquier variante positiva: 'Disponible', 'Solo queda
+        1', 'Solo quedan N') y sin etiqueta 'Agotado' — el JSON del SPA
+        llega desfasado (declara in-stock en productos agotados).
+        """
         cur = self._current()
         stock = cur.get("stock") or {}
+        has_stock_badge = (
+            self.page.locator(PdpLocators.AVAILABILITY_BADGE).count() > 0
+            and self.page.locator(PdpLocators.OUT_OF_STOCK_BADGE).count() == 0
+        )
         return bool(
             stock.get("is_in_stock")
             and int(stock.get("qty") or 0) > 0
             and cur.get("status") == self.REQUIRED_STATUS
             and cur.get("visibility") == self.REQUIRED_VISIBILITY
+            and has_stock_badge
         )
 
     def is_add_to_cart_enabled(self) -> bool:
