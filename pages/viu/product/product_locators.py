@@ -11,6 +11,8 @@ class ProductLocators:
     # carrito: solo ofrece "Aceptar"; el minicart se abre desde el header.
     # Llega en dos variantes: .success (agregado) y .error (sin stock).
     NOTIFICATION_TOAST = "div.notification:visible"
+    # Contrato common `add_confirmation_message` (texto del toast post-add).
+    NOTIFICATION = NOTIFICATION_TOAST
     NOTIFICATION_SUCCESS = "div.notification.success:visible"
     NOTIFICATION_ERROR = "div.notification.error:visible"
     NOTIFICATION_ACCEPT = ".notification-action:visible"

@@ -5,6 +5,8 @@ las marcas solo redefinen `continue_as_guest` y `get_displayed_price`,
 cuyo DOM difiere.
 """
 
+from fnmatch import fnmatch
+
 from playwright.sync_api import Page
 
 from core.execution.execution_context import ExecutionContext
@@ -15,6 +17,9 @@ from domain.money.money import Money
 from pages.base_page import BasePage
 from pages.common.components.checkout.checkout_component import (
     CheckoutComponent,
+)
+from pages.common.components.checkout.checkout_locators import (
+    CheckoutLocators,
 )
 from pages.common.components.checkout.customer_form_component import (
     CustomerFormComponent,
@@ -43,6 +48,16 @@ class CommonCheckoutPage(BasePage):
         raise NotImplementedError
 
     # --- Etapa / estructura ---------------------------------------------
+    def is_on_checkout(self) -> bool:
+        """La URL actual es la del checkout de la marca (patrón glob de
+        sites.yaml vía ExecutionContext)."""
+        return fnmatch(self.page.url, self.context.checkout_url_pattern)
+
+    def evidence_mask(self) -> list:
+        """Locators a tapar en los screenshots del checkout: inputs y
+        selects visibles (identidad real del comprador, domicilio, tarjeta)."""
+        return [self.page.locator(CheckoutLocators.EVIDENCE_MASK)]
+
     def wait_until_ready(self) -> None:
         self.gate.wait_until_ready()
 

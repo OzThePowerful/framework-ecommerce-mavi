@@ -30,3 +30,9 @@ class CommonOrderPage(BasePage):
 
     def read_order(self, payment_method: str | None = None) -> Order:
         return self.confirmation.read_order(payment_method)
+
+    def success_heading(self) -> str | None:
+        return self.confirmation.success_heading()
+
+    def final_order(self, folio: str, timeout_ms: int = 10000) -> dict | None:
+        return self.confirmation.final_order(folio, timeout_ms)

@@ -8,6 +8,7 @@ subclase en `dismiss_post_add_overlays` / `open_cart_from_notification`.
 from typing import ClassVar
 
 from playwright.sync_api import Page
+from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
 
 from core.execution.execution_context import ExecutionContext
 from domain.models.product import Product
@@ -54,6 +55,19 @@ class CommonProductPage(BasePage):
 
     def variants(self) -> list[Product]:
         return self.pdp.variants()
+
+    def add_confirmation_message(self, timeout_ms: int = 10000) -> str | None:
+        """Texto del toast post-add ('Tu producto … ha sido agregado a tu
+        carrito de compras.'). Sondeo: None si no aparece a tiempo.
+
+        Contrato por marca: `PRODUCT_LOCATORS.NOTIFICATION` = toast post-add.
+        """
+        toast = self.page.locator(self.PRODUCT_LOCATORS.NOTIFICATION).first
+        try:
+            toast.wait_for(state="visible", timeout=timeout_ms)
+        except PlaywrightTimeoutError:
+            return None
+        return " ".join(toast.inner_text().split()) or None
 
     def add_to_cart(self) -> None:
         self.page.locator(
