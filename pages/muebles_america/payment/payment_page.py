@@ -26,9 +26,12 @@ class PaymentPage(CommonPaymentPage):
     ) -> list[dict]:
         """Métodos de pago `{value, label, enabled}` una vez estabilizada la
         etapa: radios y estado del botón de confirmación deben repetirse
-        sin cambios durante `settle_ms`, con al menos un método habilitado
-        (KO oscila al abrir la etapa). Al agotar `timeout_ms` devuelve la
-        última lectura (el step decide)."""
+        sin cambios durante `settle_ms` — y el estado estable debe ser el
+        de mayor habilitación observado. KO oscila al abrir la etapa
+        ('todos → solo Efectivo → todos'): una fase transitoria puede
+        durar más que `settle_ms`, así que el cierre no basta con '≥1
+        habilitado'. Al agotar `timeout_ms` devuelve la lectura con más
+        métodos habilitados vista (el step decide)."""
 
         def snapshot() -> tuple[list[dict], bool]:
             return (
@@ -36,19 +39,25 @@ class PaymentPage(CommonPaymentPage):
                 self.is_place_order_enabled(),
             )
 
+        def enabled_count(state: tuple[list[dict], bool]) -> int:
+            return sum(1 for option in state[0] if option["enabled"])
+
         deadline = time.monotonic() + timeout_ms / 1000
-        state = snapshot()
+        state = best = snapshot()
         stable_since = time.monotonic()
         while time.monotonic() < deadline:
             self.page.wait_for_timeout(250)
             current = snapshot()
+            if enabled_count(current) > enabled_count(best):
+                best = current
             if current != state:
                 state, stable_since = current, time.monotonic()
                 continue
-            enabled = any(option["enabled"] for option in state[0])
-            if enabled and (time.monotonic() - stable_since) * 1000 >= settle_ms:
+            if current == best and (
+                time.monotonic() - stable_since
+            ) * 1000 >= settle_ms:
                 break
-        return list(state[0])
+        return list(best[0])
 
     def active_method(self) -> str | None:
         """`value` del método cuyo contenedor está marcado `_active`."""
