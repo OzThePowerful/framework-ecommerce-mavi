@@ -2,10 +2,16 @@
 
 El flujo de pago es el de la base común; aquí se agregan las lecturas de
 CP_EC_MA_PAY_001 (opciones estabilizadas, método activo, etiqueta del
-botón y valores de tarjeta conservados). Nunca pulsa 'Finalizar compra'.
+botón y valores de tarjeta conservados), que nunca pulsan 'Finalizar
+compra', y la confirmación con registro de peticiones de
+CP_EC_MA_ORDER_001 (`confirm_order_tracked`, acción irreversible).
 """
 
 import time
+from urllib.parse import urlsplit
+
+from playwright.sync_api import Error as PlaywrightError
+from playwright.sync_api import Response
 
 from pages.common.components.payment.payment_locators import (
     PaymentLocators as CommonPaymentLocators,
@@ -78,3 +84,53 @@ class PaymentPage(CommonPaymentPage):
             "exp_year": selected(CommonPaymentLocators.CARD_EXP_YEAR),
             "cvv": digits(CommonPaymentLocators.CARD_CVV),
         }
+
+    # --- Confirmación (CP_EC_MA_ORDER_001) --------------------------------
+    def confirm_order_tracked(self, timeout_ms: int = 90000) -> dict:
+        """ACCIÓN IRREVERSIBLE: ejecuta 'Finalizar compra' (`confirm_order`
+        común) registrando las respuestas POST de la confirmación, y espera
+        la de creación de la orden (`payment-information`).
+
+        Devuelve `{path, status, body}` de esa respuesta; `body` es None si
+        el navegador ya no conserva el cuerpo. Las demás respuestas se leen
+        con `confirmation_responses()`. Solo para casos ORDER autorizados.
+        """
+        self._confirmation_log: list[dict] = []
+
+        def is_tracked(response: Response) -> bool:
+            return response.request.method == "POST" and any(
+                part in response.url for part in PaymentLocators.CONFIRMATION_REQUESTS
+            )
+
+        def record(response: Response) -> None:
+            if is_tracked(response):
+                self._confirmation_log.append(
+                    {"path": urlsplit(response.url).path, "status": response.status}
+                )
+
+        self._confirmation_listener = record
+        self.page.on("response", record)
+        with self.page.expect_response(
+            lambda r: is_tracked(r) and PaymentLocators.PLACE_ORDER_REQUEST in r.url,
+            timeout=timeout_ms,
+        ) as info:
+            self.confirm_order()
+        response = info.value
+        try:
+            body = response.text().strip()
+        except PlaywrightError:
+            body = None
+        return {
+            "path": urlsplit(response.url).path,
+            "status": response.status,
+            "body": body,
+        }
+
+    def confirmation_responses(self) -> list[dict]:
+        """Respuestas POST `{path, status}` registradas desde
+        `confirm_order_tracked`; deja de registrar al leerlas."""
+        listener = getattr(self, "_confirmation_listener", None)
+        if listener is not None:
+            self.page.remove_listener("response", listener)
+            self._confirmation_listener = None
+        return list(getattr(self, "_confirmation_log", []))

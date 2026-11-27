@@ -24,6 +24,7 @@ from tests.bdd.steps.home_steps import *  # noqa: F401,F403  (registra steps)
 from tests.bdd.steps.muebles_america.cart_steps import *  # noqa: F401,F403
 from tests.bdd.steps.muebles_america.checkout_steps import *  # noqa: F401,F403
 from tests.bdd.steps.muebles_america.home_steps import *  # noqa: F401,F403
+from tests.bdd.steps.muebles_america.order_steps import *  # noqa: F401,F403
 from tests.bdd.steps.muebles_america.payment_steps import *  # noqa: F401,F403
 from tests.bdd.steps.muebles_america.pdp_steps import *  # noqa: F401,F403
 from tests.bdd.steps.muebles_america.search_steps import *  # noqa: F401,F403

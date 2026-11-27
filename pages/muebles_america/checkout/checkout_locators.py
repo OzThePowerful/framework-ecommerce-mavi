@@ -18,6 +18,11 @@ Domicilio y entrega (CP_EC_MA_CHECKOUT_003, verificado en stage MA):
   `StorePickupSelected` ("A tu domicilio" viene preseleccionado);
 - el resumen muestra "Envío: Aún no calculado" hasta completar el
   domicilio y luego "Costo de envío: Gratis" o un importe.
+
+Resumen final (CP_EC_MA_ORDER_001, verificado en stage MA): "Detalle de
+la compra" lista un `li.omni-product-item` por producto con el texto
+"SKU#: MABE00902 / <nombre> / A: $6,119.00 / Entrega entre el … /
+Cantidad: 1" (sin selectores por campo: se lee el texto del ítem).
 """
 
 
@@ -30,6 +35,7 @@ class CheckoutLocators:
     COLONIA_SELECT = "select[name='colonia_select_shipping']:visible"
     DELIVERY_OPTIONS = {"a_domicilio": "#domicilio", "sucursal": "#sucursal"}
     SHIPPING_SUMMARY = ".omni-summary-totals"
+    SUMMARY_ITEM = "li.omni-product-item:visible"
     # (name) → texto del error del input visible con ese name, o null.
     FIELD_ERROR_EXPR = """(name) => {
         const input = [...document.querySelectorAll(`input[name="${name}"]`)]

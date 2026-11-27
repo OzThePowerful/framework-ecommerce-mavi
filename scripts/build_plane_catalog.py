@@ -745,6 +745,38 @@ CASES = [
         "estado_automatizacion": "Automated",
         "implementacion": "test_cases/common/order/order.feature",
         "tags": ["order", "e2e", "irreversible"],
+        # CP_EC_MA_ORDER_001 — exclusivo de MA (MA-AISLAMIENTO-001).
+        "muebles_america": {
+            "titulo": "Generar orden mediante venta de contado",
+            "objetivo": (
+                "Validar que el usuario puede confirmar una compra de contado "
+                "y obtener una orden válida."
+            ),
+            "tipo": "Funcional positivo",
+            "precondiciones": (
+                "Carrito válido; checkout completo; forma de pago de contado "
+                "seleccionada; ambiente autorizado para generar pedidos de prueba."
+            ),
+            "datos": (
+                "Contado `payment`/`card` (openpay_cards, tarjeta sandbox) + "
+                "identidad real MAVI_GUEST_MA_*."
+            ),
+            "pasos": (
+                "1. Revisar resumen final. 2. Validar total antes de confirmar. "
+                "3. Ejecutar confirmación de compra. 4. Esperar respuesta. "
+                "5. Revisar página final. 6. Obtener número de orden/folio."
+            ),
+            "resultado_esperado": (
+                "Resumen con el producto de la PDP (SKU, nombre, precio, cantidad "
+                "1, entrega) y botón 'Pagar con <contado>'; total = subtotal + "
+                "envío > 0; POST payment-information 2xx con id de orden; sin "
+                "peticiones con error ni rechazo; página de éxito con 'N° de "
+                "pedido'; folio numérico presente en la confirmación."
+            ),
+            "postcondicion": "Orden REAL de prueba creada en stage (folio en Allure).",
+            "implementacion": "test_cases/muebles_america/order/order.feature",
+            "tags": ["order", "cash_sale"],
+        },
     },
     {
         "suffix": "ORDER_002",
