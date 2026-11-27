@@ -42,3 +42,4 @@ Feature: Confirmación de orden en checkout
     And captura el resumen comercial previo a confirmar
     And confirma la compra
     Then la orden es consistente con producto, carrito, envío, total y pago
+    And la orden del dataLayer coincide con el flujo
