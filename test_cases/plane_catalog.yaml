@@ -414,24 +414,24 @@ casos:
   - order
   - commercial_validation
 - id: CP_EC_MA_SMOKE_001
-  titulo: 'Smoke: guest checkout muestra un precio de pedido mayor a cero'
-  objetivo: Verificación rápida del flujo navegación → checkout invitado con precio > 0.
+  titulo: Validar Smoke del flujo de compra previo al pago
+  objetivo: Comprobar rápidamente que las funciones críticas requeridas para iniciar una venta están operativas.
   prioridad: Alta
   tipo: Smoke
   ecommerce: Muebles América
   ecommerce_key: muebles_america
   modulo: Smoke
-  precondiciones: Ambiente stage.
-  datos: Dataset `guest_checkout`.
-  pasos: 1. Home → departamento → PDP → carrito → invitado. 2. Leer precio mostrado.
-  resultado_esperado: Precio del pedido > 0 como Money.
-  postcondicion: Sin cambios.
+  precondiciones: Ambiente stage operativo; producto elegible para la búsqueda.
+  datos: Datasets `search`/`with_results` y `checkout`/`entry`.
+  pasos: 1. Abrir Home. 2. Buscar producto. 3. Abrir PDP. 4. Agregar producto. 5. Abrir carrito. 6. Iniciar Checkout.
+  resultado_esperado: Home utilizable; búsqueda procesada con resultados; PDP del producto seleccionado y comprable; adición procesada y confirmada;
+    carrito con el producto y cantidad 1; opción de invitado y primera etapa del checkout cargada (etapa 'entrega').
+  postcondicion: No se confirma pago ni se genera pedido.
   automatizable: true
   estado_automatizacion: Automated
-  implementacion: test_cases/common/smoke/sale_cash.feature (GuestCheckoutWorkflow)
-  tags: &id011
+  implementacion: test_cases/muebles_america/smoke/sale_cash.feature
+  tags:
   - smoke
-  - regression
 - id: CP_EC_MA_E2E_001
   titulo: Flujo completo de venta de contado Home→Order
   objetivo: 'Ejecutar el recorrido E2E consolidado: búsqueda, PDP, carrito, checkout, pago y orden.'
@@ -448,7 +448,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/e2e/e2e.feature (SaleCashWorkflow, confirm_order=True)
-  tags: &id012
+  tags: &id011
   - e2e
   - contado
   - irreversible
@@ -815,7 +815,9 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/smoke/sale_cash.feature (GuestCheckoutWorkflow)
-  tags: *id011
+  tags:
+  - smoke
+  - regression
 - id: CP_EC_VIU_E2E_001
   titulo: Flujo completo de venta de contado Home→Order
   objetivo: 'Ejecutar el recorrido E2E consolidado: búsqueda, PDP, carrito, checkout, pago y orden.'
@@ -832,4 +834,4 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/e2e/e2e.feature (SaleCashWorkflow, confirm_order=True)
-  tags: *id012
+  tags: *id011

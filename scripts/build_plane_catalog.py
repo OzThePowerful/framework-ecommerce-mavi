@@ -857,6 +857,29 @@ CASES = [
             "(GuestCheckoutWorkflow)"
         ),
         "tags": ["smoke", "regression"],
+        # CP_EC_MA_SMOKE_001 — exclusivo de MA (MA-AISLAMIENTO-001).
+        "muebles_america": {
+            "titulo": "Validar Smoke del flujo de compra previo al pago",
+            "objetivo": (
+                "Comprobar rápidamente que las funciones críticas requeridas "
+                "para iniciar una venta están operativas."
+            ),
+            "precondiciones": "Ambiente stage operativo; producto elegible para la búsqueda.",
+            "datos": "Datasets `search`/`with_results` y `checkout`/`entry`.",
+            "pasos": (
+                "1. Abrir Home. 2. Buscar producto. 3. Abrir PDP. 4. Agregar "
+                "producto. 5. Abrir carrito. 6. Iniciar Checkout."
+            ),
+            "resultado_esperado": (
+                "Home utilizable; búsqueda procesada con resultados; PDP del "
+                "producto seleccionado y comprable; adición procesada y "
+                "confirmada; carrito con el producto y cantidad 1; opción de "
+                "invitado y primera etapa del checkout cargada (etapa 'entrega')."
+            ),
+            "postcondicion": "No se confirma pago ni se genera pedido.",
+            "implementacion": "test_cases/muebles_america/smoke/sale_cash.feature",
+            "tags": ["smoke"],
+        },
     },
     {
         "suffix": "E2E_001",
