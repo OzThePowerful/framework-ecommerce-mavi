@@ -7,12 +7,13 @@ secuencias Playwright. El sitio lo decide el ExecutionContext (--site).
 from pytest_bdd import given, then, when
 
 
-@given("el usuario abre la home del sitio activo")
-def open_active_site_home(pages) -> None:
+@given("el usuario abre la home del sitio activo", target_fixture="home_ctx")
+def open_active_site_home(pages) -> dict:
     home = pages.home()
-    home.open_home()
+    status = home.open_home()
     home.accept_cookies_if_present()
     home.wait_until_ready()
+    return {"status": status}
 
 
 @given("el buscador está disponible")

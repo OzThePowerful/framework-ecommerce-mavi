@@ -11,6 +11,14 @@ from pytest_bdd import then
 from core.reporting.allure_manager import attach_text
 
 
+@then("el sitio responde con un estado correcto")
+def site_responds_ok(home_ctx) -> None:
+    status = home_ctx["status"]
+    attach_text("Respuesta HTTP", json.dumps({"status": status}))
+    assert status is not None, "La navegación no obtuvo respuesta HTTP"
+    assert 200 <= status < 400, f"El sitio respondió con status HTTP {status}"
+
+
 @then("la home identifica la marca del sitio activo")
 def home_identifies_brand(pages, execution_context) -> None:
     home = pages.home()

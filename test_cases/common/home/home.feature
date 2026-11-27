@@ -9,7 +9,8 @@ Feature: Home del ecommerce
   @HOME_001
   Scenario: La home carga en estado utilizable e identifica la marca
     Given el usuario abre la home del sitio activo
-    Then la home identifica la marca del sitio activo
+    Then el sitio responde con un estado correcto
+    And la home identifica la marca del sitio activo
     And el buscador está accesible
     And el acceso al carrito está disponible
     And la navegación principal está disponible
