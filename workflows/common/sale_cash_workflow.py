@@ -90,8 +90,14 @@ class SaleResult:
 class SaleCashWorkflow:
     """Coordina la venta de contado completa sin absorber la UI."""
 
-    def __init__(self, pages, context: ExecutionContext) -> None:
+    def __init__(
+        self,
+        pages,
+        context: ExecutionContext,
+        on_stage: Callable[[str], None] | None = None,
+    ) -> None:
         self._pages = pages
+        self._on_stage = on_stage
         self._log = get_logger(
             __name__,
             run_id=context.run_id,
@@ -136,6 +142,8 @@ class SaleCashWorkflow:
         self._log.info("Etapa '%s' — inicio", name)
         try:
             result = action()
+            if self._on_stage is not None:
+                self._on_stage(name)
         except Exception as exc:
             exc.add_note(f"SaleCashWorkflow: falló en la etapa '{name}'")
             self._log.error("Etapa '%s' — error: %s", name, exc)

@@ -8,10 +8,11 @@ PRECAUCIÓN: ejecuta 'Finalizar compra' → crea una orden REAL en stage.
 """
 
 import json
+from pathlib import Path
 
 from pytest_bdd import given, then, when
 
-from core.reporting.allure_manager import attach_text
+from core.reporting.allure_manager import attach_file, attach_text
 from domain.models.address import Address
 from workflows.common.sale_cash_workflow import (
     PaymentCard,
@@ -49,8 +50,27 @@ def prepare_sale_request(data_provider, guest_customer, payment_card) -> dict:
 
 
 @when("ejecuta el flujo completo de venta de contado", target_fixture="order_ctx")
-def run_sale_cash(e2e_ctx, pages, execution_context) -> dict:
-    result = SaleCashWorkflow(pages, execution_context).run(e2e_ctx["request"])
+def run_sale_cash(e2e_ctx, page, pages, evidence_manager, execution_context) -> dict:
+    e2e_evidence: list[dict] = []
+
+    def capture_stage(stage: str) -> None:
+        checkout = pages.checkout()
+        mask = checkout.evidence_mask() if checkout.is_on_checkout() else None
+        name = f"{len(e2e_evidence) + 1:02d}_{stage}"
+        path = evidence_manager.save_screenshot(page, name, mask=mask)
+        attach_file(path, name=f"Etapa {stage}")
+        e2e_evidence.append(
+            {
+                "stage": stage,
+                "url": page.url,
+                "screenshot": str(path),
+                "masked": bool(mask),
+            }
+        )
+
+    result = SaleCashWorkflow(
+        pages, execution_context, on_stage=capture_stage
+    ).run(e2e_ctx["request"])
     item = result.cart.items[0] if result.cart.items else None
     attach_text(
         "SaleResult snapshot",
@@ -78,6 +98,7 @@ def run_sale_cash(e2e_ctx, pages, execution_context) -> dict:
         "order_page": pages.order(),
         "result": result,
         "request": e2e_ctx["request"],
+        "e2e_evidence": e2e_evidence,
     }
 
 
@@ -113,3 +134,42 @@ def commercial_integrity(order_ctx) -> None:
     assert result.payment_method == request.payment_method, (
         f"Método {result.payment_method!r} != {request.payment_method!r}"
     )
+
+
+# Etapas que emite SaleCashWorkflow vía `on_stage`, en orden.
+_WORKFLOW_STAGES = (
+    "product", "cart", "guest", "customer_address",
+    "shipping", "payment", "summary", "order",
+)
+
+
+@then("la evidencia de la venta de contado está completa")
+def sale_evidence_complete(order_ctx, evidence_manager) -> None:
+    evidence = order_ctx["e2e_evidence"]
+    stages = [entry["stage"] for entry in evidence]
+    missing = [
+        entry["stage"]
+        for entry in evidence
+        if not Path(entry["screenshot"]).is_file()
+        or not Path(entry["screenshot"]).stat().st_size
+    ]
+    assert not missing, f"Etapas sin captura en disco: {missing}"
+    assert tuple(stages) == _WORKFLOW_STAGES, (
+        f"Etapas evidenciadas {stages} != flujo {list(_WORKFLOW_STAGES)}"
+    )
+    masked = [entry["stage"] for entry in evidence if entry["masked"]]
+    assert masked, (
+        "Ninguna captura quedó enmascarada (checkout sin evidencia protegida)"
+    )
+    result = order_ctx["result"]
+    summary = {
+        "etapas": stages,
+        "evidencia": evidence,
+        "capturas_enmascaradas": masked,
+        "producto": {"sku": result.product.sku, "nombre": result.product.name},
+        "folio": result.order.folio if result.order else None,
+    }
+    content = json.dumps(summary, ensure_ascii=False, indent=2)
+    evidence_manager.save_log("e2e_resumen", content)
+    attach_text("Evidencia E2E", content)
+    assert summary["folio"], "La evidencia no registra el folio de la orden"
