@@ -143,7 +143,50 @@ class CheckoutPage(CommonCheckoutPage):
         while self.current_stage() != "forma_de_pago" and time.monotonic() < deadline:
             self.page.wait_for_timeout(250)
 
+    # --- Evidencia (CP_EC_MA_E2E_001) --------------------------------------
+    def evidence_mask(self) -> list:
+        """Locators a tapar en los screenshots del checkout: inputs y selects
+        visibles (identidad real del comprador, domicilio y tarjeta)."""
+        return [self.page.locator(CheckoutLocators.EVIDENCE_MASK)]
+
     # --- Resumen ----------------------------------------------------------
+    def summary_items(self) -> list[dict]:
+        """Productos del resumen final ("Detalle de la compra"):
+        `{sku, name, price, qty, delivery}` leídos del texto de cada
+        `li.omni-product-item`; un campo ausente queda en None (el step
+        decide). Solo lectura (CP_EC_MA_ORDER_001)."""
+        items = self.page.locator(CheckoutLocators.SUMMARY_ITEM)
+        return [
+            self._parse_summary_item(items.nth(i).inner_text())
+            for i in range(items.count())
+        ]
+
+    @staticmethod
+    def _parse_summary_item(text: str) -> dict:
+        lines = [line.strip() for line in text.splitlines() if line.strip()]
+        sku_index = next(
+            (i for i, line in enumerate(lines) if line.upper().startswith("SKU#")),
+            None,
+        )
+        sku = name = None
+        if sku_index is not None:
+            sku = lines[sku_index].split(":", 1)[-1].strip() or None
+            if sku_index + 1 < len(lines):
+                name = lines[sku_index + 1]
+        price = re.search(r"A:\s*(\$[\d,]+\.\d{2})", text)
+        qty = re.search(r"Cantidad:\s*(\d+)", text)
+        delivery = re.search(r"Entrega entre el [^\n]+", text)
+        return {
+            "sku": sku,
+            "name": name,
+            "price": (
+                Money(Decimal(re.sub(r"[^\d.]", "", price.group(1))))
+                if price else None
+            ),
+            "qty": int(qty.group(1)) if qty else None,
+            "delivery": delivery.group(0).strip() if delivery else None,
+        }
+
     def get_displayed_price(self) -> Money:
         """Expone el precio mostrado como Money; la validación la hace el test."""
         text = self.page.locator(CheckoutLocators.TOTAL_PRICE).first.inner_text()

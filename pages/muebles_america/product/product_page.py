@@ -20,12 +20,14 @@ class ProductPage(CommonProductPage):
         super().__init__(page, context)
         self.promotions_window = PromotionsWindowComponent(page)
 
-    def availability_label(self) -> str | None:
+    def availability_label(self, timeout_ms: int = 15000) -> str | None:
         """Etiqueta de disponibilidad visible: 'Disponible', 'Agotado' o
-        'Solo queda N'. Es un sondeo: None si la PDP no la muestra."""
+        'Solo queda(n) N'. Llega después de cargar la PDP (servicio
+        `/api/stock/check`), por eso la espera amplia. Es un sondeo: None
+        si la PDP no la muestra en `timeout_ms`."""
         label = self.page.locator(ProductLocators.AVAILABILITY_LABEL)
         try:
-            label.first.wait_for(state="visible", timeout=5000)
+            label.first.wait_for(state="visible", timeout=timeout_ms)
         except PlaywrightTimeoutError:
             return None
         return " ".join(label.first.inner_text().split())

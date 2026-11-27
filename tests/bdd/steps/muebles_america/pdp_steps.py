@@ -17,7 +17,7 @@ from core.reporting.allure_manager import attach_text
 
 _ABSENT = "ausente"
 # Etiquetas de la PDP que permiten comprar; 'Agotado' no lo permite.
-_PURCHASABLE_LABEL = re.compile(r"^(disponible|solo queda (\d+))$", re.IGNORECASE)
+_PURCHASABLE_LABEL = re.compile(r"^(disponible|solo quedan? (\d+))$", re.IGNORECASE)
 
 
 @when("selecciona una card elegible y abre su PDP", target_fixture="pdp_ctx")

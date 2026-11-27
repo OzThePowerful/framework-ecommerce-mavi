@@ -638,6 +638,44 @@ CASES = [
         "estado_automatizacion": "Automated",
         "implementacion": "test_cases/common/payment/payment.feature",
         "tags": ["payment", "contado", "openpay"],
+        # CP_EC_MA_PAY_001 — exclusivo de MA (MA-AISLAMIENTO-001).
+        "muebles_america": {
+            "titulo": "Seleccionar forma de pago correspondiente a venta de contado",
+            "objetivo": (
+                "Validar que el método definido funcionalmente como pago de "
+                "contado está disponible y puede seleccionarse."
+            ),
+            "tipo": "Funcional positivo",
+            "precondiciones": (
+                "Checkout completo; dirección válida; método de entrega "
+                "seleccionado; método de contado documentado y habilitado en Stage."
+            ),
+            "datos": (
+                "Contado `payment`/`card`: openpay_cards 'Tarjeta Crédito / "
+                "Débito' (OpenPay), tarjeta sandbox; método vía "
+                "`checkout`/`guest.payment_method`."
+            ),
+            "pasos": (
+                "1. Llegar a la etapa de pago. 2. Consultar métodos disponibles. "
+                "3. Identificar forma de pago de contado. 4. Seleccionar método. "
+                "5. Completar datos permitidos cuando aplique. 6. Revisar resumen "
+                "antes de confirmación."
+            ),
+            "resultado_esperado": (
+                "Etapa 'forma_de_pago' con el botón deshabilitado; métodos "
+                "habilitados con nombre (estabilizados); contado presente con el "
+                "nombre del dataset; seleccionado, contenedor activo y botón "
+                "'Pagar con <método>'; tarjeta conservada sin errores; subtotal = "
+                "precio PDP, total = subtotal + envío y botón habilitado, sin "
+                "salir del checkout."
+            ),
+            "postcondicion": (
+                "Forma de pago de contado seleccionada y compra lista para "
+                "finalizar; NO se crea orden."
+            ),
+            "implementacion": "test_cases/muebles_america/payment/payment.feature",
+            "tags": ["payment", "cash_sale"],
+        },
     },
     {
         "suffix": "PAY_002",
@@ -707,6 +745,38 @@ CASES = [
         "estado_automatizacion": "Automated",
         "implementacion": "test_cases/common/order/order.feature",
         "tags": ["order", "e2e", "irreversible"],
+        # CP_EC_MA_ORDER_001 — exclusivo de MA (MA-AISLAMIENTO-001).
+        "muebles_america": {
+            "titulo": "Generar orden mediante venta de contado",
+            "objetivo": (
+                "Validar que el usuario puede confirmar una compra de contado "
+                "y obtener una orden válida."
+            ),
+            "tipo": "Funcional positivo",
+            "precondiciones": (
+                "Carrito válido; checkout completo; forma de pago de contado "
+                "seleccionada; ambiente autorizado para generar pedidos de prueba."
+            ),
+            "datos": (
+                "Contado `payment`/`card` (openpay_cards, tarjeta sandbox) + "
+                "identidad real MAVI_GUEST_MA_*."
+            ),
+            "pasos": (
+                "1. Revisar resumen final. 2. Validar total antes de confirmar. "
+                "3. Ejecutar confirmación de compra. 4. Esperar respuesta. "
+                "5. Revisar página final. 6. Obtener número de orden/folio."
+            ),
+            "resultado_esperado": (
+                "Resumen con el producto de la PDP (SKU, nombre, precio, cantidad "
+                "1, entrega) y botón 'Pagar con <contado>'; total = subtotal + "
+                "envío > 0; POST payment-information 2xx con id de orden; sin "
+                "peticiones con error ni rechazo; página de éxito con 'N° de "
+                "pedido'; folio numérico presente en la confirmación."
+            ),
+            "postcondicion": "Orden REAL de prueba creada en stage (folio en Allure).",
+            "implementacion": "test_cases/muebles_america/order/order.feature",
+            "tags": ["order", "cash_sale"],
+        },
     },
     {
         "suffix": "ORDER_002",
@@ -730,6 +800,40 @@ CASES = [
         "estado_automatizacion": "Automated",
         "implementacion": "test_cases/common/order/order.feature",
         "tags": ["order", "consistencia", "irreversible"],
+        # CP_EC_MA_ORDER_002 — exclusivo de MA (MA-AISLAMIENTO-001).
+        "muebles_america": {
+            "titulo": "Validar integridad comercial de la orden generada",
+            "objetivo": (
+                "Comprobar que los datos de la orden final son consistentes con "
+                "las etapas previas del flujo."
+            ),
+            "tipo": "Validación comercial",
+            "precondiciones": (
+                "Orden generada; información de Product, Cart y Checkout disponible."
+            ),
+            "datos": (
+                "Orden final = eventos `purchase` del dataLayer de la página de "
+                "éxito; contado `payment`/`card` (openpay_cards, sale_type "
+                "'contado'); identidad real MAVI_GUEST_MA_*."
+            ),
+            "pasos": (
+                "1. Obtener información final de la orden. 2. Comparar producto. "
+                "3. Comparar cantidad. 4. Comparar subtotal. 5. Comparar descuento. "
+                "6. Comparar shipping. 7. Comparar total. 8. Revisar forma de pago. "
+                "9. Revisar folio."
+            ),
+            "resultado_esperado": (
+                "Orden del folio disponible y coherente entre eventos; SKU = "
+                "PDP/carrito/checkout y nombre = PDP; cantidad = PDP/carrito/"
+                "checkout; precio unitario y subtotal = PDP/carrito/checkout; cupón "
+                "⇔ descuento del carrito y descuento de producto = PDP; envío y "
+                "total = checkout (total = subtotal − descuento + envío); tipo_pago "
+                "'contado' y método openpay_cards; folio numérico = transaction_id."
+            ),
+            "postcondicion": "Orden REAL de prueba creada en stage y validada.",
+            "implementacion": "test_cases/muebles_america/order/order.feature",
+            "tags": ["order", "commercial_validation"],
+        },
     },
     {
         "suffix": "SMOKE_001",
@@ -753,6 +857,29 @@ CASES = [
             "(GuestCheckoutWorkflow)"
         ),
         "tags": ["smoke", "regression"],
+        # CP_EC_MA_SMOKE_001 — exclusivo de MA (MA-AISLAMIENTO-001).
+        "muebles_america": {
+            "titulo": "Validar Smoke del flujo de compra previo al pago",
+            "objetivo": (
+                "Comprobar rápidamente que las funciones críticas requeridas "
+                "para iniciar una venta están operativas."
+            ),
+            "precondiciones": "Ambiente stage operativo; producto elegible para la búsqueda.",
+            "datos": "Datasets `search`/`with_results` y `checkout`/`entry`.",
+            "pasos": (
+                "1. Abrir Home. 2. Buscar producto. 3. Abrir PDP. 4. Agregar "
+                "producto. 5. Abrir carrito. 6. Iniciar Checkout."
+            ),
+            "resultado_esperado": (
+                "Home utilizable; búsqueda procesada con resultados; PDP del "
+                "producto seleccionado y comprable; adición procesada y "
+                "confirmada; carrito con el producto y cantidad 1; opción de "
+                "invitado y primera etapa del checkout cargada (etapa 'entrega')."
+            ),
+            "postcondicion": "No se confirma pago ni se genera pedido.",
+            "implementacion": "test_cases/muebles_america/smoke/sale_cash.feature",
+            "tags": ["smoke"],
+        },
     },
     {
         "suffix": "E2E_001",
@@ -778,6 +905,40 @@ CASES = [
             "test_cases/common/e2e/e2e.feature "
             "(SaleCashWorkflow, confirm_order=True)"
         ),
+        # CP_EC_MA_E2E_001 — exclusivo de MA (MA-AISLAMIENTO-001).
+        "muebles_america": {
+            "titulo": "Validar flujo completo de venta de contado",
+            "objetivo": (
+                "Validar de extremo a extremo el proceso de compra de contado en "
+                "Muebles América."
+            ),
+            "tipo": "End-to-End",
+            "precondiciones": (
+                "Módulos funcionales operativos; producto elegible; dataset de "
+                "cliente y dirección; forma de pago de contado definida; ambiente "
+                "habilitado para la operación."
+            ),
+            "datos": (
+                "Datasets search/checkout/addresses/payment (contado openpay_cards, "
+                "sale_type 'contado') + identidad real MAVI_GUEST_MA_*."
+            ),
+            "pasos": (
+                "Home → Search → PDP → Cart → Checkout → Customer → Address → "
+                "Shipping → Payment → Order, cada etapa verificada y con evidencia; "
+                "luego validaciones obligatorias."
+            ),
+            "resultado_esperado": (
+                "Producto, cantidad y precio consistentes en todo el flujo; subtotal "
+                "= precio × cantidad en carrito, checkout y orden; descuento "
+                "correcto cuando aplica; shipping consistente (entrega, resumen, "
+                "orden); total = checkout = subtotal − descuento + envío; tipo_pago "
+                "'contado'; folio válido = transaction_id; 10 capturas por etapa "
+                "(checkout enmascarado) y resumen de evidencia."
+            ),
+            "postcondicion": "Orden REAL de prueba creada en stage con evidencia por etapa.",
+            "implementacion": "test_cases/muebles_america/e2e/e2e.feature",
+            "tags": ["e2e", "cash_sale", "critical"],
+        },
         "tags": ["e2e", "contado", "irreversible"],
     },
 ]

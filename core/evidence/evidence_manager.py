@@ -21,9 +21,14 @@ class EvidenceManager:
     def base_dir(self) -> Path:
         return self._base
 
-    def save_screenshot(self, page, name: str) -> Path:
+    def save_screenshot(self, page, name: str, mask: list | None = None) -> Path:
+        """Screenshot full-page; `mask` (locators de Playwright) tapa datos
+        privados en la imagen. Sin `mask` el comportamiento no cambia."""
         path = self._base / "screenshots" / f"{name}.png"
-        page.screenshot(path=str(path), full_page=True)
+        if mask:
+            page.screenshot(path=str(path), full_page=True, mask=mask)
+        else:
+            page.screenshot(path=str(path), full_page=True)
         return path
 
     def save_log(self, name: str, content: str) -> Path:
