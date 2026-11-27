@@ -54,7 +54,13 @@ class PdpComponent:
             pass
 
     def read_product(self) -> Product:
-        """Convierte el estado observado en el modelo de dominio Product."""
+        """Convierte el estado observado en el modelo de dominio Product.
+
+        Espera el estado renderizado: `__INITIAL_STATE__` es inline y el
+        badge tarda unos ms en pintarse — sin el wait, `availability`
+        queda False en una PDP comprable (falso negativo).
+        """
+        self.wait_until_ready()
         cur = self._current()
         regular = Decimal(
             str(cur.get("regular_price") or cur.get("original_price") or cur["price"])
