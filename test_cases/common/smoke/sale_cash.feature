@@ -13,7 +13,9 @@ Feature: Smoke de venta de contado
     When busca el término con resultados del dataset
     And abre la PDP de una card elegible
     And agrega el producto al carrito
-    And abre el carrito de compras
+    Then el ecommerce procesa la adición al carrito
+    And el ecommerce confirma la adición al carrito
+    When abre el carrito de compras
     Then el producto agregado es visible en el carrito con cantidad 1
     When continúa al checkout desde el carrito
     Then el acceso como invitado está disponible
