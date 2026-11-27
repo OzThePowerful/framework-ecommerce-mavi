@@ -307,25 +307,27 @@ casos:
   - pickup
   - store-selector
 - id: CP_EC_MA_PAY_001
-  titulo: Seleccionar contado y preparar la orden sin confirmarla
-  objetivo: Verificar la selección de openpay_cards con tarjeta sandbox hasta 'Finalizar compra' habilitado.
+  titulo: Seleccionar forma de pago correspondiente a venta de contado
+  objetivo: Validar que el método definido funcionalmente como pago de contado está disponible y puede seleccionarse.
   prioridad: Alta
-  tipo: Funcional
+  tipo: Funcional positivo
   ecommerce: Muebles América
   ecommerce_key: muebles_america
   modulo: Payment
-  precondiciones: Checkout completo (comprador, dirección, entrega).
-  datos: Dataset `payment`/`card` (sandbox OpenPay).
-  pasos: 1. Abrir etapa de pago. 2. Seleccionar tarjeta. 3. Completar campos. 4. Verificar botón habilitado.
-  resultado_esperado: Método seleccionado sin errores; _btnCheckout habilitado (nunca clickeado).
-  postcondicion: Orden lista para confirmar; NO se crea orden.
+  precondiciones: Checkout completo; dirección válida; método de entrega seleccionado; método de contado documentado y habilitado en Stage.
+  datos: 'Contado `payment`/`card`: openpay_cards ''Tarjeta Crédito / Débito'' (OpenPay), tarjeta sandbox; método vía `checkout`/`guest.payment_method`.'
+  pasos: 1. Llegar a la etapa de pago. 2. Consultar métodos disponibles. 3. Identificar forma de pago de contado. 4. Seleccionar método. 5. Completar
+    datos permitidos cuando aplique. 6. Revisar resumen antes de confirmación.
+  resultado_esperado: Etapa 'forma_de_pago' con el botón deshabilitado; métodos habilitados con nombre (estabilizados); contado presente con el
+    nombre del dataset; seleccionado, contenedor activo y botón 'Pagar con <método>'; tarjeta conservada sin errores; subtotal = precio PDP, total
+    = subtotal + envío y botón habilitado, sin salir del checkout.
+  postcondicion: Forma de pago de contado seleccionada y compra lista para finalizar; NO se crea orden.
   automatizable: true
   estado_automatizacion: Automated
-  implementacion: test_cases/common/payment/payment.feature
-  tags: &id009
+  implementacion: test_cases/muebles_america/payment/payment.feature
+  tags:
   - payment
-  - contado
-  - openpay
+  - cash_sale
 - id: CP_EC_MA_PAY_002
   titulo: El pago en efectivo no es seleccionable por encima de $30,000
   objetivo: 'Verificar la regla de negocio: openpay_stores deshabilitado con total > $30,000 MXN.'
@@ -342,7 +344,7 @@ casos:
   automatizable: true
   estado_automatizacion: Not Automated
   implementacion: Escenario @pending en test_cases/common/payment/payment.feature; falta dataset de alto monto
-  tags: &id010
+  tags: &id009
   - payment
   - regla-negocio
   - openpay-stores
@@ -362,7 +364,7 @@ casos:
   automatizable: true
   estado_automatizacion: Not Automated
   implementacion: Escenario @pending en test_cases/common/payment/payment.feature; falta wiring MSI
-  tags: &id011
+  tags: &id010
   - payment
   - msi
   - contado
@@ -382,7 +384,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/order/order.feature
-  tags: &id012
+  tags: &id011
   - order
   - e2e
   - irreversible
@@ -402,7 +404,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/order/order.feature
-  tags: &id013
+  tags: &id012
   - order
   - consistencia
   - irreversible
@@ -422,7 +424,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/smoke/sale_cash.feature (GuestCheckoutWorkflow)
-  tags: &id014
+  tags: &id013
   - smoke
   - regression
 - id: CP_EC_MA_E2E_001
@@ -441,7 +443,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/e2e/e2e.feature (SaleCashWorkflow, confirm_order=True)
-  tags: &id015
+  tags: &id014
   - e2e
   - contado
   - irreversible
@@ -714,7 +716,10 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/payment/payment.feature
-  tags: *id009
+  tags:
+  - payment
+  - contado
+  - openpay
 - id: CP_EC_VIU_PAY_002
   titulo: El pago en efectivo no es seleccionable por encima de $30,000
   objetivo: 'Verificar la regla de negocio: openpay_stores deshabilitado con total > $30,000 MXN.'
@@ -731,7 +736,7 @@ casos:
   automatizable: true
   estado_automatizacion: Not Automated
   implementacion: Escenario @pending en test_cases/common/payment/payment.feature; falta dataset de alto monto
-  tags: *id010
+  tags: *id009
 - id: CP_EC_VIU_PAY_003
   titulo: El contado a MSI se prepara con la tarjeta 4242
   objetivo: Verificar el flujo de meses sin intereses (contado diferido bancario) con 4242…4242.
@@ -748,7 +753,7 @@ casos:
   automatizable: true
   estado_automatizacion: Not Automated
   implementacion: Escenario @pending en test_cases/common/payment/payment.feature; falta wiring MSI
-  tags: *id011
+  tags: *id010
 - id: CP_EC_VIU_ORDER_001
   titulo: Confirmar la compra genera una orden con folio verificable
   objetivo: Ejecutar 'Finalizar compra' y capturar folio + mensaje de éxito inequívoco.
@@ -765,7 +770,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/order/order.feature
-  tags: *id012
+  tags: *id011
 - id: CP_EC_VIU_ORDER_002
   titulo: La orden es consistente con los datos comerciales del flujo
   objetivo: Comparar la orden contra Product, Cart, Shipping, total y método de pago.
@@ -782,7 +787,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/order/order.feature
-  tags: *id013
+  tags: *id012
 - id: CP_EC_VIU_SMOKE_001
   titulo: 'Smoke: guest checkout muestra un precio de pedido mayor a cero'
   objetivo: Verificación rápida del flujo navegación → checkout invitado con precio > 0.
@@ -799,7 +804,7 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/smoke/sale_cash.feature (GuestCheckoutWorkflow)
-  tags: *id014
+  tags: *id013
 - id: CP_EC_VIU_E2E_001
   titulo: Flujo completo de venta de contado Home→Order
   objetivo: 'Ejecutar el recorrido E2E consolidado: búsqueda, PDP, carrito, checkout, pago y orden.'
@@ -816,4 +821,4 @@ casos:
   automatizable: true
   estado_automatizacion: Automated
   implementacion: test_cases/common/e2e/e2e.feature (SaleCashWorkflow, confirm_order=True)
-  tags: *id015
+  tags: *id014

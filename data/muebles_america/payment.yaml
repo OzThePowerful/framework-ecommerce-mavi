@@ -7,8 +7,15 @@
 # Reglas verificadas: openpay_stores no seleccionable si total > $30,000;
 # paypal_express abre ventana del proveedor (popup, fuera del dominio).
 # Casos relacionados: CP_EC_MA_PAY_001.
+# `card` es la forma de pago de contado de CP_EC_MA_PAY_001 (nombre del
+# método, proveedor, datos de prueba y restricciones del contrato).
+# Restricciones verificadas en stage MA: exige número, vencimiento y CVV
+# antes de habilitar 'Pagar con Tarjeta Crédito / Débito'; la facturación
+# usa la dirección de entrega por defecto; sin monto máximo observado.
 card:
   method: "openpay_cards"   # Tarjeta Crédito / Débito — contado (OpenPay)
+  label: "Tarjeta Crédito / Débito"  # nombre visible del método en el checkout
+  provider: "OpenPay"
   status: "verified"
   # Tarjeta pública de sandbox OpenPay (ficticia — no es un PAN real)
   number: "4111111111111111"

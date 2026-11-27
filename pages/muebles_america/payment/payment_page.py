@@ -1,7 +1,80 @@
-"""Pago de Muebles América: fachada sobre la base common."""
+"""Pago de Muebles América: fachada sobre la base common.
 
+El flujo de pago es el de la base común; aquí se agregan las lecturas de
+CP_EC_MA_PAY_001 (opciones estabilizadas, método activo, etiqueta del
+botón y valores de tarjeta conservados). Nunca pulsa 'Finalizar compra'.
+"""
+
+import time
+
+from pages.common.components.payment.payment_locators import (
+    PaymentLocators as CommonPaymentLocators,
+)
 from pages.common.pages.payment_page import CommonPaymentPage
+from pages.muebles_america.payment.payment_locators import PaymentLocators
 
 
 class PaymentPage(CommonPaymentPage):
-    """Sin variación de marca: el comportamiento es el de la base común."""
+    def payment_options(
+        self, settle_ms: int = 1500, timeout_ms: int = 15000
+    ) -> list[dict]:
+        """Métodos de pago `{value, label, enabled}` una vez estabilizada la
+        etapa: radios y estado del botón de confirmación deben repetirse
+        sin cambios durante `settle_ms`, con al menos un método habilitado
+        (KO oscila al abrir la etapa). Al agotar `timeout_ms` devuelve la
+        última lectura (el step decide)."""
+
+        def snapshot() -> tuple[list[dict], bool]:
+            return (
+                self.page.evaluate(PaymentLocators.OPTIONS_EXPR),
+                self.is_place_order_enabled(),
+            )
+
+        deadline = time.monotonic() + timeout_ms / 1000
+        state = snapshot()
+        stable_since = time.monotonic()
+        while time.monotonic() < deadline:
+            self.page.wait_for_timeout(250)
+            current = snapshot()
+            if current != state:
+                state, stable_since = current, time.monotonic()
+                continue
+            enabled = any(option["enabled"] for option in state[0])
+            if enabled and (time.monotonic() - stable_since) * 1000 >= settle_ms:
+                break
+        return list(state[0])
+
+    def active_method(self) -> str | None:
+        """`value` del método cuyo contenedor está marcado `_active`."""
+        radio = self.page.locator(PaymentLocators.ACTIVE_METHOD_RADIO)
+        return radio.first.get_attribute("value") if radio.count() else None
+
+    def place_order_label(self) -> str | None:
+        """Texto del botón de confirmación ('Finalizar compra' o
+        'Pagar con <método>'). Solo lectura: nunca se pulsa."""
+        button = self.page.locator(CommonPaymentLocators.PLACE_ORDER)
+        if not button.count():
+            return None
+        return " ".join(button.first.inner_text().split())
+
+    def card_values(self) -> dict[str, str | None]:
+        """Valores conservados en los campos de tarjeta: número y CVV solo
+        dígitos (OpenPay enmascara con espacios); mes y año, la opción
+        elegida."""
+
+        def digits(selector: str) -> str | None:
+            field = self.page.locator(selector)
+            if not field.count():
+                return None
+            return "".join(ch for ch in field.first.input_value() if ch.isdigit())
+
+        def selected(selector: str) -> str | None:
+            option = self.page.locator(selector).locator("option:checked")
+            return option.first.inner_text().strip() if option.count() else None
+
+        return {
+            "number": digits(CommonPaymentLocators.CARD_NUMBER),
+            "exp_month": selected(CommonPaymentLocators.CARD_EXP_MONTH),
+            "exp_year": selected(CommonPaymentLocators.CARD_EXP_YEAR),
+            "cvv": digits(CommonPaymentLocators.CARD_CVV),
+        }

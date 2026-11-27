@@ -638,6 +638,44 @@ CASES = [
         "estado_automatizacion": "Automated",
         "implementacion": "test_cases/common/payment/payment.feature",
         "tags": ["payment", "contado", "openpay"],
+        # CP_EC_MA_PAY_001 — exclusivo de MA (MA-AISLAMIENTO-001).
+        "muebles_america": {
+            "titulo": "Seleccionar forma de pago correspondiente a venta de contado",
+            "objetivo": (
+                "Validar que el método definido funcionalmente como pago de "
+                "contado está disponible y puede seleccionarse."
+            ),
+            "tipo": "Funcional positivo",
+            "precondiciones": (
+                "Checkout completo; dirección válida; método de entrega "
+                "seleccionado; método de contado documentado y habilitado en Stage."
+            ),
+            "datos": (
+                "Contado `payment`/`card`: openpay_cards 'Tarjeta Crédito / "
+                "Débito' (OpenPay), tarjeta sandbox; método vía "
+                "`checkout`/`guest.payment_method`."
+            ),
+            "pasos": (
+                "1. Llegar a la etapa de pago. 2. Consultar métodos disponibles. "
+                "3. Identificar forma de pago de contado. 4. Seleccionar método. "
+                "5. Completar datos permitidos cuando aplique. 6. Revisar resumen "
+                "antes de confirmación."
+            ),
+            "resultado_esperado": (
+                "Etapa 'forma_de_pago' con el botón deshabilitado; métodos "
+                "habilitados con nombre (estabilizados); contado presente con el "
+                "nombre del dataset; seleccionado, contenedor activo y botón "
+                "'Pagar con <método>'; tarjeta conservada sin errores; subtotal = "
+                "precio PDP, total = subtotal + envío y botón habilitado, sin "
+                "salir del checkout."
+            ),
+            "postcondicion": (
+                "Forma de pago de contado seleccionada y compra lista para "
+                "finalizar; NO se crea orden."
+            ),
+            "implementacion": "test_cases/muebles_america/payment/payment.feature",
+            "tags": ["payment", "cash_sale"],
+        },
     },
     {
         "suffix": "PAY_002",
