@@ -23,6 +23,7 @@ from tests.bdd.steps.e2e_steps import *  # noqa: F401,F403  (registra steps)
 from tests.bdd.steps.home_steps import *  # noqa: F401,F403  (registra steps)
 from tests.bdd.steps.muebles_america.cart_steps import *  # noqa: F401,F403
 from tests.bdd.steps.muebles_america.checkout_steps import *  # noqa: F401,F403
+from tests.bdd.steps.muebles_america.e2e_steps import *  # noqa: F401,F403
 from tests.bdd.steps.muebles_america.home_steps import *  # noqa: F401,F403
 from tests.bdd.steps.muebles_america.order_steps import *  # noqa: F401,F403
 from tests.bdd.steps.muebles_america.payment_steps import *  # noqa: F401,F403

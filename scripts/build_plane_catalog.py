@@ -905,6 +905,40 @@ CASES = [
             "test_cases/common/e2e/e2e.feature "
             "(SaleCashWorkflow, confirm_order=True)"
         ),
+        # CP_EC_MA_E2E_001 — exclusivo de MA (MA-AISLAMIENTO-001).
+        "muebles_america": {
+            "titulo": "Validar flujo completo de venta de contado",
+            "objetivo": (
+                "Validar de extremo a extremo el proceso de compra de contado en "
+                "Muebles América."
+            ),
+            "tipo": "End-to-End",
+            "precondiciones": (
+                "Módulos funcionales operativos; producto elegible; dataset de "
+                "cliente y dirección; forma de pago de contado definida; ambiente "
+                "habilitado para la operación."
+            ),
+            "datos": (
+                "Datasets search/checkout/addresses/payment (contado openpay_cards, "
+                "sale_type 'contado') + identidad real MAVI_GUEST_MA_*."
+            ),
+            "pasos": (
+                "Home → Search → PDP → Cart → Checkout → Customer → Address → "
+                "Shipping → Payment → Order, cada etapa verificada y con evidencia; "
+                "luego validaciones obligatorias."
+            ),
+            "resultado_esperado": (
+                "Producto, cantidad y precio consistentes en todo el flujo; subtotal "
+                "= precio × cantidad en carrito, checkout y orden; descuento "
+                "correcto cuando aplica; shipping consistente (entrega, resumen, "
+                "orden); total = checkout = subtotal − descuento + envío; tipo_pago "
+                "'contado'; folio válido = transaction_id; 10 capturas por etapa "
+                "(checkout enmascarado) y resumen de evidencia."
+            ),
+            "postcondicion": "Orden REAL de prueba creada en stage con evidencia por etapa.",
+            "implementacion": "test_cases/muebles_america/e2e/e2e.feature",
+            "tags": ["e2e", "cash_sale", "critical"],
+        },
         "tags": ["e2e", "contado", "irreversible"],
     },
 ]

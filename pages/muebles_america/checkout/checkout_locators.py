@@ -36,6 +36,9 @@ class CheckoutLocators:
     DELIVERY_OPTIONS = {"a_domicilio": "#domicilio", "sucursal": "#sucursal"}
     SHIPPING_SUMMARY = ".omni-summary-totals"
     SUMMARY_ITEM = "li.omni-product-item:visible"
+    # Evidencia (CP_EC_MA_E2E_001): campos capturados del checkout que se
+    # tapan en los screenshots (identidad real del comprador, domicilio, tarjeta).
+    EVIDENCE_MASK = "input:visible, select:visible"
     # (name) → texto del error del input visible con ese name, o null.
     FIELD_ERROR_EXPR = """(name) => {
         const input = [...document.querySelectorAll(`input[name="${name}"]`)]

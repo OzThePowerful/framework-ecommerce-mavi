@@ -143,6 +143,12 @@ class CheckoutPage(CommonCheckoutPage):
         while self.current_stage() != "forma_de_pago" and time.monotonic() < deadline:
             self.page.wait_for_timeout(250)
 
+    # --- Evidencia (CP_EC_MA_E2E_001) --------------------------------------
+    def evidence_mask(self) -> list:
+        """Locators a tapar en los screenshots del checkout: inputs y selects
+        visibles (identidad real del comprador, domicilio y tarjeta)."""
+        return [self.page.locator(CheckoutLocators.EVIDENCE_MASK)]
+
     # --- Resumen ----------------------------------------------------------
     def summary_items(self) -> list[dict]:
         """Productos del resumen final ("Detalle de la compra"):
