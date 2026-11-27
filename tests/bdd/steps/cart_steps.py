@@ -7,14 +7,19 @@ dominio leído en PDP contra el Cart leído de la página.
 """
 
 import json
+import re
 
 from pytest_bdd import then, when
 
 from core.reporting.allure_manager import attach_text
 
 
+def _normalize(text: str) -> str:
+    return re.sub(r"\s+", " ", text or "").strip().lower()
+
+
 @when("agrega el producto al carrito", target_fixture="cart_ctx")
-def add_product_to_cart(pdp_ctx) -> dict:
+def add_product_to_cart(pages, pdp_ctx) -> dict:
     product_page = pdp_ctx["product_page"]
     expected = product_page.read_product()
     expected_qty = product_page.quantity()
@@ -31,13 +36,64 @@ def add_product_to_cart(pdp_ctx) -> dict:
         ),
     )
     product_page.add_to_cart()
+    cart_page = pages.cart()
+    confirmation = product_page.add_confirmation_message()
+    minicart_count = cart_page.wait_for_minicart_count(expected_qty)
     product_page.dismiss_post_add_overlays()
-    return {"expected": expected, "expected_qty": expected_qty}
+    return {
+        "expected": expected,
+        "expected_qty": expected_qty,
+        "cart_page": cart_page,
+        "confirmation": confirmation,
+        "minicart_count": minicart_count,
+    }
+
+
+@then("el ecommerce procesa la adición al carrito")
+def add_processed_to_cart(cart_ctx) -> None:
+    expected = cart_ctx["expected"]
+    item = cart_ctx["cart_page"].state_item(expected.sku)
+    attach_text("Adición procesada", json.dumps(item, ensure_ascii=False))
+    assert item is not None, (
+        f"El estado del carrito no registró el sku {expected.sku!r}"
+    )
+    assert item.get("server_item_id"), (
+        f"El ítem {expected.sku!r} no quedó aceptado por el ecommerce "
+        "(sin server_item_id)"
+    )
+    assert item.get("qty") == cart_ctx["expected_qty"], (
+        f"El ítem {expected.sku!r} se procesó con cantidad "
+        f"{item.get('qty')}; se esperaba {cart_ctx['expected_qty']}"
+    )
+
+
+@then("el ecommerce confirma la adición al carrito")
+def add_confirmed_to_cart(cart_ctx) -> None:
+    message = cart_ctx["confirmation"]
+    name = cart_ctx["expected"].name
+    attach_text(
+        "Confirmación",
+        json.dumps(
+            {"message": message, "minicart_count": cart_ctx["minicart_count"]},
+            ensure_ascii=False,
+        ),
+    )
+    assert message is not None, "No apareció la confirmación de producto agregado"
+    assert "agregado" in _normalize(message), (
+        f"La confirmación no indica que el producto se agregó: {message!r}"
+    )
+    assert _normalize(name) in _normalize(message), (
+        f"La confirmación no menciona el producto {name!r}: {message!r}"
+    )
+    assert cart_ctx["minicart_count"] == cart_ctx["expected_qty"], (
+        f"El minicart muestra {cart_ctx['minicart_count']} producto(s); "
+        f"se esperaba {cart_ctx['expected_qty']}"
+    )
 
 
 @when("abre el carrito de compras")
 def open_cart(pages, cart_ctx) -> None:
-    cart_page = pages.cart()
+    cart_page = cart_ctx.get("cart_page") or pages.cart()
     cart_page.open_cart()
     cart_ctx["cart_page"] = cart_page
     cart_ctx["cart"] = cart_page.read_cart()
